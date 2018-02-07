@@ -1,0 +1,17 @@
+<script id="t-text-view" type="text/template">
+
+{{buttonBar}}
+
+<h5 style="color: #0000ff;">{{title}}</h5>
+
+<p style="text-align:left; font-size: 18px;">
+	{{traName}}
+</p>
+
+<p style="text-align:left; font-size: 18px;">
+	<pre>
+		{{text}}
+	</pre>
+</p>
+
+</script>

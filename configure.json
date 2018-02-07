@@ -1,0 +1,51 @@
+{
+	"/mydrawer": {
+		"path": "./app.html", 
+		"method":"GET", 
+		"handler":"getContent"
+	},
+
+	"/normalize-css": {
+		"path": "./css/normalize.css", 
+		"method":"GET", 
+		"handler":"getContent"
+	},
+	"/skeleton-css": {
+		"path": "./css/skeleton.css", 
+		"method":"GET", 
+		"handler":"getContent"
+	},
+	"/style-css": {
+		"path": "./css/style.css", 
+		"method":"GET", 
+		"handler":"getContent"
+	},
+
+	"/drawer-js": {
+		"path": "./js/drawer.js", 
+		"method":"GET", 
+		"handler":"getContent"
+	},
+	"/tray-js": {
+		"path": "./js/tray.js", 
+		"method":"GET", 
+		"handler":"getContent"
+	},
+	"/user-js": {
+		"path": "./js/user.js", 
+		"method":"GET", 
+		"handler":"getContent"
+	},
+	"/utility-js": {
+		"path": "./js/utility.js", 
+		"method":"GET", 
+		"handler":"getContent"
+	},
+
+	"/favicon-image": {
+		"path": "./images/favicon.ico", 
+		"method":"GET", 
+		"handler":"getContent"
+	}
+
+}

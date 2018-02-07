@@ -1,0 +1,19 @@
+<script id="t-tray-list-rows" type="text/template">
+
+	<tr>
+		<td style="padding-left: 9px;">
+			<a href="#" onclick='postSearchDrawerByTraSk("{{traSk}}|{{traName}}");'>
+				<span style="font-size:18px; color:blue;">
+					{{traName}}
+				</span>
+			</a>
+		</td>
+		<td>
+			<a href="#" onclick='renderEditTray("{{traSk}}","{{traName}}");'>Edit</a>
+		</td>
+		<td style="padding-right: 9px;">
+			<a href="#" onclick='checkIfTrayCanBeDeleted("{{traSk}}","{{traName}}");'>Delete</a>
+		</td>
+	</tr>
+
+</script>

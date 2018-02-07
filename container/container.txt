@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="canonical" href="" />
+
+<meta name="description" content="Use My Drawer to store anything you want including anything that you type, pictures, articles and videos from the web and be able to search for any of it and find it instantly."/>
+<meta name="keywords" content="my drawer it's all here store retrieve articles text media">
+<meta name="og:locale" content="en_US" />
+<meta name="author" content="Stan Zajdel">
+<meta name="og:url" content="" />
+<meta name="og:type" content="website" />
+<meta name="og:title" content="My Drawer - It's All Here" />
+<meta name="og:description" content="Use My Drawer to store anything you want including anything that you type, pictures, articles and videos from the web and be able to search for any of it and find it instantly."/>
+<meta name="og:site_name" content="My Drawer - It's All Here" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:description" content="Use My Drawer to store anything you want including anything that you type, pictures, articles and videos from the web and be able to search for any of it and find it instantly."/>
+<meta name="twitter:title" content="My Drawer - It's All Here"/>
+<meta name="twitter:domain" content="My Drawer - It's All Here"/>
+
+<title>My Drawer - It's All Here</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+
+<link href='https://fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+
+<link rel="stylesheet" href="/normalize-css">
+<link rel="stylesheet" href="/skeleton-css">
+<link rel="stylesheet" href="/style-css">
+
+<link href='/favicon-image' type="image/x-icon" rel="icon">
+
+</head>
+<body>
+
+<div class="container">
+
+	<nav class="menu-bar" style="background-color:#eff6fc;">
+<!--		<div class="container" style="border-bottom: 1px solid #e50000;">&nbsp; -->
+		<div class="container">&nbsp;
+
+			<a class="logo" onclick="getDrawer();"><h3>My Drawer</h3></a>
+
+			<button id="hamburger" onclick="openHamburger();" class="hamburger">&#9776;</button>
+			<button id="cross" onclick="closeHamburger();" class="cross" style="display:none;">&#9776;</button>
+
+		</div>
+	</nav>
+
+	<div id="template-menu">
+
+	</div>
+
+	<div style="padding: 12rem 0;">
+
+		<div id="template-content">
+
+		</div>
+
+	</div>
+</div>
+
+<!-- TEMPLATES -->
+{{templates}}
+
+<!-- SCRIPTS -->
+<script src="/utility-js"></script>
+<script src="/tray-js"></script>
+<script src="/drawer-js"></script>
+<script src="/user-js"></script>
+
+<script>
+	init();
+</script>
+
+</body>
+</html>

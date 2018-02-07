@@ -1,0 +1,9 @@
+<script id="t-drawer-button-video-view" type="text/template">
+
+<a href="#" onclick='renderViewVideoEntry("{{drwSk}}");'>
+	<span style="color: #000;">
+		<strong>V</strong>iew
+	</span>
+</a>
+
+</script>

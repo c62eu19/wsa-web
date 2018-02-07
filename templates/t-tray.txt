@@ -1,0 +1,32 @@
+<script id="t-tray" type="text/template">
+
+<h5 style="color: #0000ff;">{{heading}}</h5>
+
+<div id="error" style="margin-bottom: 9px; color: #ff0000"></div>
+
+<p style="font-size:18px;">
+	<a href="#" onclick='getTrays();'>Return to Tray List</a>
+</p>
+
+<form>
+	<div class="row">
+		<div class="two columns">
+			<label for="name">Tray</label>
+		</div>
+		<div class="ten columns">
+			<input class="u-full-width" type="text" id="name" name="name" value="{{name}}" data-name="{{name}}" placeholder="Enter a Tray Name here">
+		</div>
+	</div>
+	<div class="row">
+		<div class="two columns">
+			&nbsp;
+		</div>
+		<div class="ten columns">
+			<label class="u-full-width">
+				<a class="button button-primary" href="#" onclick='{{saveFunction}}' style="font-size:16px;">Save</a>
+			</label>
+		</div>
+	</div>
+</form>
+
+</script>

@@ -1,0 +1,11 @@
+<script id="t-view-button-bar" type="text/template">
+
+<ul class="icons" style="text-align:right; margin-bottom:2px;">
+	<li>{{editButton}}</li>
+	<li>{{deleteButton}}</li>
+	<li>
+		<a href="#"><span style="color: #000;"><strong>S</strong>hare</span></a>
+	</li>
+</ul>
+
+</script>

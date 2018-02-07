@@ -1,0 +1,32 @@
+<script id="t-sign-in" type="text/template">
+
+<h5 style="color: #0000ff;">Sign In</h5>
+
+<div id="error" style="margin-bottom: 9px; color: #ff0000"></div>
+
+<form id="f-sign-in" onsubmit="postSignIn();return false;">
+	<div class="row">
+		<div class="six columns">
+			<label for="email">Email</label>
+			<input class="u-full-width" type="email" id="email" name="email">
+		</div>
+	</div>
+	<div class="row">
+		<div class="six columns">
+			<label for="password">Password</label>
+			<input class="u-full-width" type="password" id="password" name="password">
+		</div>
+	</div>
+
+	<a class="button button-primary" href="#" onclick="postSignIn();" style="font-size:16px;">Sign In</a>
+
+	<p style="font-size: 18px;">
+		You don't have your own drawer? 
+	<p>
+
+	<a href="#" onclick="renderSignUp();" style="font-size:18px;">
+		Click here to Sign Up now and create your own drawer!
+	</a>
+</form>
+
+</script>

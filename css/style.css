@@ -1,0 +1,305 @@
+.container {
+	max-width: 840px;
+}
+
+.header {
+	margin-top: 16rem;
+	text-align: center;
+}
+
+/* Menu Bar */
+
+.menu-bar {
+	height: 90px;
+	background: #fff;
+/*	border-bottom: 1px solid #fff; */
+	width:100%; 
+	z-index: 99;
+	position: fixed;
+	top: 0;
+	left: 0; 
+	display: block;
+	line-height:90px;
+/*	border-bottom:1px solid #dddddd; */
+}
+
+.logo {
+	background:none;
+	position:absolute;
+	top:0;
+	left:0;
+	line-height:80px;
+	padding:20px 0 0 0;
+	color:#0000ff;
+	border:0;
+	cursor:pointer;
+	outline:none;
+	z-index:100;
+}
+
+.hamburger {
+	background:none;
+	position:absolute;
+	top:0;
+	right:0;
+	line-height:65px;
+	padding:10px 0px 0px 15px;
+	color:#000;
+	border:0;
+	font-size:2.0em;
+	font-weight:bold;
+	cursor:pointer;
+	outline:none;
+	z-index:100;
+}
+
+.cross {
+	background:none;
+	position:absolute;
+	top:0;
+	right:0;
+	line-height:65px;
+	padding:10px 0px 0px 15px;
+	color:#000;
+	border:0;
+	font-size:2.0em;
+	font-weight:bold;
+	cursor:pointer;
+	outline:none;
+	z-index:100;
+}
+
+.menu {
+	z-index:99;
+	font-size:1.0em;
+	width:100%;
+	color: #0000ff;
+	background-color:#fff;
+	position: fixed;
+	left: 0; 
+	display: block;
+	text-align:left;
+	font-size:18px;
+	top: 80;
+    max-height: 400px;
+    overflow-y: scroll;
+}
+
+.menu ul {
+	margin: 0; 
+padding: 9px 9px 9px 9px;
+	list-style-type: none; 
+	list-style-image: none;
+/*	background-color:#f2f2f3; */
+	background-color:#fff;
+}
+
+.menu li {
+	display: block;
+	padding:3px 0 3px 0;
+color: #0000ff;
+/*	border-bottom:#dddddd 1px solid; */
+/*	background-color:#f2f2f3; */
+}
+
+.menu li:hover {
+	display: block;
+/*	background:#ffffff; */
+color: #000;
+	padding:3px 0 3px 0;
+	border-bottom:#dddddd 1px solid;
+}
+
+.menu ul li a {
+	text-decoration:none;
+	margin: 0px; color:#666;
+}
+
+.menu ul li a:hover {
+	color: #000;
+	text-decoration:none;
+}
+
+.menu a {
+	text-decoration:none;
+	color:#666;
+}
+
+.menu a:hover {
+	text-decoration:none;
+	color:#000;
+}
+
+.add-items-menu {
+	display: block;
+	text-align:left;
+	font-size:18px;
+}
+
+.dropdown-menu {
+	display: block;
+	text-align:center;
+	font-size:18px;
+	margin-bottom:9px;
+	padding-bottom:9px;
+	padding-top:9px;
+	border-bottom: #e50000 2px solid;
+/*	background: #f2f2f3; */
+/*	background:#F3FFFF; */
+}
+
+.add-items-menu a, .dropdown-menu, a {
+	display: block;
+	text-decoration:none;
+	color:#000;
+}
+
+.add-items-menu a:hover, .dropdown-menu, a:hover {
+	text-decoration:none;
+	color:#0000ff;
+}
+
+ul.icons {
+	cursor: default;
+	list-style: none;
+	padding-left: 0;
+}
+
+ul.icons li {
+	display: inline-block;
+	padding: 0 1em 0 0;
+}
+
+ul.icons li:last-child {
+	padding-right: 0;
+}
+
+ul.icons li .icon {
+	color: inherit;
+}
+
+ul.icons li .icon:before {
+	font-size: 1.25em;
+}
+
+/* Video */
+
+.responsive-video {
+	position: relative;
+	padding-bottom: 56.25%;
+	padding-top: 60px; 
+	overflow: hidden; 
+}
+
+.responsive-video iframe,
+.responsive-video object,
+.responsive-video embed {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+/* Image */
+
+.responsive-image {
+	width:100%; 
+	height:auto;
+}
+
+/* Search bar */
+
+#button-holder {
+	background-color:#f1f1f1;
+	box-shadow:1px 1px 1px 1px #e5e5e5;
+	border-top:thin solid #e5e5e5;
+	height:35px;
+	cursor:pointer;
+	float:left;
+	text-align:center;
+	width:50px;
+}
+
+#button-holder img {
+	margin:4px;
+	width:20px;
+}
+
+#advanced {
+	background-color:#fff;
+	float:left;
+	height:27px;
+	margin:15px 0 0 9px;
+	text-align:center;
+	width:50px;
+}
+
+/* Miscellaneous */
+
+.hide-textarea-resize {
+	resize: none;
+}
+
+pre {
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	text-align: justify;
+}
+
+tr:nth-child(even) {
+/*	background: #f2f2f3; */
+	background: #F3FFFF;
+}
+
+tr:nth-child(odd) {
+	background: #fff;
+}
+
+td {
+	padding-top: 7px;
+	padding-bottom: 7px;
+}
+
+/* Media Queries */
+
+/* Mobile */
+@media (max-width: 399px) {
+
+	.logo {
+		padding:20px 0px 0 15px;
+	}
+
+	.hamburger {
+		padding:5px 15px 0px 15px;
+	}
+
+	.cross {
+		padding:7px 15px 0px 15px;
+	}
+}
+
+/* Larger than mobile */
+@media (min-width: 400px) {
+
+}
+
+/* Larger than phablet (also point when grid becomes active) */
+@media (min-width: 550px) {
+
+}
+
+/* Larger than tablet */
+@media (min-width: 750px) {
+
+}
+
+/* Larger than desktop */
+@media (min-width: 1000px) {
+
+}
+
+/* Larger than Desktop HD */
+@media (min-width: 1200px) {
+
+}

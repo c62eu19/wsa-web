@@ -1,0 +1,19 @@
+<script id="t-video-view" type="text/template">
+
+{{buttonBar}}
+
+<h5 style="color: #0000ff;">{{title}}</h5>
+
+<p style="text-align:left; font-size: 18px;">
+	{{traName}}
+</p>
+
+<div class="row">
+	<div class="twelve columns">
+		<div class="responsive-video">
+			<iframe id="embedded-video" width="500" height="400" frameborder="0" allowfullscreen></iframe>
+		</div>
+	</div>
+</div>
+
+</script>

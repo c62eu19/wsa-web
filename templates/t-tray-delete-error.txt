@@ -1,0 +1,20 @@
+<script id="t-tray-delete-error" type="text/template">
+
+<h5 style="color: #0000ff;">My Trays</h5>
+
+<p style="font-size: 18px;">
+	You cannot Delete this Tray from your drawer because it still contains items.  Only empty trays can 
+	be deleted. You can either delete those items or move them to different trays.
+</p>
+
+<p style="font-size: 18px;">
+	Also, you cannot Delete your Favorites tray from your drawer as this is a special tray that we created for you to store your 
+	favorite items.
+</p>
+
+<p style="font-size: 18px;">
+	<a href="#" onclick="getTrays();">Return to My Trays</a>
+
+</p>
+
+</script>

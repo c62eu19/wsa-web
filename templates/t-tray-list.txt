@@ -1,0 +1,32 @@
+<script id="t-tray-list" type="text/template">
+
+<div class="row">
+	<div class="four columns" padding-top:9px;">
+		<span style="font-size:20px; color:blue;">
+			My Trays
+		</span>
+	</div>
+	<div class="eight columns" style="padding-top:9px;">
+		<ul class="icons" style="text-align:right; margin-bottom:9px;">
+			<li style="padding-left: 7px;">
+				<a href="#" onclick='renderAddTray("{{traMbrSk}}");'>Add a Tray</a>
+			</li>
+			<li style="padding-left: 7px;">
+				<a href="#" onclick='getDrawer();'>My Drawer</a>
+			</li>
+			<li style="padding-left: 7px;">
+				<a href="#">Inbasket <sup>2</sup></a>
+			</li>
+		</ul>
+	</div>
+</div>
+
+<hr style="margin-top:7px; margin-bottom:7px;">
+
+<table>
+	<tbody>
+		{{trayRows}}
+	</tbody>
+</table>
+
+</script>

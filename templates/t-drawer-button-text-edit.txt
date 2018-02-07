@@ -1,0 +1,9 @@
+<script id="t-drawer-button-text-edit" type="text/template">
+
+<a href="#" onclick='renderEditTextEntry("{{drwSk}}");'>
+	<span style="color: #000;">
+		<strong>E</strong>dit
+	</span>
+</a>
+
+</script>

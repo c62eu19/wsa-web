@@ -1,0 +1,17 @@
+<script id="t-signup-error" type="text/template">
+
+<h5 style="color: #0000ff;">Error</h5>
+
+<p style="font-size: 18px;">
+	{{errorMsg}}
+</p>
+
+<p style="font-size: 18px;">
+	<a href="#" onclick="renderSignUp();">Click here to try again</a>
+</p>
+
+<p style="font-size: 18px;">
+	Thank you.
+</p>
+
+</script>

@@ -1,0 +1,7 @@
+<script id="t-tray-select-tag" type="text/template">
+
+<select class="u-full-width" name="traSk" id="traSk" {{changeFunction}}>
+	{{traOptions}}
+</select>
+
+</script>

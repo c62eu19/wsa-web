@@ -1,0 +1,28 @@
+<script id="t-contact-us" type="text/template">
+
+<h5 style="color: #0000ff;">Contact Us</h5>
+
+<form>
+	<div class="row">
+		<div class="six columns">
+			<label for="msgFrom">Email</label>
+			<input class="u-full-width" type="email" placeholder="test@mailbox.com" name="msgFrom" id="msgFrom">
+		</div>
+		<div class="six columns">
+			<label for="msgSubj">Subject</label>
+			<select class="u-full-width" name="msgSubj" id="msgSubj">
+				<option value=""></option>
+				<option value="1">Question</option>
+				<option value="2">Feature Request</option>
+				<option value="3">Forgot Password</option>
+				<option value="4">Other</option>
+			</select>
+		</div>
+	</div>
+	<label for="msg">Message</label>
+	<textarea class="u-full-width hide-textarea-resize" placeholder="Enter your message" rows="6" id="msg" name="msg"></textarea>
+
+	<a class="button button-primary" onclick="postContactUs();" style="font-size:16px;">Send</a>
+</form>
+
+</script>

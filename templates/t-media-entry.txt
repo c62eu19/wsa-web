@@ -1,0 +1,28 @@
+<script id="t-media-entry" type="text/template">
+
+<h5 style="color: #0000ff;">Save a Picture or any File</h5>
+
+<div id="error" style="margin-bottom: 9px; color: #ff0000"></div>
+
+<form action="/uploads" enctype="multipart/form-data" method="post">
+
+	<input type="file" name="inputFile" id="inputFile" onchange="postFetchMediaFile();"/>
+
+	<div class="row">
+		<div class="eight columns">
+			<label for="name">Title</label>
+			<input class="u-full-width" type="text" id="title" name="title" placeholder="Enter a Title here">
+		</div>
+		<div class="four columns">
+			<label for="name">Tray</label>
+			{{mbrTrayListSelectTag}}
+		</div>
+	</div>
+
+	<label for="name">Text</label>
+	<textarea class="u-full-width hide-textarea-resize" style="height:100px;" id="text" name="text" placeholder="Link Text" rows="10"></textarea>
+
+	<a class="button button-primary" href="#" onclick="postShareMediaFile();" style="font-size:14px;">Save</a>
+</form>
+
+</script>

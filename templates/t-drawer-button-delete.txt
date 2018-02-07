@@ -1,0 +1,9 @@
+<script id="t-drawer-button-delete" type="text/template">
+
+<a href="#" onclick='deleteDrawerItem("{{drwSk}}");'>
+	<span style="color: #000;">
+		<strong>D</strong>elete
+	</span>
+</a>
+
+</script>

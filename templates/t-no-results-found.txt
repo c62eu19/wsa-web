@@ -1,0 +1,13 @@
+<script id="t-no-results-found" type="text/template">
+
+<h5 style="color: #0000ff;">No Results Found</h5>
+
+<p style="font-size: 18px;">
+	Sorry but there is nothing in your drawer that matches what you are searching for.
+</p>
+
+<p style="font-size: 18px;">
+	<strong><a href="#" onclick='getDrawer();'>Click here to try again.</strong></a>
+</p>
+
+</script>
