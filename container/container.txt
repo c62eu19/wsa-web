@@ -37,7 +37,6 @@
 <div class="container">
 
 	<nav class="menu-bar" style="background-color:#eff6fc;">
-<!--		<div class="container" style="border-bottom: 1px solid #e50000;">&nbsp; -->
 		<div class="container">&nbsp;
 
 			<a class="logo" onclick="getDrawer();"><h3>My Drawer</h3></a>

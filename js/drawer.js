@@ -12,12 +12,12 @@ function init() {
 		if(typeof(gblStateObj) === "undefined" || gblStateObj == null) {
 
 			gblStateObj = {};
-			gblStateObj.mbrSkToken = "";
-			gblStateObj.mbrName = "";
-			gblStateObj.mbrTrayJson = "";
-			gblStateObj.mbrDrawerJson = "";
+			gblStateObj.collectionName = "";
+			gblStateObj.userName = "";
+			gblStateObj.trayJson = "";
+			gblStateObj.drawerJson = "";
 			gblStateObj.origTemplateContent = "";
-			gblStateObj.mbrTraySelected = "";
+			gblStateObj.traySelected = "";
 			gblStateObj.favoriteTraTokens = "";
 		}
 
@@ -34,7 +34,7 @@ function init() {
 function getDrawer() {
 
 	try {
-		if(isEmpty(gblStateObj.mbrSkToken)) {
+		if(isEmpty(gblStateObj.collectionName)) {
 			renderSignIn();
 
 		} else {
@@ -49,11 +49,11 @@ function getDrawer() {
 				if (xhr.readyState === DONE) {
 					if (xhr.status === OK) {
 
-						gblStateObj.mbrDrawerJson = xhr.responseText;
+						gblStateObj.drawerJson = xhr.responseText;
 
-						var mbrDrawerArray = JSON.parse(gblStateObj.mbrDrawerJson);
+						var drawerArray = JSON.parse(gblStateObj.drawerJson);
 
-						gblStateObj.mbrTraySelected = "in your drawer";
+						gblStateObj.traySelected = "in your drawer";
 
 						resetMenu();
 						renderDrawer();
@@ -68,7 +68,7 @@ function getDrawer() {
 				console.log("getDrawer(): An error occurred during the transaction");
 			};
 
-			var url = "https://mydrawer-itsallhere.rhcloud.com/memberdrawerlistws/" + gblStateObj.mbrSkToken;
+			var url = "http://localhost:8080/mydrawer/DrawerList/" + gblStateObj.collectionName;
 
 			xhr.open("GET", url, true);
 			xhr.send();
@@ -91,7 +91,11 @@ function postSearchDrawerByWildcard() {
 			return false;
 		}
 
-		var inputFields = {"searchType":"WILDCARD", "mbrSkToken":gblStateObj.mbrSkToken, "searchTerm":searchTerm, "traSk":""};
+		var inputFields = {
+			"searchType":"WILDCARD", 
+			"collectionName":gblStateObj.collectionName, 
+			"searchTerm":searchTerm, "trayId":""
+		};
 
 		var inputJSON = {};
 		inputJSON.inputArgs = inputFields;
@@ -108,16 +112,16 @@ function postSearchDrawerByWildcard() {
 			if (xhr.readyState === DONE) {
 				if (xhr.status === OK) {
 
-					gblStateObj.mbrDrawerJson = xhr.responseText;
+					gblStateObj.drawerJson = xhr.responseText;
 
-					var mbrDrawerArray = JSON.parse(gblStateObj.mbrDrawerJson);
+					var drawerArray = JSON.parse(gblStateObj.drawerJson);
 
-					if(mbrDrawerArray.length <= 0) {
+					if(drawerArray.length <= 0) {
 
 						renderNoResultsFound();
 
 					} else {
-						gblStateObj.mbrTraySelected = "resulting in your search";
+						gblStateObj.traySelected = "resulting in your search";
 
 						resetMenu();
 						renderDrawer();
@@ -132,7 +136,7 @@ function postSearchDrawerByWildcard() {
 			console.log("postSearchDrawerByWildcard(): An error occurred during the transaction");
 		};
 
-		var url = "https://mydrawer-itsallhere.rhcloud.com/memberdrawerlistws/";
+		var url = "http://localhost:8080/mydrawer/DrawerList/";
 
 		xhr.open("POST", url, true);
 		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -147,14 +151,19 @@ function postSearchDrawerByWildcard() {
 	}
 }
 
-function postSearchDrawerByTraSk(traTokens) {
+function postSearchDrawerByTraId(traTokens) {
 
 	try {
 		var tokens = traTokens.split("|");
-		var traSk = tokens[0];
-		var traName = tokens[1];
+		var trayId = tokens[0];
+		var trayName = tokens[1];
 
-		var inputFields = {"searchType":"TRAY", "mbrSkToken":gblStateObj.mbrSkToken, "searchTerm":"", "traSk":traSk};
+		var inputFields = {
+			"searchType":"TRAY", 
+			"collectionName":gblStateObj.collectionName, 
+			"searchTerm":"", 
+			"trayId":trayId
+		};
 
 		var inputJSON = {};
 		inputJSON.inputArgs = inputFields;
@@ -171,15 +180,15 @@ function postSearchDrawerByTraSk(traTokens) {
 			if (xhr.readyState === DONE) {
 				if (xhr.status === OK) {
 
-					gblStateObj.mbrDrawerJson = xhr.responseText;
+					gblStateObj.drawerJson = xhr.responseText;
 
-					var mbrDrawerArray = JSON.parse(gblStateObj.mbrDrawerJson);
+					var drawerArray = JSON.parse(gblStateObj.drawerJson);
 
-					if(mbrDrawerArray.length <= 0) {
+					if(drawerArray.length <= 0) {
 						renderNoResultsFound();
 
 					} else {
-						gblStateObj.mbrTraySelected = "in your " + traName + " tray";
+						gblStateObj.traySelected = "in your " + trayName + " tray";
 
 						resetMenu();
 						renderDrawer();
@@ -191,10 +200,10 @@ function postSearchDrawerByTraSk(traTokens) {
 		};
 
 		xhr.onerror = function () {
-			console.log("postSearchDrawerByTraSk(): An error occurred during the transaction");
+			console.log("postSearchDrawerByTraId(): An error occurred during the transaction");
 		};
 
-		var url = "https://mydrawer-itsallhere.rhcloud.com/memberdrawerlistws/";
+		var url = "http://localhost:8080/mydrawer/DrawerList/";
 
 		xhr.open("POST", url, true);
 		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -202,7 +211,7 @@ function postSearchDrawerByTraSk(traTokens) {
 		xhr.send("inputJSON=" + stringJSON);
 	}
 	catch(err) {
-		console.log("postSearchDrawerByTraSk(): " + err);
+		console.log("postSearchDrawerByTraId(): " + err);
 	}
 	finally {
 
@@ -212,11 +221,9 @@ function postSearchDrawerByTraSk(traTokens) {
 function renderNoResultsFound() {
 
 	try {
-		var t = document.getElementById("t-no-results-found");
+		var data = {};
 
-		var tHtml = t.innerHTML;
-
-		document.getElementById('template-content').innerHTML = tHtml;
+		render("t-no-results-found", "template-content", data);
 
 		resetMenu();
 	}
@@ -231,51 +238,50 @@ function renderNoResultsFound() {
 function renderDrawer() {
 
 	try {
-		var td = "";
-		var tdHtml = "";
-		var tdHtmlReplace = "";
 
-		var mbrDrawerArray = JSON.parse(gblStateObj.mbrDrawerJson);
+		var drawerArray = JSON.parse(gblStateObj.drawerJson);
 
-		var tr = document.getElementById("t-drawer-rows");
-		var trHtml = tr.innerHTML;
-		var trHtmlReplace = "";
+		var rowHtml = "";
+		var rowData = {};
 
-		for(var i=0; i<mbrDrawerArray.length; i++) {
+		for(var i=0; i<drawerArray.length; i++) {
 
-			var item = mbrDrawerArray[i];
+			var item = drawerArray[i];
 
 			var abbrText = item.abbrText.replace(/\r/g, " ");
 			abbrText = item.abbrText.replace(/\n/g, " ");
 
-			var itemTitle = renderDrawerItemViewTitle(item.drwSk);
+			var itemTitle = createDrawerItemViewTitle(item.drawerId);
 
-			var viewButton = renderDrawerItemViewButton(item.drwSk);
-			var editButton = renderDrawerItemEditButton(item.drwSk);
-			var deleteButton = renderDrawerItemDeleteButton(item.drwSk);
+			var viewButton = createDrawerItemViewButton(item.drawerId);
+			var editButton = createDrawerItemEditButton(item.drawerId);
+			var deleteButton = createDrawerItemDeleteButton(item.drawerId);
 
-			trHtmlReplace += trHtml.replace(/{{itemTitle}}/g, itemTitle)
-				.replace(/{{traName}}/g, item.traName)
-				.replace(/{{text}}/g, abbrText)
-				.replace(/{{updatedDt}}/g, item.updatedDt)
-				.replace(/{{viewButton}}/g, viewButton)
-				.replace(/{{editButton}}/g, editButton)
-				.replace(/{{deleteButton}}/g, deleteButton);
+			rowData = {
+				"{{itemTitle}}" : itemTitle,
+				"{{traName}}" : item.traName,
+				"{{text}} " : abbrText,
+				"{{updatedDt}}" : item.updatedDt,
+				"{{viewButton}}" : viewButton,
+				"{{editButton}}" : editButton,
+				"{{deleteButton}}" : deleteButton
+			};
+
+			rowHtml = create("t-drawer-rows", rowData);
 		}
 
-		td = document.getElementById("t-drawer");
-
-		if(mbrDrawerArray.length <= 0) {
-			trHtmlReplace = "";
+		if(drawerArray.length <= 0) {
+			rowHtml = "";
 		}
 
-		tdHtml = td.innerHTML;
-		tdHtmlReplace = tdHtml.replace(/{{favoriteTraTokens}}/g, gblStateObj.favoriteTraTokens)
-			.replace(/{{totalItems}}/g, mbrDrawerArray.length)
-			.replace(/{{mbrTraySelected}}/g, gblStateObj.mbrTraySelected)
-			.replace(/{{drawerRows}}/g, trHtmlReplace);
+		var tableData = {
+			"{{favoriteTraTokens}}" : gblStateObj.favoriteTraTokens,
+			"{{totalItems}}" : drawerArray.length,
+			"{{traySelected}}" : gblStateObj.traySelected,
+			"{{drawerRows}}" : rowHtml
+		};
 
-		document.getElementById('template-content').innerHTML = tdHtmlReplace;
+		render("t-drawer", "template-content", tableData);
 
 		document.body.addEventListener("keydown", function(e) {
 			if (e.keyCode === 13) {
@@ -291,26 +297,26 @@ function renderDrawer() {
 	}
 }
 
-function getDrawerItem(drwSk) {
+function getDrawerItem(drawerId) {
 
 	var drawerItem = {};
 
 	try {
-		var mbrDrawerArray = JSON.parse(gblStateObj.mbrDrawerJson);
+		var drawerArray = JSON.parse(gblStateObj.drawerJson);
 
-		if(mbrDrawerArray.length > 0) {
+		if(drawerArray.length > 0) {
 
-			for(var i=0; i<mbrDrawerArray.length; i++) {
+			for(var i=0; i<drawerArray.length; i++) {
 
-				var item = mbrDrawerArray[i];
+				var item = drawerArray[i];
 
-				if(drwSk == item.drwSk) {
+				if(drawerId == item.drawerId) {
 
 					var decodeUrl = decodeURIComponent(item.url);
 
-					drawerItem.drwSk = item.drwSk;
-					drawerItem.traSk = item.traSk;
-					drawerItem.typeId = item.typeId;
+					drawerItem.drawerId = item.drawerId;
+					drawerItem.trayId = item.trayId;
+					drawerItem.type = item.type;
 					drawerItem.updatedDt = item.updatedDt;
 					drawerItem.title = item.title;
 					drawerItem.text = item.text;
@@ -332,168 +338,148 @@ function getDrawerItem(drwSk) {
 	return drawerItem;
 }
 
-function renderDrawerItemViewTitle(drwSk) {
+function createDrawerItemViewTitle(drawerId) {
 
-	var ttReplace = "";
+	var componentHtml = "";
 
 	try {
 		drawerItem = {};
-		drawerItem = getDrawerItem(drwSk);
+		drawerItem = getDrawerItem(drawerId);
 
-		var tt = "";
-		var ttHtml = "";
+		var data = {
+			"{{drawerId}}" : drawerId,
+			"{{title}}" : drawerItem.title,
+			"{{url}}" : drawerItem.url
+		};
 
-		if(drawerItem.typeId == "1") {
-			tt = document.getElementById("t-drawer-title-text-view");
-			ttHtml = tt.innerHTML;
+		if(drawerItem.type == "1") {
+			componentHtml = create("t-drawer-title-text-view", data);
 
-			ttReplace = ttHtml.replace(/{{drwSk}}/g, drwSk)
-				.replace(/{{title}}/g, drawerItem.title);
+		} else if(drawerItem.type == "4") {
+			componentHtml = create("t-drawer-title-article-view", data);
 
-		} else if(drawerItem.typeId == "4") {
-			tt = document.getElementById("t-drawer-title-article-view");
-			ttHtml = tt.innerHTML;
-
-			ttReplace = ttHtml.replace(/{{url}}/g, drawerItem.url)
-				.replace(/{{title}}/g, drawerItem.title);
-
-		} else if(drawerItem.typeId == "5") {
-			tt = document.getElementById("t-drawer-title-video-view");
-			ttHtml = tt.innerHTML;
-
-			ttReplace = ttHtml.replace(/{{drwSk}}/g, drwSk)
-				.replace(/{{title}}/g, drawerItem.title);
+		} else if(drawerItem.type == "5") {
+			componentHtml = create("t-drawer-title-video-view", data);
 		}
 	}
 	catch(err) {
-		console.log("renderDrawerItemViewTitle(): " + err);
+		console.log("createDrawerItemViewTitle(): " + err);
 	}
 	finally {
 
 	}
 
-	return ttReplace;
+	return componentHtml;
 }
 
-function renderDrawerItemViewButton(drwSk) {
+function createDrawerItemViewButton(drawerId) {
 
-	var tbReplace = "";
+	var componentHtml = "";
 
 	try {
 		drawerItem = {};
-		drawerItem = getDrawerItem(drwSk);
+		drawerItem = getDrawerItem(drawerId);
 
-		var tb = "";
-		var tbHtml = "";
+		var data = {
+			"{{drawerId}}" : drawerId,
+			"{{url}}" : drawerItem.url
+		};
 
-		if(drawerItem.typeId == "1") {
-			tb = document.getElementById("t-drawer-button-text-view");
-			tbHtml = tb.innerHTML;
+		if(drawerItem.type == "1") {
+			componentHtml = create("t-drawer-button-text-view", data);
 
-			tbReplace = tbHtml.replace(/{{drwSk}}/g, drwSk);
+		} else if(drawerItem.type == "4") {
+			componentHtml = create("t-drawer-button-article-view", data);
 
-		} else if(drawerItem.typeId == "4") {
-			tb = document.getElementById("t-drawer-button-article-view");
-			tbHtml = tb.innerHTML;
-
-			tbReplace = tbHtml.replace(/{{url}}/g, drawerItem.url);
-
-		} else if(drawerItem.typeId == "5") {
-			tb = document.getElementById("t-drawer-button-video-view");
-			tbHtml = tb.innerHTML;
-
-			tbReplace = tbHtml.replace(/{{drwSk}}/g, drwSk);
+		} else if(drawerItem.type == "5") {
+			componentHtml = create("t-drawer-button-video-view", data);
 		}
 	}
 	catch(err) {
-		console.log("renderDrawerItemViewButton(): " + err);
+		console.log("createDrawerItemViewButton(): " + err);
 	}
 	finally {
 
 	}
 
-	return tbReplace;
+	return componentHtml;
 }
 
-function renderDrawerItemEditButton(drwSk) {
+function createDrawerItemEditButton(drawerId) {
 
-	var tbReplace = "";
+	var componentHtml = "";
 
 	try {
 		drawerItem = {};
-		drawerItem = getDrawerItem(drwSk);
+		drawerItem = getDrawerItem(drawerId);
 
-		var tb = "";
-		var tbHtml = "";
+		var data = {
+			"{{drawerId}}" : drawerId
+		};
 
-		if(drawerItem.typeId == "1") {
-			tb = document.getElementById("t-drawer-button-text-edit");
-			tbHtml = tb.innerHTML;
+		if(drawerItem.type == "1") {
+			componentHtml = create("t-drawer-button-text-edit", data);
 
-			tbReplace = tbHtml.replace(/{{drwSk}}/g, drwSk);
-
-		} else if(drawerItem.typeId == "4" || drawerItem.typeId == "5") {
-			tb = document.getElementById("t-drawer-button-web-edit");
-			tbHtml = tb.innerHTML;
-
-			tbReplace = tbHtml.replace(/{{drwSk}}/g, drwSk);
+		} else if(drawerItem.type == "4" || drawerItem.type == "5") {
+			componentHtml = create("t-drawer-button-web-edit", data);
 		}
 	}
 	catch(err) {
-		console.log("renderDrawerItemEditTitle(): " + err);
+		console.log("createDrawerItemEditTitle(): " + err);
 	}
 	finally {
 
 	}
 
-	return tbReplace;
+	return componentHtml;
 }
 
-function renderDrawerItemDeleteButton(drwSk) {
+function createDrawerItemDeleteButton(drawerId) {
 
-	var tbReplace = "";
+	var componentHtml = "";
 
 	try {
-		var tb = document.getElementById("t-drawer-button-delete");
-		var tbHtml = tb.innerHTML;
+		var data = {
+			"{{drawerId}}" : drawerId
+		};
 
-		tbReplace = tbHtml.replace(/{{drwSk}}/g, drwSk);
+		componentHtml = create("t-drawer-button-delete", data);
 	}
 	catch(err) {
-		console.log("renderDrawerItemDeleteTitle(): " + err);
+		console.log("createDrawerItemDeleteTitle(): " + err);
 	}
 	finally {
 
 	}
 
-	return tbReplace;
+	return componentHtml;
 }
 
-function renderViewTextEntry(drwSk) {
+function renderViewTextEntry(drawerId) {
 
 	try {
 		drawerItem = {};
-		drawerItem = getDrawerItem(drwSk);
+		drawerItem = getDrawerItem(drawerId);
 
-		var b = document.getElementById("t-view-button-bar");
+		var editButtonComponent = createDrawerItemEditButton(drawerItem.drawerId);
+		var deleteButtonComponent = createDrawerItemDeleteButton(drawerItem.drawerId);
 
-		var editButton = renderDrawerItemEditButton(drawerItem.drwSk);
-		var deleteButton = renderDrawerItemDeleteButton(drawerItem.drwSk);
+		var buttonBarData = {
+			"{{editButton}}" : editButtonComponent,
+			"{{deleteButton}}" : deleteButtonComponent
+		};
 
-		var bHtml = b.innerHTML;
-		var bHtmlReplace = bHtml.replace(/{{editButton}}/g, editButton)
-			.replace(/{{deleteButton}}/g, deleteButton);
+		var buttonBarComponent = create("t-view-button-bar", buttonBarData);
 
-		var t = document.getElementById("t-text-view");
+		var data = {
+			"{{buttonBar}}" : buttonBarComponent,
+			"{{deleteButton}}" : deleteButton,
+			"{{title}}" : drawerItem.title,
+			"{{traName}}" : drawerItem.traName,
+			"{{text}}" : drawerItem.text
+		};
 
-		var tHtml = t.innerHTML;
-		var tHtmlReplace = tHtml.replace(/{{buttonBar}}/g, bHtmlReplace)
-			.replace(/{{deleteButton}}/g, deleteButton)
-			.replace(/{{title}}/g, drawerItem.title)
-			.replace(/{{traName}}/g, drawerItem.traName)
-			.replace(/{{text}}/g, drawerItem.text);
-
-		document.getElementById('template-content').innerHTML = tHtmlReplace;
+		render("t-text-view", "template-content", data);
 
 		resetMenu();
 	}
@@ -505,22 +491,21 @@ function renderViewTextEntry(drwSk) {
 	}
 }
 
-function renderViewVideoEntry(drwSk) {
+function renderViewVideoEntry(drawerId) {
 
 	try {
 		drawerItem = {};
-		drawerItem = getDrawerItem(drwSk);
+		drawerItem = getDrawerItem(drawerId);
 
-		var b = document.getElementById("t-view-button-bar");
+		var editButtonComponent = createDrawerItemEditButton(drawerItem.drawerId);
+		var deleteButtonComponent = createDrawerItemDeleteButton(drawerItem.drawerId);
 
-		var editButton = renderDrawerItemEditButton(drawerItem.drwSk);
-		var deleteButton = renderDrawerItemDeleteButton(drawerItem.drwSk);
+		var buttonBarData = {
+			"{{editButton}}" : editButtonComponent,
+			"{{deleteButton}}" : deleteButtonComponent
+		};
 
-		var bHtml = b.innerHTML;
-		var bHtmlReplace = bHtml.replace(/{{editButton}}/g, editButton)
-			.replace(/{{deleteButton}}/g, deleteButton);
-
-		var t = document.getElementById("t-video-view");
+		var buttonBarComponent = create("t-view-button-bar", buttonBarData);
 
 		var id = "";
 		var embeddedLink = "";
@@ -541,12 +526,13 @@ function renderViewVideoEntry(drwSk) {
 
 		}
 
-		var tHtml = t.innerHTML;
-		var tHtmlReplace = tHtml.replace(/{{buttonBar}}/g, bHtmlReplace)
-			.replace(/{{title}}/g, drawerItem.title)
-			.replace(/{{traName}}/g, drawerItem.traName);
+		var data = {
+			"{{buttonBar}}" : buttonBarComponent,
+			"{{title}}" : drawerItem.title,
+			"{{traName}}" : drawerItem.traName
+		};
 
-		document.getElementById('template-content').innerHTML = tHtmlReplace;
+		render("t-video-view", "template-content", data);
 
 		document.getElementById("embedded-video").src = embeddedlink;
 
@@ -563,16 +549,15 @@ function renderViewVideoEntry(drwSk) {
 function renderAddTextEntry() {
 
 	try {
-		var t = document.getElementById("t-text-entry");
+		var trayListSelectTag = createTraySelectTag("", "N");
 
-		var mbrTrayListSelectTag = renderMbrTraySelectTag("","N");
+		var data = {
+			"{{buttonBar}}": "",
+			"{{trayListSelectTag}}": trayListSelectTag,
+			"{{saveFunction}}": 'postSaveTextEntry();'
+		};
 
-		var tHtml = t.innerHTML;
-		var tHtmlReplace = tHtml.replace(/{{buttonBar}}/g, "")
-			.replace(/{{mbrTrayListSelectTag}}/g, mbrTrayListSelectTag)
-			.replace(/{{saveFunction}}/g, 'postSaveTextEntry();');
-
-		document.getElementById('template-content').innerHTML = tHtmlReplace;
+		render("t-text-entry", "template-content", data);
 
 		resetMenu();
 	}
@@ -587,11 +572,11 @@ function renderAddTextEntry() {
 function postSaveTextEntry(){
 
 	try {
-		var traSk = document.forms[0].traSk.value;
+		var trayId = document.forms[0].traId.value;
 		var title = document.forms[0].title.value;
 		var text = document.forms[0].text.value;
 
-		if(isEmpty(traSk)) {
+		if(isEmpty(trayId)) {
 			document.getElementById('error').innerHTML = 'Please select a Tray.';
 			return false;
 		}
@@ -609,7 +594,13 @@ function postSaveTextEntry(){
 		var cleanedTitle = replaceSpecialChars(title);
 		var cleanedText = replaceSpecialChars(text);
 
-		var inputFields = {"mbrSkToken":gblStateObj.mbrSkToken, "traSk":traSk, "typeId":"1", "url":".", "title":cleanedTitle, "text":cleanedText};
+		var inputFields = {
+			"collectionName":gblStateObj.collectionName, 
+			"trayId":trayId, 
+			"type":"1", 
+			"url":".", 
+			"title":cleanedTitle, 
+			"text":cleanedText};
 
 		var inputJSON = {};
 		inputJSON.inputArgs = inputFields;
@@ -626,7 +617,7 @@ function postSaveTextEntry(){
 			if (xhr.readyState === DONE) {
 				if (xhr.status === OK) {
 
-					gblStateObj.mbrDrawerJson = xhr.responseText;
+					gblStateObj.drawerJson = xhr.responseText;
 
 					renderDrawer();
 
@@ -640,7 +631,7 @@ function postSaveTextEntry(){
 			console.log("postSaveTextEntry(): An error occurred during the transaction");
 		};
 
-		var url = "https://mydrawer-itsallhere.rhcloud.com/memberdrawerentryws/";
+		var url = "http://localhost:8080/mydrawer/DrawerEntry/";
 
 		xhr.open("POST", url, true);
 		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -655,32 +646,32 @@ function postSaveTextEntry(){
 	}
 }
 
-function renderEditTextEntry(drwSk) {
+function renderEditTextEntry(drawerId) {
 
 	try {
 		drawerItem = {};
-		drawerItem = getDrawerItem(drwSk);
+		drawerItem = getDrawerItem(drawerId);
 
-		var b = document.getElementById("t-edit-button-bar");
+		var viewButtonComponent = createDrawerItemViewButton(drawerItem.drawerId);
+		var deleteButtonComponent = createDrawerItemDeleteButton(drawerItem.drawerId);
 
-		var viewButton = renderDrawerItemViewButton(drawerItem.drwSk);
-		var deleteButton = renderDrawerItemDeleteButton(drawerItem.drwSk);
+		var buttonBarData = {
+			"{{viewButton}}" : viewButtonComponent,
+			"{{deleteButton}}" : deleteButtonComponent
+		};
 
-		var bHtml = b.innerHTML;
-		var bHtmlReplace = bHtml.replace(/{{viewButton}}/g, viewButton)
-			.replace(/{{deleteButton}}/g, deleteButton);
+		var buttonBarComponent = create("t-edit-button-bar", buttonBarData);
 
-		var t = document.getElementById("t-text-entry");
+		var trayListSelectTag = createTraySelectTag(drawerItem.trayId, "N");
 
-		var mbrTrayListSelectTag = renderMbrTraySelectTag(drawerItem.traSk, "N");
+		var data = {
+			"{{buttonBar}}" : buttonBarComponent,
+			"{{trayListSelectTag}}" : trayListSelectTag,
+			"{{drawerId}}" : drawerId,
+			"{{saveFunction}}" : 'putSaveTextEntry("' + drawerId + '");'
+		};
 
-		var tHtml = t.innerHTML;
-		var tHtmlReplace = tHtml.replace(/{{buttonBar}}/g, bHtmlReplace)
-			.replace(/{{mbrTrayListSelectTag}}/g, mbrTrayListSelectTag)
-			.replace(/{{drwSk}}/g, drwSk)
-			.replace(/{{saveFunction}}/g, 'putSaveTextEntry("' + drwSk + '");');
-
-		document.getElementById('template-content').innerHTML = tHtmlReplace;
+		render("t-text-entry", "template-content", data);
 
 		document.getElementById("title").value = drawerItem.title;
 		document.getElementById("text").value = drawerItem.text;
@@ -695,14 +686,14 @@ function renderEditTextEntry(drwSk) {
 	}
 }
 
-function putSaveTextEntry(drwSk){
+function putSaveTextEntry(drawerId){
 
 	try {
-		var traSk = document.forms[0].traSk.value;
+		var trayId = document.forms[0].traId.value;
 		var title = document.forms[0].title.value;
 		var text = document.forms[0].text.value;
 
-		if(isEmpty(traSk)) {
+		if(isEmpty(trayId)) {
 			document.getElementById('error').innerHTML = 'Please select a Tray.';
 			return false;
 		}
@@ -720,7 +711,13 @@ function putSaveTextEntry(drwSk){
 		var cleanedTitle = replaceSpecialChars(title);
 		var cleanedText = replaceSpecialChars(text);
 
-		var inputFields = {"mbrSkToken":gblStateObj.mbrSkToken, "drwSk":drwSk, "traSk":traSk, "url":".", "title":cleanedTitle, "text":cleanedText};
+		var inputFields = {
+			"collectionName":gblStateObj.collectionName, 
+			"drawerId":drawerId, 
+			"trayId":trayId, 
+			"url":".", 
+			"title":cleanedTitle, 
+			"text":cleanedText};
 
 		var inputJSON = {};
 		inputJSON.inputArgs = inputFields;
@@ -737,7 +734,7 @@ function putSaveTextEntry(drwSk){
 			if (xhr.readyState === DONE) {
 				if (xhr.status === OK) {
 
-					gblStateObj.mbrDrawerJson = xhr.responseText;
+					gblStateObj.drawerJson = xhr.responseText;
 
 					renderDrawer();
 
@@ -751,7 +748,7 @@ function putSaveTextEntry(drwSk){
 			console.log("putSaveTextEntry(): An error occurred during the transaction");
 		};
 
-		var url = "https://mydrawer-itsallhere.rhcloud.com/memberdrawerentryws/";
+		var url = "http://localhost:8080/mydrawer/DrawerEntry/";
 
 		xhr.open("PUT", url, true);
 		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -769,16 +766,15 @@ function putSaveTextEntry(drwSk){
 function renderAddWebEntry() {
 
 	try {
-		var t = document.getElementById("t-web-entry");
+		var trayListSelectTag = createTraySelectTag("", "N");
 
-		var mbrTrayListSelectTag = renderMbrTraySelectTag("", "N");
+		var data = {
+			"{{buttonBar}}": "",
+			"{{trayListSelectTag}}": trayListSelectTag,
+			"{{saveFunction}}": 'postSaveWebEntry();'
+		};
 
-		var tHtml = t.innerHTML;
-		var tHtmlReplace = tHtml.replace(/{{buttonBar}}/g, "")
-			.replace(/{{mbrTrayListSelectTag}}/g, mbrTrayListSelectTag)
-			.replace(/{{saveFunction}}/g, 'postSaveWebEntry();');
-
-		document.getElementById('template-content').innerHTML = tHtmlReplace;
+		render("t-web-entry", "template-content", data);
 
 		resetMenu();
 	}
@@ -872,7 +868,7 @@ function getUrlParts(url) {
 			console.log("getUrlParts(): An error occurred during the transaction");
 		};
 
-		var url = "https://mydrawer-itsallhere.rhcloud.com/urlpartsws/";
+		var url = "http://localhost:8080/mydrawer/urlparts/";
 
 		xhr.open("POST", url, true);
 		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -893,7 +889,7 @@ function postSaveWebEntry(){
 
 	try {
 		var pastedUrl = document.forms[0].url.value;
-		var traSk = document.forms[0].traSk.value;
+		var trayId = document.forms[0].traId.value;
 		var title = document.forms[0].title.value;
 		var text = document.forms[0].text.value;
 
@@ -902,7 +898,7 @@ function postSaveWebEntry(){
 			return false;
 		}
 
-		if(isEmpty(traSk)) {
+		if(isEmpty(trayId)) {
 			document.getElementById('error').innerHTML = 'Please select a Tray.';
 			return false;
 		}
@@ -922,19 +918,25 @@ function postSaveWebEntry(){
 
 		var encodeUrl = encodeURIComponent(pastedUrl);
 
-		var typeId = "4";
+		var type = "4";
 
 		if(pastedUrl.indexOf("www.youtube.com") > -1) {
-			typeId = "5";
+			type = "5";
 		} else if(pastedUrl.indexOf("www.vimeo.com") > -1) {
-			typeId = "5";
+			type = "5";
 		} else if(pastedUrl.indexOf("www.ted.com") > -1) {
-			typeId = "5";
+			type = "5";
 		} else {
-			typeId = "4";
+			type = "4";
 		}
 
-		var inputFields = {"mbrSkToken":gblStateObj.mbrSkToken, "traSk":traSk, "typeId":typeId, "url":encodeUrl, "title":cleanedTitle, "text":cleanedText};
+		var inputFields = {
+			"collectionName":gblStateObj.collectionName, 
+			"trayId":trayId, 
+			"type":type, 
+			"url":encodeUrl, 
+			"title":cleanedTitle, 
+			"text":cleanedText};
 
 		var inputJSON = {};
 		inputJSON.inputArgs = inputFields;
@@ -951,7 +953,7 @@ function postSaveWebEntry(){
 			if (xhr.readyState === DONE) {
 				if (xhr.status === OK) {
 
-					gblStateObj.mbrDrawerJson = xhr.responseText;
+					gblStateObj.drawerJson = xhr.responseText;
 
 					renderDrawer();
 
@@ -965,7 +967,7 @@ function postSaveWebEntry(){
 			console.log("postSaveWebEntry(): An error occurred during the transaction");
 		};
 
-		var url = "https://mydrawer-itsallhere.rhcloud.com/memberdrawerentryws/";
+		var url = "http://localhost:8080/mydrawer/DrawerEntry/";
 
 		xhr.open("POST", url, true);
 		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -980,32 +982,32 @@ function postSaveWebEntry(){
 	}
 }
 
-function renderEditWebEntry(drwSk) {
+function renderEditWebEntry(drawerId) {
 
 	try {
 		drawerItem = {};
-		drawerItem = getDrawerItem(drwSk);
+		drawerItem = getDrawerItem(drawerId);
 
-		var b = document.getElementById("t-edit-button-bar");
+		var viewButtonComponent = createDrawerItemViewButton(drawerItem.drawerId);
+		var deleteButtonComponent = createDrawerItemDeleteButton(drawerItem.drawerId);
 
-		var viewButton = renderDrawerItemViewButton(drawerItem.drwSk);
-		var deleteButton = renderDrawerItemDeleteButton(drawerItem.drwSk);
+		var buttonBarData = {
+			"{{viewButton}}" : viewButtonComponent,
+			"{{deleteButton}}" : deleteButtonComponent
+		};
 
-		var bHtml = b.innerHTML;
-		var bHtmlReplace = bHtml.replace(/{{viewButton}}/g, viewButton)
-			.replace(/{{deleteButton}}/g, deleteButton);
+		var buttonBarComponent = create("t-edit-button-bar", buttonBarData);
 
-		var t = document.getElementById("t-web-entry");
+		var trayListSelectTag = createTraySelectTag(drawerItem.trayId, "N");
 
-		var mbrTrayListSelectTag = renderMbrTraySelectTag(drawerItem.traSk, "N");
+		var data = {
+			"{{buttonBar}}" : buttonBarComponent,
+			"{{trayListSelectTag}}" : trayListSelectTag,
+			"{{drawerId}}" : drawerId,
+			"{{saveFunction}}" : 'putSaveWebEntry("' + drawerId + '");'
+		};
 
-		var tHtml = t.innerHTML;
-		var tHtmlReplace = tHtml.replace(/{{buttonBar}}/g, bHtmlReplace)
-			.replace(/{{mbrTrayListSelectTag}}/g, mbrTrayListSelectTag)
-			.replace(/{{drwSk}}/g, drwSk)
-			.replace(/{{saveFunction}}/g, 'putSaveWebEntry("' + drwSk + '");');
-
-		document.getElementById('template-content').innerHTML = tHtmlReplace;
+		render("t-web-entry", "template-content", data);
 
 		var decodeUrl = decodeURIComponent(drawerItem.url);
 
@@ -1023,11 +1025,11 @@ function renderEditWebEntry(drwSk) {
 	}
 }
 
-function putSaveWebEntry(drwSk) {
+function putSaveWebEntry(drawerId) {
 
 	try {
 		var pastedUrl = document.forms[0].url.value;
-		var traSk = document.forms[0].traSk.value;
+		var trayId = document.forms[0].traId.value;
 		var title = document.forms[0].title.value;
 		var text = document.forms[0].text.value;
 
@@ -1036,7 +1038,7 @@ function putSaveWebEntry(drwSk) {
 			return false;
 		}
 
-		if(isEmpty(traSk)) {
+		if(isEmpty(trayId)) {
 			document.getElementById('error').innerHTML = 'Please select a Tray.';
 			return false;
 		}
@@ -1056,7 +1058,13 @@ function putSaveWebEntry(drwSk) {
 
 		var encodeUrl = encodeURIComponent(pastedUrl);
 
-		var inputFields = {"mbrSkToken":gblStateObj.mbrSkToken, "drwSk":drwSk, "traSk":traSk, "url":encodeUrl, "title":cleanedTitle, "text":cleanedText};
+		var inputFields = {
+			"collectionName":gblStateObj.collectionName, 
+			"drawerId":drawerId, 
+			"trayId":trayId, 
+			"url":encodeUrl, 
+			"title":cleanedTitle, 
+			"text":cleanedText};
 
 		var inputJSON = {};
 		inputJSON.inputArgs = inputFields;
@@ -1073,7 +1081,7 @@ function putSaveWebEntry(drwSk) {
 			if (xhr.readyState === DONE) {
 				if (xhr.status === OK) {
 
-					gblStateObj.mbrDrawerJson = xhr.responseText;
+					gblStateObj.drawerJson = xhr.responseText;
 
 					renderDrawer();
 
@@ -1087,7 +1095,7 @@ function putSaveWebEntry(drwSk) {
 			console.log("putSaveWebEntry(): An error occurred during the transaction");
 		};
 
-		var url = "https://mydrawer-itsallhere.rhcloud.com/memberdrawerentryws/";
+		var url = "http://localhost:8080/mydrawer/DrawerEntry/";
 
 		xhr.open("PUT", url, true);
 		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -1106,14 +1114,13 @@ function putSaveWebEntry(drwSk) {
 function renderAddMediaEntry() {
 
 	try {
-		var t = document.getElementById("t-media-entry");
+		var trayListSelectTag = createTraySelectTag("", "N");
 
-		var mbrTrayListSelectTag = renderMbrTraySelectTag("", "N");
+		var data = {
+			"{{trayListSelectTag}}": trayListSelectTag,
+		};
 
-		var tHtml = t.innerHTML;
-		var tHtmlReplace = tHtml.replace(/{{mbrTrayListSelectTag}}/g, mbrTrayListSelectTag);
-
-		document.getElementById('template-content').innerHTML = tHtmlReplace;
+		render("t-media-entry", "template-content", data);
 
 		resetMenu();
 	}
@@ -1222,7 +1229,10 @@ alert("File Size: " + oFile.size);
 			/* encode the base64 so that it transfers properly to the server otherwise we'll not get the image */
 			var base64 = encodeURIComponent(base64Code);
 
-			var inputFields = {"title":cleanedTitle, "fileType":fileType, "base64Code":base64};
+			var inputFields = {
+				"title":cleanedTitle, 
+				"fileType":fileType, 
+				"base64Code":base64};
 
 			var inputJSON = {};
 			inputJSON.inputArgs = inputFields;
@@ -1247,7 +1257,7 @@ alert("File Size: " + oFile.size);
 function postUploadMediaFile(stringJSON) {
 
 	try {
-		var url = "https://mydrawer-itsallhere.rhcloud.com/sharepicturews/social";
+		var url = "https://mydrawer-itsallhere.rhcloud.com/sharepicture/social";
 
 		var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
 
@@ -1290,11 +1300,14 @@ function postUploadMediaFile(stringJSON) {
 	}
 }
 
-function deleteDrawerItem(drwSk){
+function deleteDrawerItem(drawerId){
 
 	try {
 
-		var inputFields = {"mbrSkToken":gblStateObj.mbrSkToken, "drwSk":drwSk};
+		var inputFields = {
+			"collectionName":gblStateObj.collectionName, 
+			"drawerId":drawerId
+		};
 
 		var inputJSON = {};
 		inputJSON.inputArgs = inputFields;
@@ -1311,7 +1324,7 @@ function deleteDrawerItem(drwSk){
 			if (xhr.readyState === DONE) {
 				if (xhr.status === OK) {
 
-					gblStateObj.mbrDrawerJson = xhr.responseText;
+					gblStateObj.drawerJson = xhr.responseText;
 
 					renderDrawer();
 
@@ -1325,7 +1338,7 @@ function deleteDrawerItem(drwSk){
 			console.log("deleteDrawerItem(): An error occurred during the transaction");
 		};
 
-		var url = "https://mydrawer-itsallhere.rhcloud.com/memberdrawerentryws/";
+		var url = "http://localhost:8080/mydrawer/DrawerEntry/";
 
 		xhr.open("DELETE", url, true);
 		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -1339,4 +1352,3 @@ function deleteDrawerItem(drwSk){
 
 	}
 }
-

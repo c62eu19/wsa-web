@@ -81,8 +81,8 @@ server.listen(port, function(err) {
 	console.log('MyDrawer (Init): Server is listening now on Port ' + port + '. Ready to serve YOU!');
 });
 
-/* Gets and serves all web content */
-getContent = function(request, response) {
+/* Gets and serves all web resources */
+getResource = function(request, response) {
 
 	try {
 		var filePath = getConfigValue(request.url,"path");
@@ -101,6 +101,7 @@ getContent = function(request, response) {
 			'.png': 'image/png',
 			'.jpg': 'image/jpg',
 			'.gif': 'image/gif',
+			'.ico': 'image/ico',
 			'.wav': 'audio/wav',
 			'.mp4': 'video/mp4',
 			'.woff': 'application/font-woff',
@@ -116,7 +117,7 @@ getContent = function(request, response) {
 		writeContent(response, filePath, contentType);
 	}
 	catch(e) {
-		console.log("getContent: " + e);
+		console.log("getResource: " + e);
 	}
 };
 

@@ -8,11 +8,10 @@
 function renderSignIn() {
 
 	try {
-		if(isEmpty(gblStateObj.mbrSkToken)) {
-			var t = document.getElementById("t-sign-in");
-			var tHtml = t.innerHTML;
+		if(isEmpty(gblStateObj.collectionName)) {
 
-			document.getElementById('template-content').innerHTML = tHtml;
+			var data = {};
+			render("t-sign-in", "template-content", data);
 
 			document.body.addEventListener("keydown", function(e) {
 				if (e.keyCode === 13) {
@@ -59,43 +58,41 @@ function postSignIn(){
 
 		xhr.onreadystatechange = function () {
 
-			var DONE = 4;
-			var OK = 200;
+			if (xhr.readyState !== 4) {
+				return;
+			}
 
-			if (xhr.readyState === DONE) {
-				if (xhr.status === OK) {
+			if (xhr.status === 200) {
+				var data = JSON.parse(xhr.responseText);
 
-					var data = JSON.parse(xhr.responseText);
+				var statusInd = data.statusInd;
+				var statusMsg = data.statusMsg;
 
-					var statusInd = data.statusInd;
-					var statusMsg = data.statusMsg;
+				gblStateObj.collectionName = data.collectionName;
+				gblStateObj.userName = data.userName;
+				gblStateObj.trayJson = data.trayJson;
+				gblStateObj.drawerJson = data.drawerJson;
 
-					gblStateObj.collectionName = data.collectionName;
-					gblStateObj.userName = data.userName;
-					gblStateObj.trayJson = data.trayJson;
-					gblStateObj.drawerJson = data.drawerJson;
+				console.log("TEST: " + gblStateObj.trayJson);
 
-					console.log("statusInd: " + statusInd);
+				if(statusInd == "A") {
 
-					if(statusInd == "A") {
+					gblStateObj.traySelected = "in your drawer";
 
-						gblStateObj.mbrTraySelected = "in your drawer";
+					gblStateObj.favoriteTraTokens = getFavoriteTraTokens();
 
-						gblStateObj.favoriteTraTokens = getFavoriteTraTokens();
+					resetMenu();
+					renderDrawer();
 
-						resetMenu();
-						renderDrawer();
-
-					} else if(statusInd == "D") {
-						renderAccountDisabled();
-					}
-					else {
-						renderSignInError();
-					}
-
- 				} else {
-					console.log('postSignin(): ' + xhr.status);
+				} else if(statusInd == "D") {
+					renderAccountDisabled();
 				}
+				else {
+					renderSignInError();
+				}
+
+			} else {
+				console.log('postSignin(): ' + xhr.status);
 			}
 		};
 
@@ -121,11 +118,8 @@ function postSignIn(){
 function renderSignInError() {
 
 	try {
-		var t = document.getElementById("t-signin-error");
-
-		var tHtml = t.innerHTML;
-
-		document.getElementById('template-content').innerHTML = tHtml;
+		var data = {};
+		render("t-sign-error", "template-content", data);
 
 		resetMenu();
 	}
@@ -140,11 +134,8 @@ function renderSignInError() {
 function renderAccountDisabled() {
 
 	try {
-		var t = document.getElementById("t-account-disabled");
-
-		var tHtml = t.innerHTML;
-
-		document.getElementById('template-content').innerHTML = tHtml;
+		var data = {};
+		render("t-account-disabled", "template-content", data);
 
 		resetMenu();
 	}
@@ -161,10 +152,8 @@ function renderSignUp() {
 	try {
 		gblStateObj = {};
 
-		var ts = document.getElementById("t-sign-up");
-		var tsHtml = ts.innerHTML;
-
-		document.getElementById('template-content').innerHTML = tsHtml;
+		var data = {};
+		render("t-sign-up", "template-content", data);
 
 		document.body.addEventListener("keydown", function(e) {
 			if (e.keyCode === 13) {
@@ -225,11 +214,6 @@ function postSignUp(){
 			return false;
 		}
 
-		if(name.length > 50) {
-			document.getElementById('error').innerHTML = 'Your Name cannot be more that 50 characters.';
-			return false;
-		}
-
 		var inputFields = {"email":email, "password":password, "name":name};
 
 		var inputJSON = {};
@@ -259,7 +243,7 @@ function postSignUp(){
 
 					if(statusInd == "A") {
 
-						gblStateObj.mbrTraySelected = "in your drawer";
+						gblStateObj.traySelected = "in your drawer";
 
 						gblStateObj.favoriteTraTokens = getFavoriteTraTokens();
 
@@ -300,12 +284,11 @@ function postSignUp(){
 function renderSignUpError(errorMsg) {
 
 	try {
-		var t = document.getElementById("t-signup-error");
+		var data = {
+			"{{errorMsg}}": errorMsg
+		};
 
-		var tHtml = t.innerHTML;
-		tHtmlReplace = tHtml.replace(/{{errorMsg}}/g, errorMsg);
-
-		document.getElementById('template-content').innerHTML = tHtmlReplace;
+		render("t-signup-error", "template-content", data);
 
 		resetMenu();
 	}
@@ -320,15 +303,13 @@ function renderSignUpError(errorMsg) {
 function getSignOut() {
 
 	try {
-		/* Clear gblStateObj.mbrSkToken */
+		/* Clear gblStateObj.collectionName */
 		gblStateObj = {};
 
-		gblStateObj.mbrSkToken = "";
+		gblStateObj.CollectionName = "";
 
-		var ts = document.getElementById("t-sign-in");
-		var tsHtml = ts.innerHTML;
-
-		document.getElementById('template-content').innerHTML = tsHtml;
+		var data = {};
+		render("t-sign-in", "template-content", data);
 
 		resetMenu();
 	}
@@ -343,12 +324,11 @@ function getSignOut() {
 function renderContactUs() {
 
 	try {
-		var t = document.getElementById("t-contact-us");
-		var tHtml = t.innerHTML;
 
 		gblStateObj.origTemplateContent = document.getElementById('template-content').innerHTML;
 
-		document.getElementById('template-content').innerHTML = tHtml;
+		var data = {};
+		render("t-contact-us", "template-content", data);
 
 		resetMenu();
 	}
@@ -363,34 +343,34 @@ function renderContactUs() {
 function postContactUs() {
 
 	try {
-		var msgFrom = document.getElementById("msgFrom").value;
+		var email = document.getElementById("email").value;
 
-		var msgSubjEl = document.getElementById("msgSubj");
-		var msgSubj = msgSubjEl.options[msgSubjEl.selectedIndex].text;
+		var subjectEl = document.getElementById("subject");
+		var subject = msgSubjEl.options[subjectEl.selectedIndex].text;
 
-		var msg = document.getElementById("msg").value;
+		var message = document.getElementById("message").value;
 
-		if(isEmpty(msgFrom)) {
+		if(isEmpty(email)) {
 			document.getElementById('error').innerHTML = 'Your Email is required.';
 			return false;
 		}
 
-		if(!isValidEmail(msgFrom)) {
+		if(!isValidEmail(email)) {
 			document.getElementById('error').innerHTML = 'You have entered an invalid Email.';
 			return false;
 		}
 
-		if(isEmpty(msgSubj)) {
+		if(isEmpty(subject)) {
 			document.getElementById('error').innerHTML = ' The Subject is required.';
 			return false;
 		}
 
-		if(isEmpty(msg)) {
+		if(isEmpty(message)) {
 			document.getElementById('error').innerHTML = 'The Message is required.';
 			return false;
 		}
 
-		var inputFields = {"msgFrom":msgFrom, "msgSubj":msgSubj, "msg":msg};
+		var inputFields = {"email":email, "subject":subject, "message":message};
 
 		var inputJSON = {};
 		inputJSON.inputArgs = inputFields;
@@ -440,12 +420,11 @@ function postContactUs() {
 function renderAbout() {
 
 	try {
-		var t = document.getElementById("t-about");
-		var tHtml = t.innerHTML;
 
 		gblStateObj.origTemplateContent = document.getElementById('template-content').innerHTML;
 
-		document.getElementById('template-content').innerHTML = tHtml;
+		var data = {};
+		render("t-about", "template-content", data);
 
 		resetMenu();
 	}

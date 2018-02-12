@@ -2,50 +2,55 @@
 	"/mydrawer": {
 		"path": "./app.html", 
 		"method":"GET", 
-		"handler":"getContent"
+		"handler":"getResource"
 	},
 
 	"/normalize-css": {
 		"path": "./css/normalize.css", 
 		"method":"GET", 
-		"handler":"getContent"
+		"handler":"getResource"
 	},
 	"/skeleton-css": {
 		"path": "./css/skeleton.css", 
 		"method":"GET", 
-		"handler":"getContent"
+		"handler":"getResource"
 	},
 	"/style-css": {
 		"path": "./css/style.css", 
 		"method":"GET", 
-		"handler":"getContent"
+		"handler":"getResource"
 	},
 
 	"/drawer-js": {
 		"path": "./js/drawer.js", 
 		"method":"GET", 
-		"handler":"getContent"
+		"handler":"getResource"
 	},
 	"/tray-js": {
 		"path": "./js/tray.js", 
 		"method":"GET", 
-		"handler":"getContent"
+		"handler":"getResource"
 	},
 	"/user-js": {
 		"path": "./js/user.js", 
 		"method":"GET", 
-		"handler":"getContent"
+		"handler":"getResource"
 	},
 	"/utility-js": {
 		"path": "./js/utility.js", 
 		"method":"GET", 
-		"handler":"getContent"
+		"handler":"getResource"
+	},
+	"/menu-js": {
+		"path": "./js/menu.js", 
+		"method":"GET", 
+		"handler":"getResource"
 	},
 
 	"/favicon-image": {
 		"path": "./images/favicon.ico", 
 		"method":"GET", 
-		"handler":"getContent"
+		"handler":"getResource"
 	}
 
 }

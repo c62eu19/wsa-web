@@ -5,17 +5,14 @@
  * @author Stan Zajdel
 */
 
-function renderMbrTraySelectTag(traSk, includeChangeFunctionFlag) {
+function createTraySelectTag(trayId, includeChangeFunctionFlag) {
 
-	var mbrTrayListSelectTag = "";
+	var trayListSelectTag = "";
 
 	try {
-		var to = document.getElementById("t-tray-select-option-tag");
-		var toHtml = to.innerHTML;
+		var optionHtml = "";
 
-		var toHtmlReplace = "";
-
-		var trayArray = JSON.parse(gblStateObj.mbrTrayJson);
+		var trayArray = JSON.parse(gblStateObj.trayJson);
 
 		for(var i=0; i<trayArray.length; i++) {
 
@@ -23,13 +20,17 @@ function renderMbrTraySelectTag(traSk, includeChangeFunctionFlag) {
 
 			var selected = "";
 
-			if(traSk == tray.traSk) {
+			if(trayId == tray.trayId) {
 				selected = " selected";
 			}
 
-			toHtmlReplace += toHtml.replace(/{{traSk}}/g, tray.traSk)
-						.replace(/{{selected}}/g, selected)
-						.replace(/{{traName}}/g, tray.name);
+			var optionData = {
+				"{{traId}}" : tray.trayId,
+				"{{selected}}" : selected,
+				"{{traName}}" : tray.trayName
+			};
+
+			optionHtml += create("t-tray-select-option-tag", optionData);
 		}
 
 		var changeFunction = "";
@@ -38,31 +39,31 @@ function renderMbrTraySelectTag(traSk, includeChangeFunctionFlag) {
 			changeFunction = 'onchange="getSelectedTrayList(this);"';
 		}
 
-		var ts = document.getElementById("t-tray-select-tag");
-		var tsHtml = ts.innerHTML;
-		var tsHtmlReplace = tsHtml.replace(/{{changeFunction}}/g, changeFunction)
-					.replace(/{{traOptions}}/g, toHtmlReplace);
+		var selectData = {
+			"{{changeFunction}}" : changeFunction,
+			"{{trayOptions}}" : optionHtml
+		};
 
-		mbrTrayListSelectTag = tsHtmlReplace;
+		trayListSelectTag = create("t-tray-select-tag", selectData);
 	}
 	catch(err) {
-		console.log("renderMbrTraySelectTag(): " + err);
+		console.log("createTraySelectTag(): " + err);
 	}
 	finally {
 
 	}
 
-	return mbrTrayListSelectTag;
+	return trayListSelectTag;
 }
 
 function getSelectedTrayList(element) {
 	try {
-		var traSk = element.options[element.selectedIndex].value;
-		var traName = element.options[element.selectedIndex].text;
+		var trayId = element.options[element.selectedIndex].value;
+		var trayName = element.options[element.selectedIndex].text;
 
-		var traTokens = traSk + "|" + traName;
+		var trayTokens = trayId + "|" + trayName;
 
-		postSearchDrawerByTraSk(traTokens);
+		postSearchDrawerByTraId(trayTokens);
 	}
 	catch(err) {
 		console.log("getSelectedTray(): " + err);
@@ -85,29 +86,30 @@ function getTrays() {
 			if (xhr.readyState === DONE) {
 				if (xhr.status === OK) {
 
-					var mbrTrayJson = xhr.responseText;
-					var mbrTrayArray = JSON.parse(xhr.responseText);
+					var trayJson = xhr.responseText;
+					var trayArray = JSON.parse(xhr.responseText);
 
-					var tr = document.getElementById("t-tray-list-rows");
-					var trHtml = tr.innerHTML;
+					var rowHtml = "";
 
-					var trHtmlReplace = "";
+					for(var i=0; i<trayArray.length; i++) {
 
-					for(var i=0; i<mbrTrayArray.length; i++) {
+						var tray = trayArray[i];
 
-						var tray = mbrTrayArray[i];
+						var rowData = {
+							"{{traId}}" : tray.trayId,
+							"{{traName}}" : tray.trayName
+						};
 
-						trHtmlReplace += trHtml.replace(/{{traSk}}/g, tray.traSk)
-							.replace(/{{traName}}/g, tray.name);
+						rowHtml = create("t-tray-list-rows", rowData);
 					}
 
-					var tt = document.getElementById("t-tray-list");
-					var ttHtml = tt.innerHTML;
-					var ttHtmlReplace = ttHtml.replace(/{{trayRows}}/g, trHtmlReplace);
+					var tableData = {
+						"{{trayRows}}" : rowHtml
+					};
 
-					document.getElementById('template-content').innerHTML = ttHtmlReplace;
+					render("t-tray-list", "template-content", tableData);
 
-					gblStateObj.mbrTrayJson = mbrTrayJson;
+					gblStateObj.trayJson = trayJson;
 
 					resetMenu();
 
@@ -121,7 +123,7 @@ function getTrays() {
 			console.log("getTrays(): An error occurred during the transaction");
 		};
 
-		var url = "http://localhost:8080/mydrawer/tray/" + gblStateObj.mbrSkToken;
+		var url = "http://localhost:8080/mydrawer/Tray/" + gblStateObj.collectionName;
 
 		xhr.open("GET", url, true);
 		xhr.send();
@@ -136,20 +138,20 @@ function getTrays() {
 
 function getFavoriteTraTokens() {
 
-	var traTokens = "";
+	var trayTokens = "";
 
 	try {
-		var mbrDrawerArray = JSON.parse(gblStateObj.mbrDrawerJson);
+		var drawerArray = JSON.parse(gblStateObj.drawerJson);
 
-		if(mbrDrawerArray.length > 0) {
+		if(drawerArray.length > 0) {
 
-			for(var i=0; i<mbrDrawerArray.length; i++) {
+			for(var i=0; i<drawerArray.length; i++) {
 
-				var item = mbrDrawerArray[i];
+				var item = drawerArray[i];
 
-				if(item.traName.toLowerCase() == "favorites") {
+				if(item.trayName.toLowerCase() == "favorites") {
 
-					traTokens = item.traSk + "|" + item.traName;
+					trayTokens = item.trayId + "|" + item.trayName;
 					break;
 				}
 			}
@@ -162,20 +164,19 @@ function getFavoriteTraTokens() {
 
 	}
 
-	return traTokens;
+	return trayTokens;
 }
 
 function renderAddTray() {
 
 	try {
-		var tm = document.getElementById("t-tray");
-		var tmHtml = tm.innerHTML;
+		var data = {
+			"{{heading}}": "Add a New Tray",
+			"{{name}}": "",
+			"{{saveFunction}}": "postSaveTray();"
+		};
 
-		var tmHtmlReplace = tmHtml.replace(/{{heading}}/g, "Add a New Tray")
-			.replace(/{{name}}/g, "")
-			.replace(/{{saveFunction}}/g, "postSaveTray();");
-
-		document.getElementById('template-content').innerHTML = tmHtmlReplace;
+		render("t-tray", "template-content", data);
 
 		resetMenu();
 	}
@@ -202,7 +203,10 @@ function postSaveTray() {
 			return false;
 		}
 
-		var inputFields = {"mbrSkToken":gblStateObj.mbrSkToken, "name":name};
+		var inputFields = {
+			"collectionName":gblStateObj.collectionName, 
+			"trayName":name
+		};
 
 		var inputJSON = {};
 		inputJSON.inputArgs = inputFields;
@@ -231,7 +235,7 @@ function postSaveTray() {
 			console.log("postSaveTray(): An error occurred during the transaction");
 		};
 
-		var url = "http://localhost:8080/mydrawer/tray/";
+		var url = "http://localhost:8080/mydrawer/Tray/";
 
 		xhr.open("POST", url, true);
 		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -246,21 +250,20 @@ function postSaveTray() {
 	}
 }
 
-function renderEditTray(traSk, name) {
+function renderEditTray(trayId, trayName) {
 
 	try {
-		if(name.toLowerCase() == "favorites") {
+		if(trayName.toLowerCase() == "favorites") {
 			renderTrayError();
 
 		} else {
-			var tm = document.getElementById("t-tray");
-			var tmHtml = tm.innerHTML;
+			var data = {
+				"{{heading}}": "Change the Name of Your Tray",
+				"{{name}}": trayName,
+				"{{saveFunction}}": 'putSaveTray("' + trayId + '");'
+			};
 
-			var tmHtmlReplace = tmHtml.replace(/{{heading}}/g, "Change the Name of Your Tray")
-				.replace(/{{name}}/g, name)
-				.replace(/{{saveFunction}}/g, 'putSaveTray("' + traSk + '");');
-
-			document.getElementById('template-content').innerHTML = tmHtmlReplace;
+			render("t-tray", "template-content", data);
 		}
 
 		resetMenu();
@@ -273,7 +276,7 @@ function renderEditTray(traSk, name) {
 	}
 }
 
-function putSaveTray(traSk) {
+function putSaveTray(trayId) {
 
 	try {
 		var name = document.getElementById("name").value;
@@ -292,7 +295,9 @@ function putSaveTray(traSk) {
 			return false;
 		}
 
-		var inputFields = {"mbrSkToken":gblStateObj.mbrSkToken, "traSk":traSk, "name":name};
+		var inputFields = {
+			"collectionName":gblStateObj.collectionName, 
+			"trayId":trayId, "trayName":name};
 
 		var inputJSON = {};
 		inputJSON.inputArgs = inputFields;
@@ -321,7 +326,7 @@ function putSaveTray(traSk) {
 			console.log("putSaveTray(): An error occurred during the transaction");
 		};
 
-		var url = "http://localhost:8080/mydrawer/tray/";
+		var url = "http://localhost:8080/mydrawer/Tray/";
 
 		xhr.open("PUT", url, true);
 		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -336,20 +341,20 @@ function putSaveTray(traSk) {
 	}
 }
 
-function checkIfTrayCanBeDeleted(traSk, traName) {
+function checkIfTrayCanBeDeleted(trayId, trayName) {
 
 	try {
-		if(isFavoriteTray(traName)) {
+		if(isFavoriteTray(trayName)) {
 			renderCannotDeleteTray();
 
 		} else {
 
-			if(isTrayEmpty(traSk)) {
+			if(isTrayEmpty(trayId)) {
 
-				var mbrTrayArray = gblStateObj.mbrTrayJson;
+				var trayArray = gblStateObj.trayJson;
 
-				if(mbrTrayArray.length > 1) {
-					deleteTray(traSk);
+				if(trayArray.length > 1) {
+					deleteTray(trayId);
 				} else {
 					renderCannotDeleteTray();
 				}
@@ -366,12 +371,12 @@ function checkIfTrayCanBeDeleted(traSk, traName) {
 	}
 }
 
-function isFavoriteTray(traName) {
+function isFavoriteTray(trayName) {
 
 	var result = false;
 
 	try {
-		if(traName.toLowerCase() == "favorites") {
+		if(trayName.toLowerCase() == "favorites") {
 			result = true;
 
 		} else {
@@ -388,20 +393,20 @@ function isFavoriteTray(traName) {
 	return result;
 }
 
-function isDuplicateTraName(traName) {
+function isDuplicateTraName(trayName) {
 
 	var duplicate = false;
 
 	try {
-		var mbrDrawerArray = JSON.parse(gblStateObj.mbrDrawerJson);
+		var drawerArray = JSON.parse(gblStateObj.drawerJson);
 
-		if(mbrDrawerArray.length > 0) {
+		if(drawerArray.length > 0) {
 
-			for(var i=0; i<mbrDrawerArray.length; i++) {
+			for(var i=0; i<drawerArray.length; i++) {
 
-				var item = mbrDrawerArray[i];
+				var item = drawerArray[i];
 
-				if(traName.toLowerCase() == item.traName.toLowerCase()) {
+				if(trayName.toLowerCase() == item.trayName.toLowerCase()) {
 
 					duplicate = true;
 					break;
@@ -419,10 +424,13 @@ function isDuplicateTraName(traName) {
 	return duplicate;
 }
 
-function deleteTray(traSk) {
+function deleteTray(trayId) {
 
 	try {
-		var inputFields = {"mbrSkToken":gblStateObj.mbrSkToken, "traSk":traSk};
+		var inputFields = {
+			"collectionName":gblStateObj.collectionName, 
+			"trayId":trayId
+		};
 
 		var inputJSON = {};
 		inputJSON.inputArgs = inputFields;
@@ -451,7 +459,7 @@ function deleteTray(traSk) {
 			console.log("deleteTray(): An error occurred during the transaction");
 		};
 
-		var url = "http://localhost:8080/mydrawer/tray/";
+		var url = "http://localhost:8080/mydrawer/Tray/";
 
 		xhr.open("DELETE", url, true);
 		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -466,20 +474,20 @@ function deleteTray(traSk) {
 	}
 }
 
-function isTrayEmpty(traSk) {
+function isTrayEmpty(trayId) {
 
 	var empty = true;
 
 	try {
-		var mbrDrawerArray = JSON.parse(gblStateObj.mbrDrawerJson);
+		var drawerArray = JSON.parse(gblStateObj.drawerJson);
 
-		if(mbrDrawerArray.length > 0) {
+		if(drawerArray.length > 0) {
 
-			for(var i=0; i<mbrDrawerArray.length; i++) {
+			for(var i=0; i<drawerArray.length; i++) {
 
-				var item = mbrDrawerArray[i];
+				var item = drawerArray[i];
 
-				if(traSk == item.traSk) {
+				if(trayId == item.trayId) {
 
 					empty = false;
 					break;
@@ -500,11 +508,9 @@ function isTrayEmpty(traSk) {
 function renderCannotDeleteTray() {
 
 	try {
-		var t = document.getElementById("t-tray-delete-error");
+		var data = {};
 
-		var tHtml = t.innerHTML;
-
-		document.getElementById('template-content').innerHTML = tHtml;
+		render("t-tray-delete-error", "template-content", data);
 
 		resetMenu();
 	}
@@ -519,11 +525,9 @@ function renderCannotDeleteTray() {
 function renderTrayError() {
 
 	try {
-		var t = document.getElementById("t-tray-error");
+		var data = {};
 
-		var tHtml = t.innerHTML;
-
-		document.getElementById('template-content').innerHTML = tHtml;
+		render("t-tray-error", "template-content", data);
 
 		resetMenu();
 	}

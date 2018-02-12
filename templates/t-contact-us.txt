@@ -5,12 +5,12 @@
 <form>
 	<div class="row">
 		<div class="six columns">
-			<label for="msgFrom">Email</label>
-			<input class="u-full-width" type="email" placeholder="test@mailbox.com" name="msgFrom" id="msgFrom">
+			<label for="email">Email</label>
+			<input class="u-full-width" type="email" placeholder="test@mailbox.com" name="email" id="email">
 		</div>
 		<div class="six columns">
-			<label for="msgSubj">Subject</label>
-			<select class="u-full-width" name="msgSubj" id="msgSubj">
+			<label for="subject">Subject</label>
+			<select class="u-full-width" name="subject" id="subject">
 				<option value=""></option>
 				<option value="1">Question</option>
 				<option value="2">Feature Request</option>
@@ -19,8 +19,8 @@
 			</select>
 		</div>
 	</div>
-	<label for="msg">Message</label>
-	<textarea class="u-full-width hide-textarea-resize" placeholder="Enter your message" rows="6" id="msg" name="msg"></textarea>
+	<label for="message">Message</label>
+	<textarea class="u-full-width hide-textarea-resize" placeholder="Enter your message" rows="6" id="message" name="message"></textarea>
 
 	<a class="button button-primary" onclick="postContactUs();" style="font-size:16px;">Send</a>
 </form>

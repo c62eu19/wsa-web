@@ -1,9 +1,59 @@
 /**
- * app.js
- * Contains general app methods.
+ * utility.js
+ * Contains general utility methods.
  * 
  * @author Stan Zajdel
 */
+
+function render(template, container, data) {
+
+	try {
+		var t = document.getElementById(template);
+		var tHtml = t.innerHTML;
+
+		Object.keys(data).forEach(function(key, idx) {
+			var regex = new RegExp(key, "g");
+
+			if(tHtml.indexOf(key) >= 0) {
+				tHtml = tHtml.replace(regex, data[key]);
+			}
+		}); 
+
+		document.getElementById(container).innerHTML = tHtml;
+	}
+	catch(err) {
+		console.log("render(): " + err);
+	}
+	finally {
+
+	}
+}
+
+function create(template, data) {
+
+	var componentHtml = "";
+
+	try {
+		var t = document.getElementById(template);
+		componentHtml = t.innerHTML;
+
+		Object.keys(data).forEach(function(key, idx) {
+			var regex = new RegExp(key, "g");
+
+			if(componentHtml.indexOf(key) >- 0) {
+				componentHtml = componentHtml.replace(regex, data[key]);
+			}
+		}); 
+	}
+	catch(err) {
+		console.log("create(): " + err);
+	}
+	finally {
+
+	}
+
+	return componentHtml;
+}
 
 function resetMenu() {
 
@@ -30,20 +80,21 @@ function openHamburger(e) {
 
 		gblStateObj.origTemplateContent = document.getElementById('template-content').innerHTML;
 
-		if(isEmpty(gblStateObj.mbrSkToken)) {
-			tm = document.getElementById("t-menu-signed-out");
-			tmHtml = tm.innerHTML;
+		if(isEmpty(gblStateObj.collectionName)) {
+			var signedOutData = {};
+			render("t-menu-signed-out", "template-content", signedOutData);
+
 		} else {
 
-			var mbrTrayListSelectTag = renderMbrTraySelectTag("", "add-onchange");
+			var trayListSelectTag = createTraySelectTag("", "add-onchange");
 
-			tm = document.getElementById("t-menu-signed-in");
-			var tempHtml = tm.innerHTML;
-			tmHtml = tempHtml.replace(/{{favoriteTraTokens}}/g, gblStateObj.favoriteTraTokens)
-					.replace(/{{mbrTrayListSelectTag}}/g, mbrTrayListSelectTag);
+			var signedInData = {
+				"{{favoriteTraTokens}}" : gblStateObj.favoriteTraTokens,
+				"{{trayListSelectTag}}" : trayListSelectTag
+			};
+
+			render("t-menu-signed-in", "template-content", signedInData);
 		}
-
-		document.getElementById('template-content').innerHTML = tmHtml;
 	}
 	catch(err) {
 		console.log("openHamburger(): " + err);

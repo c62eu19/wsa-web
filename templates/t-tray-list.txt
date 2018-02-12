@@ -9,7 +9,7 @@
 	<div class="eight columns" style="padding-top:9px;">
 		<ul class="icons" style="text-align:right; margin-bottom:9px;">
 			<li style="padding-left: 7px;">
-				<a href="#" onclick='renderAddTray("{{traMbrSk}}");'>Add a Tray</a>
+				<a href="#" onclick='renderAddTray("{{traId}}");'>Add a Tray</a>
 			</li>
 			<li style="padding-left: 7px;">
 				<a href="#" onclick='getDrawer();'>My Drawer</a>

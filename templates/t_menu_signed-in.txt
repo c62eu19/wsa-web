@@ -14,7 +14,7 @@
 
 	<hr style="margin-top:7px; margin-bottom:7px;">
 
-	View Your Items in: {{mbrTrayListSelectTag}}
+	View Your Items in: {{trayListSelectTag}}
 
 	<hr style="margin-top:7px; margin-bottom:7px;">
 

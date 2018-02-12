@@ -13,7 +13,7 @@
 	<div class="seven columns" style="padding-top:9px;">
 		<ul class="icons" style="text-align:right; margin-bottom:9px;">
 			<li style="padding-left: 7px;">
-				<a href="#" onclick='postSearchDrawerByTraSk("{{favoriteTraTokens}}");'>Favorites</a>
+				<a href="#" onclick='postSearchDrawerByTraId("{{favoriteTraTokens}}");'>Favorites</a>
 			</li>
 			<li style="padding-left: 7px;">
 				<a href="#" onclick='getTrays();'>Trays</a>
@@ -29,7 +29,7 @@
 
 <ul class="icons" style="text-align:left; margin-bottom:2px; padding-bottom:2px;">
 	<li style="font-size:18px;">
-		<strong>{{totalItems}} items {{mbrTraySelected}}</strong>
+		<strong>{{totalItems}} items {{traySelected}}</strong>
 	</li>
 </ul>
 
