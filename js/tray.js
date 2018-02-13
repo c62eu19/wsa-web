@@ -12,7 +12,7 @@ function createTraySelectTag(trayId, includeChangeFunctionFlag) {
 	try {
 		var optionHtml = "";
 
-		var trayArray = JSON.parse(gblStateObj.trayJson);
+		var trayArray = JSON.parse(dataObj.trayJson);
 
 		for(var i=0; i<trayArray.length; i++) {
 
@@ -25,12 +25,12 @@ function createTraySelectTag(trayId, includeChangeFunctionFlag) {
 			}
 
 			var optionData = {
-				"{{traId}}" : tray.trayId,
+				"{{trayId}}" : tray.trayId,
 				"{{selected}}" : selected,
-				"{{traName}}" : tray.trayName
+				"{{trayName}}" : tray.trayName
 			};
 
-			optionHtml += create("t-tray-select-option-tag", optionData);
+			optionHtml += component.create("t-tray-select-option-tag", optionData);
 		}
 
 		var changeFunction = "";
@@ -44,14 +44,12 @@ function createTraySelectTag(trayId, includeChangeFunctionFlag) {
 			"{{trayOptions}}" : optionHtml
 		};
 
-		trayListSelectTag = create("t-tray-select-tag", selectData);
+		trayListSelectTag = component.create("t-tray-select-tag", selectData);
 	}
 	catch(err) {
 		console.log("createTraySelectTag(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 
 	return trayListSelectTag;
 }
@@ -68,9 +66,7 @@ function getSelectedTrayList(element) {
 	catch(err) {
 		console.log("getSelectedTray(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function getTrays() {
@@ -80,42 +76,37 @@ function getTrays() {
 
 		xhr.onreadystatechange = function () {
 
-			var DONE = 4;
-			var OK = 200;
+			if (xhr.readyState !== 4) {
+				return;
+			}
 
-			if (xhr.readyState === DONE) {
-				if (xhr.status === OK) {
+			if (xhr.status === 200) {
+				var trayJson = xhr.responseText;
+				var trayArray = JSON.parse(xhr.responseText);
 
-					var trayJson = xhr.responseText;
-					var trayArray = JSON.parse(xhr.responseText);
+				var rowHtml = "";
 
-					var rowHtml = "";
+				for(var i=0; i<trayArray.length; i++) {
 
-					for(var i=0; i<trayArray.length; i++) {
+					var tray = trayArray[i];
 
-						var tray = trayArray[i];
-
-						var rowData = {
-							"{{traId}}" : tray.trayId,
-							"{{traName}}" : tray.trayName
-						};
-
-						rowHtml = create("t-tray-list-rows", rowData);
-					}
-
-					var tableData = {
-						"{{trayRows}}" : rowHtml
+					var rowData = {
+						"{{trayId}}" : tray.trayId,
+						"{{trayName}}" : tray.trayName
 					};
 
-					render("t-tray-list", "template-content", tableData);
-
-					gblStateObj.trayJson = trayJson;
-
-					resetMenu();
-
-				} else {
-					console.log('Error: ' + xhr.status);
+					rowHtml += component.create("t-tray-list-rows", rowData);
 				}
+
+				var tableData = {
+					"{{trayRows}}" : rowHtml
+				};
+
+				component.render("t-tray-list", "template-content", tableData);
+
+				menu.reset();
+			} else {
+				console.log('Error: ' + xhr.status);
 			}
 		};
 
@@ -123,7 +114,7 @@ function getTrays() {
 			console.log("getTrays(): An error occurred during the transaction");
 		};
 
-		var url = "http://localhost:8080/mydrawer/Tray/" + gblStateObj.collectionName;
+		var url = "http://localhost:8080/mydrawer/Tray/" + dataObj.collectionName;
 
 		xhr.open("GET", url, true);
 		xhr.send();
@@ -131,9 +122,7 @@ function getTrays() {
 	catch(err) {
 		console.log("getTrays(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function getFavoriteTraTokens() {
@@ -141,7 +130,7 @@ function getFavoriteTraTokens() {
 	var trayTokens = "";
 
 	try {
-		var drawerArray = JSON.parse(gblStateObj.drawerJson);
+		var drawerArray = JSON.parse(dataObj.drawerJson);
 
 		if(drawerArray.length > 0) {
 
@@ -160,9 +149,7 @@ function getFavoriteTraTokens() {
 	catch(err) {
 		console.log("getFavoriteTraTokens(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 
 	return trayTokens;
 }
@@ -176,16 +163,14 @@ function renderAddTray() {
 			"{{saveFunction}}": "postSaveTray();"
 		};
 
-		render("t-tray", "template-content", data);
+		component.render("t-tray", "template-content", data);
 
-		resetMenu();
+		menu.reset();
 	}
 	catch(err) {
 		console.log("renderAddTray(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function postSaveTray() {
@@ -204,7 +189,7 @@ function postSaveTray() {
 		}
 
 		var inputFields = {
-			"collectionName":gblStateObj.collectionName, 
+			"collectionName":dataObj.collectionName, 
 			"trayName":name
 		};
 
@@ -217,17 +202,15 @@ function postSaveTray() {
 
 		xhr.onreadystatechange = function () {
 
-			var DONE = 4;
-			var OK = 200;
+			if (xhr.readyState !== 4) {
+				return;
+			}
 
-			if (xhr.readyState === DONE) {
-				if (xhr.status === OK) {
+			if (xhr.status === 200) {
+				getTrays();
 
-					getTrays();
-
- 				} else {
-					console.log('Error: ' + xhr.status);
-				}
+			} else {
+				console.log('Error: ' + xhr.status);
 			}
 		};
 
@@ -245,9 +228,7 @@ function postSaveTray() {
 	catch(err) {
 		console.log("postSaveTray(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function renderEditTray(trayId, trayName) {
@@ -263,17 +244,15 @@ function renderEditTray(trayId, trayName) {
 				"{{saveFunction}}": 'putSaveTray("' + trayId + '");'
 			};
 
-			render("t-tray", "template-content", data);
+			component.render("t-tray", "template-content", data);
 		}
 
-		resetMenu();
+		menu.reset();
 	}
 	catch(err) {
 		console.log("renderEditTray(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function putSaveTray(trayId) {
@@ -296,7 +275,7 @@ function putSaveTray(trayId) {
 		}
 
 		var inputFields = {
-			"collectionName":gblStateObj.collectionName, 
+			"collectionName":dataObj.collectionName, 
 			"trayId":trayId, "trayName":name};
 
 		var inputJSON = {};
@@ -308,17 +287,15 @@ function putSaveTray(trayId) {
 
 		xhr.onreadystatechange = function () {
 
-			var DONE = 4;
-			var OK = 200;
+			if (xhr.readyState !== 4) {
+				return;
+			}
 
-			if (xhr.readyState === DONE) {
-				if (xhr.status === OK) {
+			if (xhr.status === 200) {
+				getTrays();
 
-					getTrays();
-
- 				} else {
-					console.log('Error: ' + xhr.status);
-				}
+			} else {
+				console.log('Error: ' + xhr.status);
 			}
 		};
 
@@ -336,9 +313,7 @@ function putSaveTray(trayId) {
 	catch(err) {
 		console.log("putSaveTray(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function checkIfTrayCanBeDeleted(trayId, trayName) {
@@ -351,7 +326,7 @@ function checkIfTrayCanBeDeleted(trayId, trayName) {
 
 			if(isTrayEmpty(trayId)) {
 
-				var trayArray = gblStateObj.trayJson;
+				var trayArray = dataObj.trayJson;
 
 				if(trayArray.length > 1) {
 					deleteTray(trayId);
@@ -366,9 +341,7 @@ function checkIfTrayCanBeDeleted(trayId, trayName) {
 	catch(err) {
 		console.log("checkIfTrayCanBeDeleted(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function isFavoriteTray(trayName) {
@@ -386,9 +359,7 @@ function isFavoriteTray(trayName) {
 	catch(err) {
 		console.log("isFavoriteTray(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 
 	return result;
 }
@@ -398,7 +369,7 @@ function isDuplicateTraName(trayName) {
 	var duplicate = false;
 
 	try {
-		var drawerArray = JSON.parse(gblStateObj.drawerJson);
+		var drawerArray = JSON.parse(dataObj.drawerJson);
 
 		if(drawerArray.length > 0) {
 
@@ -417,9 +388,7 @@ function isDuplicateTraName(trayName) {
 	catch(err) {
 		console.log("isDuplicateTrayName(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 
 	return duplicate;
 }
@@ -428,7 +397,7 @@ function deleteTray(trayId) {
 
 	try {
 		var inputFields = {
-			"collectionName":gblStateObj.collectionName, 
+			"collectionName":dataObj.collectionName, 
 			"trayId":trayId
 		};
 
@@ -441,17 +410,15 @@ function deleteTray(trayId) {
 
 		xhr.onreadystatechange = function () {
 
-			var DONE = 4;
-			var OK = 200;
+			if (xhr.readyState !== 4) {
+				return;
+			}
 
-			if (xhr.readyState === DONE) {
-				if (xhr.status === OK) {
+			if (xhr.status === 200) {
+				getTrays();
 
-					getTrays();
-
- 				} else {
-					console.log('Error: ' + xhr.status);
-				}
+			} else {
+				console.log('Error: ' + xhr.status);
 			}
 		};
 
@@ -469,9 +436,7 @@ function deleteTray(trayId) {
 	catch(err) {
 		console.log("deleteTray(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function isTrayEmpty(trayId) {
@@ -479,7 +444,7 @@ function isTrayEmpty(trayId) {
 	var empty = true;
 
 	try {
-		var drawerArray = JSON.parse(gblStateObj.drawerJson);
+		var drawerArray = JSON.parse(dataObj.drawerJson);
 
 		if(drawerArray.length > 0) {
 
@@ -498,9 +463,7 @@ function isTrayEmpty(trayId) {
 	catch(err) {
 		console.log("isTrayEmpty(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 
 	return empty;
 }
@@ -510,16 +473,14 @@ function renderCannotDeleteTray() {
 	try {
 		var data = {};
 
-		render("t-tray-delete-error", "template-content", data);
+		component.render("t-tray-delete-error", "template-content", data);
 
-		resetMenu();
+		menu.reset();
 	}
 	catch(err) {
 		console.log("renderCannotDeleteTray(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function renderTrayError() {
@@ -527,14 +488,12 @@ function renderTrayError() {
 	try {
 		var data = {};
 
-		render("t-tray-error", "template-content", data);
+		component.render("t-tray-error", "template-content", data);
 
-		resetMenu();
+		menu.reset();
 	}
 	catch(err) {
 		console.log("renderTrayError(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }

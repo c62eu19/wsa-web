@@ -8,18 +8,16 @@
 function init() {
 
 	try {
-
-		if(typeof(gblStateObj) === "undefined" || gblStateObj == null) {
-
-			gblStateObj = {};
-			gblStateObj.collectionName = "";
-			gblStateObj.userName = "";
-			gblStateObj.trayJson = "";
-			gblStateObj.drawerJson = "";
-			gblStateObj.origTemplateContent = "";
-			gblStateObj.traySelected = "";
-			gblStateObj.favoriteTraTokens = "";
-		}
+		/*
+		 * Initialize the dataObj
+		 */
+		dataObj.collectionName = "";
+		dataObj.userName = "";
+		dataObj.trayJson = "";
+		dataObj.drawerJson = "";
+		dataObj.origTemplateContent = "";
+		dataObj.traySelected = "";
+		dataObj.favoriteTraTokens = "";
 
 		renderSignIn();
 	}
@@ -34,7 +32,7 @@ function init() {
 function getDrawer() {
 
 	try {
-		if(isEmpty(gblStateObj.collectionName)) {
+		if(isEmpty(dataObj.collectionName)) {
 			renderSignIn();
 
 		} else {
@@ -49,13 +47,13 @@ function getDrawer() {
 				if (xhr.readyState === DONE) {
 					if (xhr.status === OK) {
 
-						gblStateObj.drawerJson = xhr.responseText;
+						dataObj.drawerJson = xhr.responseText;
 
-						var drawerArray = JSON.parse(gblStateObj.drawerJson);
+						var drawerArray = JSON.parse(dataObj.drawerJson);
 
-						gblStateObj.traySelected = "in your drawer";
+						dataObj.traySelected = "in your drawer";
 
-						resetMenu();
+						menu.reset();
 						renderDrawer();
 
 					} else {
@@ -68,7 +66,7 @@ function getDrawer() {
 				console.log("getDrawer(): An error occurred during the transaction");
 			};
 
-			var url = "http://localhost:8080/mydrawer/DrawerList/" + gblStateObj.collectionName;
+			var url = "http://localhost:8080/mydrawer/DrawerList/" + dataObj.collectionName;
 
 			xhr.open("GET", url, true);
 			xhr.send();
@@ -93,7 +91,7 @@ function postSearchDrawerByWildcard() {
 
 		var inputFields = {
 			"searchType":"WILDCARD", 
-			"collectionName":gblStateObj.collectionName, 
+			"collectionName":dataObj.collectionName, 
 			"searchTerm":searchTerm, "trayId":""
 		};
 
@@ -112,18 +110,18 @@ function postSearchDrawerByWildcard() {
 			if (xhr.readyState === DONE) {
 				if (xhr.status === OK) {
 
-					gblStateObj.drawerJson = xhr.responseText;
+					dataObj.drawerJson = xhr.responseText;
 
-					var drawerArray = JSON.parse(gblStateObj.drawerJson);
+					var drawerArray = JSON.parse(dataObj.drawerJson);
 
 					if(drawerArray.length <= 0) {
 
 						renderNoResultsFound();
 
 					} else {
-						gblStateObj.traySelected = "resulting in your search";
+						dataObj.traySelected = "resulting in your search";
 
-						resetMenu();
+						menu.reset();
 						renderDrawer();
 					}
 				} else {
@@ -160,7 +158,7 @@ function postSearchDrawerByTraId(traTokens) {
 
 		var inputFields = {
 			"searchType":"TRAY", 
-			"collectionName":gblStateObj.collectionName, 
+			"collectionName":dataObj.collectionName, 
 			"searchTerm":"", 
 			"trayId":trayId
 		};
@@ -180,17 +178,17 @@ function postSearchDrawerByTraId(traTokens) {
 			if (xhr.readyState === DONE) {
 				if (xhr.status === OK) {
 
-					gblStateObj.drawerJson = xhr.responseText;
+					dataObj.drawerJson = xhr.responseText;
 
-					var drawerArray = JSON.parse(gblStateObj.drawerJson);
+					var drawerArray = JSON.parse(dataObj.drawerJson);
 
 					if(drawerArray.length <= 0) {
 						renderNoResultsFound();
 
 					} else {
-						gblStateObj.traySelected = "in your " + trayName + " tray";
+						dataObj.traySelected = "in your " + trayName + " tray";
 
-						resetMenu();
+						menu.reset();
 						renderDrawer();
 					}
 				} else {
@@ -223,9 +221,9 @@ function renderNoResultsFound() {
 	try {
 		var data = {};
 
-		render("t-no-results-found", "template-content", data);
+		component.render("t-no-results-found", "template-content", data);
 
-		resetMenu();
+		menu.reset();
 	}
 	catch(err) {
 		console.log("renderNoResultsFound(): " + err);
@@ -239,7 +237,7 @@ function renderDrawer() {
 
 	try {
 
-		var drawerArray = JSON.parse(gblStateObj.drawerJson);
+		var drawerArray = JSON.parse(dataObj.drawerJson);
 
 		var rowHtml = "";
 		var rowData = {};
@@ -267,7 +265,7 @@ function renderDrawer() {
 				"{{deleteButton}}" : deleteButton
 			};
 
-			rowHtml = create("t-drawer-rows", rowData);
+			rowHtml = component.create("t-drawer-rows", rowData);
 		}
 
 		if(drawerArray.length <= 0) {
@@ -275,13 +273,13 @@ function renderDrawer() {
 		}
 
 		var tableData = {
-			"{{favoriteTraTokens}}" : gblStateObj.favoriteTraTokens,
+			"{{favoriteTraTokens}}" : dataObj.favoriteTraTokens,
 			"{{totalItems}}" : drawerArray.length,
-			"{{traySelected}}" : gblStateObj.traySelected,
+			"{{traySelected}}" : dataObj.traySelected,
 			"{{drawerRows}}" : rowHtml
 		};
 
-		render("t-drawer", "template-content", tableData);
+		component.render("t-drawer", "template-content", tableData);
 
 		document.body.addEventListener("keydown", function(e) {
 			if (e.keyCode === 13) {
@@ -302,7 +300,7 @@ function getDrawerItem(drawerId) {
 	var drawerItem = {};
 
 	try {
-		var drawerArray = JSON.parse(gblStateObj.drawerJson);
+		var drawerArray = JSON.parse(dataObj.drawerJson);
 
 		if(drawerArray.length > 0) {
 
@@ -353,13 +351,13 @@ function createDrawerItemViewTitle(drawerId) {
 		};
 
 		if(drawerItem.type == "1") {
-			componentHtml = create("t-drawer-title-text-view", data);
+			componentHtml = component.create("t-drawer-title-text-view", data);
 
 		} else if(drawerItem.type == "4") {
-			componentHtml = create("t-drawer-title-article-view", data);
+			componentHtml = component.create("t-drawer-title-article-view", data);
 
 		} else if(drawerItem.type == "5") {
-			componentHtml = create("t-drawer-title-video-view", data);
+			componentHtml = component.create("t-drawer-title-video-view", data);
 		}
 	}
 	catch(err) {
@@ -386,13 +384,13 @@ function createDrawerItemViewButton(drawerId) {
 		};
 
 		if(drawerItem.type == "1") {
-			componentHtml = create("t-drawer-button-text-view", data);
+			componentHtml = component.create("t-drawer-button-text-view", data);
 
 		} else if(drawerItem.type == "4") {
-			componentHtml = create("t-drawer-button-article-view", data);
+			componentHtml = component.create("t-drawer-button-article-view", data);
 
 		} else if(drawerItem.type == "5") {
-			componentHtml = create("t-drawer-button-video-view", data);
+			componentHtml = component.create("t-drawer-button-video-view", data);
 		}
 	}
 	catch(err) {
@@ -418,10 +416,10 @@ function createDrawerItemEditButton(drawerId) {
 		};
 
 		if(drawerItem.type == "1") {
-			componentHtml = create("t-drawer-button-text-edit", data);
+			componentHtml = component.create("t-drawer-button-text-edit", data);
 
 		} else if(drawerItem.type == "4" || drawerItem.type == "5") {
-			componentHtml = create("t-drawer-button-web-edit", data);
+			componentHtml = component.create("t-drawer-button-web-edit", data);
 		}
 	}
 	catch(err) {
@@ -443,7 +441,7 @@ function createDrawerItemDeleteButton(drawerId) {
 			"{{drawerId}}" : drawerId
 		};
 
-		componentHtml = create("t-drawer-button-delete", data);
+		componentHtml = component.create("t-drawer-button-delete", data);
 	}
 	catch(err) {
 		console.log("createDrawerItemDeleteTitle(): " + err);
@@ -469,7 +467,7 @@ function renderViewTextEntry(drawerId) {
 			"{{deleteButton}}" : deleteButtonComponent
 		};
 
-		var buttonBarComponent = create("t-view-button-bar", buttonBarData);
+		var buttonBarComponent = component.create("t-view-button-bar", buttonBarData);
 
 		var data = {
 			"{{buttonBar}}" : buttonBarComponent,
@@ -479,9 +477,9 @@ function renderViewTextEntry(drawerId) {
 			"{{text}}" : drawerItem.text
 		};
 
-		render("t-text-view", "template-content", data);
+		component.render("t-text-view", "template-content", data);
 
-		resetMenu();
+		menu.reset();
 	}
 	catch(err) {
 		console.log("renderViewTextEntry(): " + err);
@@ -505,7 +503,7 @@ function renderViewVideoEntry(drawerId) {
 			"{{deleteButton}}" : deleteButtonComponent
 		};
 
-		var buttonBarComponent = create("t-view-button-bar", buttonBarData);
+		var buttonBarComponent = component.create("t-view-button-bar", buttonBarData);
 
 		var id = "";
 		var embeddedLink = "";
@@ -532,11 +530,11 @@ function renderViewVideoEntry(drawerId) {
 			"{{traName}}" : drawerItem.traName
 		};
 
-		render("t-video-view", "template-content", data);
+		component.render("t-video-view", "template-content", data);
 
 		document.getElementById("embedded-video").src = embeddedlink;
 
-		resetMenu();
+		menu.reset();
 	}
 	catch(err) {
 		console.log("renderViewVideoEntry(): " + err);
@@ -557,9 +555,9 @@ function renderAddTextEntry() {
 			"{{saveFunction}}": 'postSaveTextEntry();'
 		};
 
-		render("t-text-entry", "template-content", data);
+		component.render("t-text-entry", "template-content", data);
 
-		resetMenu();
+		menu.reset();
 	}
 	catch(err) {
 		console.log("renderAddTextEntry(): " + err);
@@ -572,7 +570,7 @@ function renderAddTextEntry() {
 function postSaveTextEntry(){
 
 	try {
-		var trayId = document.forms[0].traId.value;
+		var trayId = document.forms[0].trayId.value;
 		var title = document.forms[0].title.value;
 		var text = document.forms[0].text.value;
 
@@ -595,7 +593,7 @@ function postSaveTextEntry(){
 		var cleanedText = replaceSpecialChars(text);
 
 		var inputFields = {
-			"collectionName":gblStateObj.collectionName, 
+			"collectionName":dataObj.collectionName, 
 			"trayId":trayId, 
 			"type":"1", 
 			"url":".", 
@@ -617,7 +615,7 @@ function postSaveTextEntry(){
 			if (xhr.readyState === DONE) {
 				if (xhr.status === OK) {
 
-					gblStateObj.drawerJson = xhr.responseText;
+					dataObj.drawerJson = xhr.responseText;
 
 					renderDrawer();
 
@@ -660,7 +658,7 @@ function renderEditTextEntry(drawerId) {
 			"{{deleteButton}}" : deleteButtonComponent
 		};
 
-		var buttonBarComponent = create("t-edit-button-bar", buttonBarData);
+		var buttonBarComponent = component.create("t-edit-button-bar", buttonBarData);
 
 		var trayListSelectTag = createTraySelectTag(drawerItem.trayId, "N");
 
@@ -671,12 +669,12 @@ function renderEditTextEntry(drawerId) {
 			"{{saveFunction}}" : 'putSaveTextEntry("' + drawerId + '");'
 		};
 
-		render("t-text-entry", "template-content", data);
+		component.render("t-text-entry", "template-content", data);
 
 		document.getElementById("title").value = drawerItem.title;
 		document.getElementById("text").value = drawerItem.text;
 
-		resetMenu();
+		menu.reset();
 	}
 	catch(err) {
 		console.log("renderEditTextEntry(): " + err);
@@ -712,7 +710,7 @@ function putSaveTextEntry(drawerId){
 		var cleanedText = replaceSpecialChars(text);
 
 		var inputFields = {
-			"collectionName":gblStateObj.collectionName, 
+			"collectionName":dataObj.collectionName, 
 			"drawerId":drawerId, 
 			"trayId":trayId, 
 			"url":".", 
@@ -734,7 +732,7 @@ function putSaveTextEntry(drawerId){
 			if (xhr.readyState === DONE) {
 				if (xhr.status === OK) {
 
-					gblStateObj.drawerJson = xhr.responseText;
+					dataObj.drawerJson = xhr.responseText;
 
 					renderDrawer();
 
@@ -774,9 +772,9 @@ function renderAddWebEntry() {
 			"{{saveFunction}}": 'postSaveWebEntry();'
 		};
 
-		render("t-web-entry", "template-content", data);
+		component.render("t-web-entry", "template-content", data);
 
-		resetMenu();
+		menu.reset();
 	}
 	catch(err) {
 		console.log("renderAddWebEntry(): " + err);
@@ -931,7 +929,7 @@ function postSaveWebEntry(){
 		}
 
 		var inputFields = {
-			"collectionName":gblStateObj.collectionName, 
+			"collectionName":dataObj.collectionName, 
 			"trayId":trayId, 
 			"type":type, 
 			"url":encodeUrl, 
@@ -953,7 +951,7 @@ function postSaveWebEntry(){
 			if (xhr.readyState === DONE) {
 				if (xhr.status === OK) {
 
-					gblStateObj.drawerJson = xhr.responseText;
+					dataObj.drawerJson = xhr.responseText;
 
 					renderDrawer();
 
@@ -996,7 +994,7 @@ function renderEditWebEntry(drawerId) {
 			"{{deleteButton}}" : deleteButtonComponent
 		};
 
-		var buttonBarComponent = create("t-edit-button-bar", buttonBarData);
+		var buttonBarComponent = component.create("t-edit-button-bar", buttonBarData);
 
 		var trayListSelectTag = createTraySelectTag(drawerItem.trayId, "N");
 
@@ -1007,7 +1005,7 @@ function renderEditWebEntry(drawerId) {
 			"{{saveFunction}}" : 'putSaveWebEntry("' + drawerId + '");'
 		};
 
-		render("t-web-entry", "template-content", data);
+		component.render("t-web-entry", "template-content", data);
 
 		var decodeUrl = decodeURIComponent(drawerItem.url);
 
@@ -1015,7 +1013,7 @@ function renderEditWebEntry(drawerId) {
 		document.getElementById("title").value = drawerItem.title;
 		document.getElementById("text").value = drawerItem.text;
 
-		resetMenu();
+		menu.reset();
 	}
 	catch(err) {
 		console.log("renderEditWebEntry(): " + err);
@@ -1059,7 +1057,7 @@ function putSaveWebEntry(drawerId) {
 		var encodeUrl = encodeURIComponent(pastedUrl);
 
 		var inputFields = {
-			"collectionName":gblStateObj.collectionName, 
+			"collectionName":dataObj.collectionName, 
 			"drawerId":drawerId, 
 			"trayId":trayId, 
 			"url":encodeUrl, 
@@ -1081,7 +1079,7 @@ function putSaveWebEntry(drawerId) {
 			if (xhr.readyState === DONE) {
 				if (xhr.status === OK) {
 
-					gblStateObj.drawerJson = xhr.responseText;
+					dataObj.drawerJson = xhr.responseText;
 
 					renderDrawer();
 
@@ -1120,9 +1118,9 @@ function renderAddMediaEntry() {
 			"{{trayListSelectTag}}": trayListSelectTag,
 		};
 
-		render("t-media-entry", "template-content", data);
+		component.render("t-media-entry", "template-content", data);
 
-		resetMenu();
+		menu.reset();
 	}
 	catch(err) {
 		console.log("renderAddMediaEntry(): " + err);
@@ -1275,7 +1273,7 @@ function postUploadMediaFile(stringJSON) {
 
 					document.getElementById('template-content').innerHTML = htmlContent;
 
-					resetMenu();
+					menu.reset();
 
 				} else {
 					console.log('Error: ' + xhr.status);
@@ -1305,7 +1303,7 @@ function deleteDrawerItem(drawerId){
 	try {
 
 		var inputFields = {
-			"collectionName":gblStateObj.collectionName, 
+			"collectionName":dataObj.collectionName, 
 			"drawerId":drawerId
 		};
 
@@ -1324,7 +1322,7 @@ function deleteDrawerItem(drawerId){
 			if (xhr.readyState === DONE) {
 				if (xhr.status === OK) {
 
-					gblStateObj.drawerJson = xhr.responseText;
+					dataObj.drawerJson = xhr.responseText;
 
 					renderDrawer();
 

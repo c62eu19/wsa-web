@@ -6,7 +6,7 @@
 			<input type="text" placeholder="Search..." style="float:left;" id="searchTerm" name="searchTerm"/>
 
 			<div id="button-holder">
-				<img src="/media/images/search.png" onclick='postSearchDrawerByWildcard();'/>
+				<img src="/search-image" onclick='postSearchDrawerByWildcard();'/>
 			</div>
 		</form>
 	</div>

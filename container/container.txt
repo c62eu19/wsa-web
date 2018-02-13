@@ -41,8 +41,8 @@
 
 			<a class="logo" onclick="getDrawer();"><h3>My Drawer</h3></a>
 
-			<button id="hamburger" onclick="openHamburger();" class="hamburger">&#9776;</button>
-			<button id="cross" onclick="closeHamburger();" class="cross" style="display:none;">&#9776;</button>
+			<button id="hamburger" onclick="menu.openHamburger();" class="hamburger">&#9776;</button>
+			<button id="cross" onclick="menu.closeHamburger();" class="cross" style="display:none;">&#9776;</button>
 
 		</div>
 	</nav>
@@ -64,7 +64,7 @@
 {{templates}}
 
 <!-- SCRIPTS -->
-<script src="/utility-js"></script>
+<script src="/library-js"></script>
 <script src="/tray-js"></script>
 <script src="/drawer-js"></script>
 <script src="/user-js"></script>

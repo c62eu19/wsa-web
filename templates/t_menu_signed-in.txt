@@ -10,7 +10,7 @@
 
 	<hr style="margin-top:7px; margin-bottom:7px;">
 
-	<a href="#" style="margin-top:9px;" onclick='postSearchDrawerByTraSk("{{favoriteTraTokens}}");'>View Your Favorites</a>
+	<a href="#" style="margin-top:9px;" onclick='postSearchDrawerByTraId("{{favoriteTraTokens}}");'>View Your Favorites</a>
 
 	<hr style="margin-top:7px; margin-bottom:7px;">
 

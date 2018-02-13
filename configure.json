@@ -36,19 +36,19 @@
 		"method":"GET", 
 		"handler":"getResource"
 	},
-	"/utility-js": {
-		"path": "./js/utility.js", 
-		"method":"GET", 
-		"handler":"getResource"
-	},
-	"/menu-js": {
-		"path": "./js/menu.js", 
+	"/library-js": {
+		"path": "./js/library.js", 
 		"method":"GET", 
 		"handler":"getResource"
 	},
 
 	"/favicon-image": {
 		"path": "./images/favicon.ico", 
+		"method":"GET", 
+		"handler":"getResource"
+	},
+	"/search-image": {
+		"path": "./images/search.png", 
 		"method":"GET", 
 		"handler":"getResource"
 	}

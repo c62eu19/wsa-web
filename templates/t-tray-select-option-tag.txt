@@ -1,3 +1,3 @@
 <script id="t-tray-select-option-tag" type="text/template">
-	<option value="{{traSk}}"{{selected}}>{{traName}}</option>
+	<option value="{{trayId}}"{{selected}}>{{trayName}}</option>
 </script>

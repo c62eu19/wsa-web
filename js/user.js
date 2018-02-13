@@ -8,10 +8,10 @@
 function renderSignIn() {
 
 	try {
-		if(isEmpty(gblStateObj.collectionName)) {
+		if(isEmpty(dataObj.collectionName)) {
 
 			var data = {};
-			render("t-sign-in", "template-content", data);
+			component.render("t-sign-in", "template-content", data);
 
 			document.body.addEventListener("keydown", function(e) {
 				if (e.keyCode === 13) {
@@ -20,14 +20,12 @@ function renderSignIn() {
 			});
 		}
 
-		resetMenu();
+		menu.reset();
 	}
 	catch(err) {
 		console.log("getSignIn(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function postSignIn(){
@@ -68,20 +66,18 @@ function postSignIn(){
 				var statusInd = data.statusInd;
 				var statusMsg = data.statusMsg;
 
-				gblStateObj.collectionName = data.collectionName;
-				gblStateObj.userName = data.userName;
-				gblStateObj.trayJson = data.trayJson;
-				gblStateObj.drawerJson = data.drawerJson;
-
-				console.log("TEST: " + gblStateObj.trayJson);
+				dataObj.collectionName = data.collectionName;
+				dataObj.userName = data.userName;
+				dataObj.trayJson = data.trayJson;
+				dataObj.drawerJson = data.drawerJson;
 
 				if(statusInd == "A") {
 
-					gblStateObj.traySelected = "in your drawer";
+					dataObj.traySelected = "in your drawer";
 
-					gblStateObj.favoriteTraTokens = getFavoriteTraTokens();
+					dataObj.favoriteTraTokens = getFavoriteTraTokens();
 
-					resetMenu();
+					menu.reset();
 					renderDrawer();
 
 				} else if(statusInd == "D") {
@@ -110,50 +106,44 @@ function postSignIn(){
 	catch(err) {
 		console.log("postSignIn(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function renderSignInError() {
 
 	try {
 		var data = {};
-		render("t-sign-error", "template-content", data);
+		component.render("t-sign-error", "template-content", data);
 
-		resetMenu();
+		menu.reset();
 	}
 	catch(err) {
 		console.log("renderSignInError(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function renderAccountDisabled() {
 
 	try {
 		var data = {};
-		render("t-account-disabled", "template-content", data);
+		component.render("t-account-disabled", "template-content", data);
 
-		resetMenu();
+		menu.reset();
 	}
 	catch(err) {
 		console.log("renderAccountDisabled(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function renderSignUp() {
 
 	try {
-		gblStateObj = {};
+		dataObj = {};
 
 		var data = {};
-		render("t-sign-up", "template-content", data);
+		component.render("t-sign-up", "template-content", data);
 
 		document.body.addEventListener("keydown", function(e) {
 			if (e.keyCode === 13) {
@@ -161,14 +151,12 @@ function renderSignUp() {
 			}
 		});
 
-		resetMenu();
+		menu.reset();
 	}
 	catch(err) {
 		console.log("getSignUp(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function postSignUp(){
@@ -225,38 +213,34 @@ function postSignUp(){
 
 		xhr.onreadystatechange = function () {
 
-			var DONE = 4;
-			var OK = 200;
+			if (xhr.readyState !== 4) {
+				return;
+			}
 
-			if (xhr.readyState === DONE) {
-				if (xhr.status === OK) {
+			if (xhr.status === 200) {
+				var data = JSON.parse(xhr.responseText);
 
-					var data = JSON.parse(xhr.responseText);
+				var statusInd = data.statusInd;
+				var statusMsg = data.statusMsg;
 
-					var statusInd = data.statusInd;
-					var statusMsg = data.statusMsg;
+				dataObj.collectionName = data.collectionName;
+				dataObj.userName = data.userName;
+				dataObj.trayJson = data.trayJson;
+				dataObj.drawerJson = data.drawerJson;
 
-					gblStateObj.collectionName = data.collectionName;
-					gblStateObj.userName = data.userName;
-					gblStateObj.trayJson = data.trayJson;
-					gblStateObj.drawerJson = data.drawerJson;
+				if(statusInd == "A") {
 
-					if(statusInd == "A") {
+					dataObj.traySelected = "in your drawer";
+					dataObj.favoriteTraTokens = getFavoriteTraTokens();
 
-						gblStateObj.traySelected = "in your drawer";
+					renderDrawer();
 
-						gblStateObj.favoriteTraTokens = getFavoriteTraTokens();
-
-						renderDrawer();
-
-						resetMenu();
-
-					} else {
-						renderSignUpError(statusMsg);
-					}
+					menu.reset();
 				} else {
-					console.log('Error: ' + xhr.status);
+					renderSignUpError(statusMsg);
 				}
+			} else {
+				console.log('Error: ' + xhr.status);
 			}
 		};
 
@@ -276,9 +260,7 @@ function postSignUp(){
 		document.getElementById('error').innerHTML = "An error has occured in your account signup. Please try again.";
 		console.log("postSignUp(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function renderSignUpError(errorMsg) {
@@ -288,56 +270,50 @@ function renderSignUpError(errorMsg) {
 			"{{errorMsg}}": errorMsg
 		};
 
-		render("t-signup-error", "template-content", data);
+		component.render("t-signup-error", "template-content", data);
 
-		resetMenu();
+		menu.reset();
 	}
 	catch(err) {
 		console.log("renderSignUpError(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function getSignOut() {
 
 	try {
-		/* Clear gblStateObj.collectionName */
-		gblStateObj = {};
+		/* Clear dataObj.collectionName */
+		dataObj = {};
 
-		gblStateObj.CollectionName = "";
+		dataObj.CollectionName = "";
 
 		var data = {};
-		render("t-sign-in", "template-content", data);
+		component.render("t-sign-in", "template-content", data);
 
-		resetMenu();
+		menu.reset();
 	}
 	catch(err) {
 		console.log("getSignOut(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function renderContactUs() {
 
 	try {
 
-		gblStateObj.origTemplateContent = document.getElementById('template-content').innerHTML;
+		dataObj.origTemplateContent = document.getElementById('template-content').innerHTML;
 
 		var data = {};
-		render("t-contact-us", "template-content", data);
+		component.render("t-contact-us", "template-content", data);
 
-		resetMenu();
+		menu.reset();
 	}
 	catch(err) {
 		console.log("renderContactUs(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function postContactUs() {
@@ -381,19 +357,16 @@ function postContactUs() {
 
 		xhr.onreadystatechange = function () {
 
-			var DONE = 4;
-			var OK = 200;
+			if (xhr.readyState !== 4) {
+				return;
+			}
 
-			if (xhr.readyState === DONE) {
-				if (xhr.status === OK) {
+			if (xhr.status === 200) {
+				menu.reset();
 
-					resetMenu();
-
-					document.getElementById('template-content').innerHTML = gblStateObj.origTemplateContent;
-
-				} else {
-					console.log('Error: ' + xhr.status);
-				}
+				document.getElementById('template-content').innerHTML = dataObj.origTemplateContent;
+			} else {
+				console.log('Error: ' + xhr.status);
 			}
 		};
 
@@ -410,28 +383,24 @@ function postContactUs() {
 	}
 	catch(err) {
 		console.log("postContactUs(): " + err);
-		document.getElementById('template-content').innerHTML = gblStateObj.origTemplateContent;
+		document.getElementById('template-content').innerHTML = dataObj.origTemplateContent;
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function renderAbout() {
 
 	try {
 
-		gblStateObj.origTemplateContent = document.getElementById('template-content').innerHTML;
+		dataObj.origTemplateContent = document.getElementById('template-content').innerHTML;
 
 		var data = {};
-		render("t-about", "template-content", data);
+		component.render("t-about", "template-content", data);
 
-		resetMenu();
+		menu.reset();
 	}
 	catch(err) {
 		console.log("renderAbout(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }

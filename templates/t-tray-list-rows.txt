@@ -2,17 +2,17 @@
 
 	<tr>
 		<td style="padding-left: 9px;">
-			<a href="#" onclick='postSearchDrawerByTraSk("{{traSk}}|{{traName}}");'>
+			<a href="#" onclick='postSearchDrawerByTraId("{{trayId}}|{{trayName}}");'>
 				<span style="font-size:18px; color:blue;">
-					{{traName}}
+					{{trayName}}
 				</span>
 			</a>
 		</td>
 		<td>
-			<a href="#" onclick='renderEditTray("{{traSk}}","{{traName}}");'>Edit</a>
+			<a href="#" onclick='renderEditTray("{{trayId}}","{{trayName}}");'>Edit</a>
 		</td>
 		<td style="padding-right: 9px;">
-			<a href="#" onclick='checkIfTrayCanBeDeleted("{{traSk}}","{{traName}}");'>Delete</a>
+			<a href="#" onclick='checkIfTrayCanBeDeleted("{{trayId}}","{{trayName}}");'>Delete</a>
 		</td>
 	</tr>
 
