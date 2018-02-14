@@ -1,6 +1,6 @@
 <script id="t-drawer-title-text-view" type="text/template">
 
-<a href="#" onclick='renderViewTextEntry("{{drwSk}}");'>
+<a href="#" onclick='renderViewTextEntry("{{drawerId}}");'>
 	<span style="font-size:20px; color:blue;">
 		{{title}}
 	</span>

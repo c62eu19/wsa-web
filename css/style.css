@@ -336,7 +336,7 @@ ul.icons li .icon:before {
 pre {
 	white-space: pre-wrap;
 	word-wrap: break-word;
-	text-align: justify;
+	text-align: left;
 }
 
 tr:nth-child(even) {

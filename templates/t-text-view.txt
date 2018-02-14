@@ -5,7 +5,7 @@
 <h5 style="color: #0000ff;">{{title}}</h5>
 
 <p style="text-align:left; font-size: 18px;">
-	{{traName}}
+	{{trayName}}
 </p>
 
 <p style="text-align:left; font-size: 18px;">

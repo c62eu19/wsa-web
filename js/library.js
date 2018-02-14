@@ -58,6 +58,15 @@ var component = {
 		finally {}
 
 		return componentHtml;
+	},
+
+	addEvent : function(event, elementId, callbackFunction, capture) {
+
+		var element = document.getElementById(elementId);
+
+		capture = capture ? true : false;
+
+		element.addEventListener(event, callbackFunction, capture);
 	}
 
 };

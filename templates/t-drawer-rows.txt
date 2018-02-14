@@ -4,11 +4,11 @@
 	<div class="twelve columns">
 		<p style="text-align:left; margin-bottom:9px;">
 			{{itemTitle}}
-			{{traName}}
+			{{trayName}}
 			<br/>
 			{{text}}
 			<br/>
-			<span><small>(Updated: {{updatedDt}})</small></span>
+			<span><small>(Updated: {{updatedDate}})</small></span>
 		</p>
 		<ul class="icons" style="text-align:left;">
 			<li>{{viewButton}}</li>

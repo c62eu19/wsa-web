@@ -1,6 +1,6 @@
 <script id="t-drawer-button-text-view" type="text/template">
 
-<a href="#" onclick='renderViewTextEntry("{{drwSk}}");'>
+<a href="#" onclick='renderViewTextEntry("{{drawerId}}");'>
 	<span style="color: #000;">
 		<strong>V</strong>iew
 	</span>

@@ -246,8 +246,8 @@ function renderDrawer() {
 
 			var item = drawerArray[i];
 
-			var abbrText = item.abbrText.replace(/\r/g, " ");
-			abbrText = item.abbrText.replace(/\n/g, " ");
+			var sanitizedText = item.text.replace(/\r/g, " ");
+			sanitizedText = item.text.replace(/\n/g, " ");
 
 			var itemTitle = createDrawerItemViewTitle(item.drawerId);
 
@@ -257,15 +257,15 @@ function renderDrawer() {
 
 			rowData = {
 				"{{itemTitle}}" : itemTitle,
-				"{{traName}}" : item.traName,
-				"{{text}} " : abbrText,
-				"{{updatedDt}}" : item.updatedDt,
+				"{{trayName}}" : item.trayName,
+				"{{text}}" : sanitizedText,
+				"{{updatedDate}}" : item.updatedDate,
 				"{{viewButton}}" : viewButton,
 				"{{editButton}}" : editButton,
 				"{{deleteButton}}" : deleteButton
 			};
 
-			rowHtml = component.create("t-drawer-rows", rowData);
+			rowHtml += component.create("t-drawer-rows", rowData);
 		}
 
 		if(drawerArray.length <= 0) {
@@ -315,11 +315,11 @@ function getDrawerItem(drawerId) {
 					drawerItem.drawerId = item.drawerId;
 					drawerItem.trayId = item.trayId;
 					drawerItem.type = item.type;
-					drawerItem.updatedDt = item.updatedDt;
+					drawerItem.updatedDate = item.updatedDate;
 					drawerItem.title = item.title;
 					drawerItem.text = item.text;
 					drawerItem.url = decodeUrl;
-					drawerItem.traName = item.traName;
+					drawerItem.trayName = item.trayName;
 
 					break;
 				}
@@ -471,9 +471,8 @@ function renderViewTextEntry(drawerId) {
 
 		var data = {
 			"{{buttonBar}}" : buttonBarComponent,
-			"{{deleteButton}}" : deleteButton,
 			"{{title}}" : drawerItem.title,
-			"{{traName}}" : drawerItem.traName,
+			"{{trayName}}" : drawerItem.trayName,
 			"{{text}}" : drawerItem.text
 		};
 
@@ -866,7 +865,7 @@ function getUrlParts(url) {
 			console.log("getUrlParts(): An error occurred during the transaction");
 		};
 
-		var url = "http://localhost:8080/mydrawer/urlparts/";
+		var url = "http://localhost:8080/mydrawer/UrlParts/";
 
 		xhr.open("POST", url, true);
 		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -887,7 +886,7 @@ function postSaveWebEntry(){
 
 	try {
 		var pastedUrl = document.forms[0].url.value;
-		var trayId = document.forms[0].traId.value;
+		var trayId = document.forms[0].trayId.value;
 		var title = document.forms[0].title.value;
 		var text = document.forms[0].text.value;
 
@@ -1027,7 +1026,7 @@ function putSaveWebEntry(drawerId) {
 
 	try {
 		var pastedUrl = document.forms[0].url.value;
-		var trayId = document.forms[0].traId.value;
+		var trayId = document.forms[0].trayId.value;
 		var title = document.forms[0].title.value;
 		var text = document.forms[0].text.value;
 
