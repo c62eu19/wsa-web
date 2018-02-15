@@ -60,13 +60,19 @@ var component = {
 		return componentHtml;
 	},
 
-	addEvent : function(event, elementId, callbackFunction, capture) {
+	addEvent: function(event, elementId, callbackFunction, capture) {
 
-		var element = document.getElementById(elementId);
+		try {
+			var element = document.getElementById(elementId);
 
-		capture = capture ? true : false;
+			capture = capture ? true : false;
 
-		element.addEventListener(event, callbackFunction, capture);
+			element.addEventListener(event, callbackFunction, capture);
+		}
+		catch(err) {
+			console.log("addEvent(): " + err);
+		}
+		finally {}
 	}
 
 };
@@ -76,8 +82,8 @@ var menu = {
 	reset: function() {
 
 		try {
-			document.getElementById('hamburger').style.display = '';
-			document.getElementById('cross').style.display = 'none';
+			document.getElementById('id-hamburger').style.display = '';
+			document.getElementById('id-cross').style.display = 'none';
 		}
 		catch(err) {
 			console.log("reset(): " + err);
@@ -88,8 +94,8 @@ var menu = {
 	openHamburger: function(e) {
 
 		try {
-			document.getElementById('hamburger').style.display = 'none';
-			document.getElementById('cross').style.display = '';
+			document.getElementById('id-hamburger').style.display = 'none';
+			document.getElementById('id-cross').style.display = '';
 
 			var tm = "";
 			var tmHtml = "";
@@ -121,8 +127,8 @@ var menu = {
 	closeHamburger: function(e) {
 
 		try {
-			document.getElementById('cross').style.display = 'none';
-			document.getElementById('hamburger').style.display = '';
+			document.getElementById('id-cross').style.display = 'none';
+			document.getElementById('id-hamburger').style.display = '';
 
 			document.getElementById('template-content').innerHTML = dataObj.origTemplateContent;
 		}

@@ -19,14 +19,17 @@ function init() {
 		dataObj.traySelected = "";
 		dataObj.favoriteTraTokens = "";
 
+		/*
+		 * Create all event listeners for the app
+		 */
+		listener.create();
+
 		renderSignIn();
 	}
 	catch(err) {
 		console.log("init(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function getDrawer() {
@@ -41,24 +44,22 @@ function getDrawer() {
 
 			xhr.onreadystatechange = function () {
 
-				var DONE = 4;
-				var OK = 200;
+				if (xhr.readyState !== 4) {
+					return;
+				}
 
-				if (xhr.readyState === DONE) {
-					if (xhr.status === OK) {
+				if (xhr.status === 200) {
+					dataObj.drawerJson = xhr.responseText;
 
-						dataObj.drawerJson = xhr.responseText;
+					var drawerArray = JSON.parse(dataObj.drawerJson);
 
-						var drawerArray = JSON.parse(dataObj.drawerJson);
+					dataObj.traySelected = "in your drawer";
 
-						dataObj.traySelected = "in your drawer";
+					menu.reset();
+					renderDrawer();
 
-						menu.reset();
-						renderDrawer();
-
-					} else {
-						console.log('Error: ' + xhr.status);
-					}
+				} else {
+					console.log('Error: ' + xhr.status);
 				}
 			};
 
@@ -75,9 +76,7 @@ function getDrawer() {
 	catch(err) {
 		console.log("getDrawer(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function postSearchDrawerByWildcard() {
@@ -104,29 +103,26 @@ function postSearchDrawerByWildcard() {
 
 		xhr.onreadystatechange = function () {
 
-			var DONE = 4;
-			var OK = 200;
+			if (xhr.readyState !== 4) {
+				return;
+			}
 
-			if (xhr.readyState === DONE) {
-				if (xhr.status === OK) {
+			if (xhr.status === 200) {
+				dataObj.drawerJson = xhr.responseText;
 
-					dataObj.drawerJson = xhr.responseText;
+				var drawerArray = JSON.parse(dataObj.drawerJson);
 
-					var drawerArray = JSON.parse(dataObj.drawerJson);
+				if(drawerArray.length <= 0) {
+					renderNoResultsFound();
 
-					if(drawerArray.length <= 0) {
-
-						renderNoResultsFound();
-
-					} else {
-						dataObj.traySelected = "resulting in your search";
-
-						menu.reset();
-						renderDrawer();
-					}
 				} else {
-					console.log('Error: ' + xhr.status);
+					dataObj.traySelected = "resulting in your search";
+
+					menu.reset();
+					renderDrawer();
 				}
+			} else {
+				console.log('Error: ' + xhr.status);
 			}
 		};
 
@@ -144,9 +140,7 @@ function postSearchDrawerByWildcard() {
 	catch(err) {
 		console.log("postSearchDrawerByWildcard(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function postSearchDrawerByTraId(traTokens) {
@@ -172,28 +166,26 @@ function postSearchDrawerByTraId(traTokens) {
 
 		xhr.onreadystatechange = function () {
 
-			var DONE = 4;
-			var OK = 200;
+			if (xhr.readyState !== 4) {
+				return;
+			}
 
-			if (xhr.readyState === DONE) {
-				if (xhr.status === OK) {
+			if (xhr.status === 200) {
+				dataObj.drawerJson = xhr.responseText;
 
-					dataObj.drawerJson = xhr.responseText;
+				var drawerArray = JSON.parse(dataObj.drawerJson);
 
-					var drawerArray = JSON.parse(dataObj.drawerJson);
+				if(drawerArray.length <= 0) {
+					renderNoResultsFound();
 
-					if(drawerArray.length <= 0) {
-						renderNoResultsFound();
-
-					} else {
-						dataObj.traySelected = "in your " + trayName + " tray";
-
-						menu.reset();
-						renderDrawer();
-					}
 				} else {
-					console.log('Error: ' + xhr.status);
+					dataObj.traySelected = "in your " + trayName + " tray";
+
+					menu.reset();
+					renderDrawer();
 				}
+			} else {
+				console.log('Error: ' + xhr.status);
 			}
 		};
 
@@ -211,9 +203,7 @@ function postSearchDrawerByTraId(traTokens) {
 	catch(err) {
 		console.log("postSearchDrawerByTraId(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function renderNoResultsFound() {
@@ -228,9 +218,7 @@ function renderNoResultsFound() {
 	catch(err) {
 		console.log("renderNoResultsFound(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function renderDrawer() {
@@ -290,9 +278,7 @@ function renderDrawer() {
 	catch(err) {
 		console.log("renderDrawer(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function getDrawerItem(drawerId) {
@@ -329,9 +315,7 @@ function getDrawerItem(drawerId) {
 	catch(err) {
 		console.log("getDrawerItem(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 
 	return drawerItem;
 }
@@ -363,9 +347,7 @@ function createDrawerItemViewTitle(drawerId) {
 	catch(err) {
 		console.log("createDrawerItemViewTitle(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 
 	return componentHtml;
 }
@@ -396,9 +378,7 @@ function createDrawerItemViewButton(drawerId) {
 	catch(err) {
 		console.log("createDrawerItemViewButton(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 
 	return componentHtml;
 }
@@ -425,9 +405,7 @@ function createDrawerItemEditButton(drawerId) {
 	catch(err) {
 		console.log("createDrawerItemEditTitle(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 
 	return componentHtml;
 }
@@ -446,9 +424,7 @@ function createDrawerItemDeleteButton(drawerId) {
 	catch(err) {
 		console.log("createDrawerItemDeleteTitle(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 
 	return componentHtml;
 }
@@ -483,9 +459,7 @@ function renderViewTextEntry(drawerId) {
 	catch(err) {
 		console.log("renderViewTextEntry(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function renderViewVideoEntry(drawerId) {
@@ -538,9 +512,7 @@ function renderViewVideoEntry(drawerId) {
 	catch(err) {
 		console.log("renderViewVideoEntry(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function renderAddTextEntry() {
@@ -561,9 +533,7 @@ function renderAddTextEntry() {
 	catch(err) {
 		console.log("renderAddTextEntry(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function postSaveTextEntry(){
@@ -608,19 +578,17 @@ function postSaveTextEntry(){
 
 		xhr.onreadystatechange = function () {
 
-			var DONE = 4;
-			var OK = 200;
+			if (xhr.readyState !== 4) {
+				return;
+			}
 
-			if (xhr.readyState === DONE) {
-				if (xhr.status === OK) {
+			if (xhr.status === 200) {
+				dataObj.drawerJson = xhr.responseText;
 
-					dataObj.drawerJson = xhr.responseText;
+				renderDrawer();
 
-					renderDrawer();
-
-				} else {
-					console.log('Error: ' + xhr.status);
-				}
+			} else {
+				console.log('Error: ' + xhr.status);
 			}
 		};
 
@@ -638,9 +606,7 @@ function postSaveTextEntry(){
 	catch(err) {
 		console.log("postSaveTextEntry(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function renderEditTextEntry(drawerId) {
@@ -678,9 +644,7 @@ function renderEditTextEntry(drawerId) {
 	catch(err) {
 		console.log("renderEditTextEntry(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function putSaveTextEntry(drawerId){
@@ -725,19 +689,17 @@ function putSaveTextEntry(drawerId){
 
 		xhr.onreadystatechange = function () {
 
-			var DONE = 4;
-			var OK = 200;
+			if (xhr.readyState !== 4) {
+				return;
+			}
 
-			if (xhr.readyState === DONE) {
-				if (xhr.status === OK) {
+			if (xhr.status === 200) {
+				dataObj.drawerJson = xhr.responseText;
 
-					dataObj.drawerJson = xhr.responseText;
+				renderDrawer();
 
-					renderDrawer();
-
-				} else {
-					console.log('Error: ' + xhr.status);
-				}
+			} else {
+				console.log('Error: ' + xhr.status);
 			}
 		};
 
@@ -755,9 +717,7 @@ function putSaveTextEntry(drawerId){
 	catch(err) {
 		console.log("putSaveTextEntry(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function renderAddWebEntry() {
@@ -778,9 +738,7 @@ function renderAddWebEntry() {
 	catch(err) {
 		console.log("renderAddWebEntry(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function postPasteUrl(e) {
@@ -802,9 +760,7 @@ function postPasteUrl(e) {
 		document.getElementById('url').innerHTML = "";
 		document.getElementById('error').innerHTML = 'We are sorry but there is a problem with the Link that you are trying to fetch.';
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function getUrlParts(url) {
@@ -817,7 +773,9 @@ function getUrlParts(url) {
 
 		document.body.style.cursor = "wait";
 
-		/* encode the base64 so that it transfers properly to the server */
+		/* 
+		 * encode the base64 so that it transfers properly to the server 
+		 */
 		var encodeUrl = encodeURIComponent(url);
 
 		var inputFields = {"url":encodeUrl};
@@ -831,33 +789,32 @@ function getUrlParts(url) {
 
 		xhr.onreadystatechange = function () {
 
-			var DONE = 4;
-			var OK = 200;
+			if (xhr.readyState !== 4) {
+				return;
+			}
 
-			if (xhr.readyState === DONE) {
-				if (xhr.status === OK) {
+			if (xhr.status === 200) {
+				var data = JSON.parse(xhr.responseText);
 
-					var data = JSON.parse(xhr.responseText);
+				var statusCd = data.statusCd;
+				var title = data.title;
+				var text = data.text;
 
-					var statusCd = data.statusCd;
-					var title = data.title;
-					var text = data.text;
-
-					if(statusCd == "0") {
-						document.getElementById("title").value = title;
-						document.getElementById("text").value = text;
-					} else {
-						document.getElementById('error').innerHTML = "We are sorry but we could not fetch the title or description for your link.";
-						document.getElementById('url').innerHTML = "";
-					}
-
-					document.body.style.cursor = "default";
+				if(statusCd == "0") {
+					document.getElementById("title").value = title;
+					document.getElementById("text").value = text;
 
 				} else {
+					document.getElementById('error').innerHTML = "We are sorry but we could not fetch the title or description for your link.";
 					document.getElementById('url').innerHTML = "";
-					document.body.style.cursor = "default";
-					console.log('Error: ' + xhr.status);
 				}
+
+				document.body.style.cursor = "default";
+
+			} else {
+				document.getElementById('url').innerHTML = "";
+				document.body.style.cursor = "default";
+				console.log('Error: ' + xhr.status);
 			}
 		};
 
@@ -877,9 +834,7 @@ function getUrlParts(url) {
 		document.getElementById('url').innerHTML = "";
 		document.getElementById('error').innerHTML = 'We are sorry but there is a problem with the Link that you are trying to fetch.';
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function postSaveWebEntry(){
@@ -944,19 +899,17 @@ function postSaveWebEntry(){
 
 		xhr.onreadystatechange = function () {
 
-			var DONE = 4;
-			var OK = 200;
+			if (xhr.readyState !== 4) {
+				return;
+			}
 
-			if (xhr.readyState === DONE) {
-				if (xhr.status === OK) {
+			if (xhr.status === 200) {
+				dataObj.drawerJson = xhr.responseText;
 
-					dataObj.drawerJson = xhr.responseText;
+				renderDrawer();
 
-					renderDrawer();
-
-				} else {
-					console.log('Error: ' + xhr.status);
-				}
+			} else {
+				console.log('Error: ' + xhr.status);
 			}
 		};
 
@@ -974,9 +927,7 @@ function postSaveWebEntry(){
 	catch(err) {
 		console.log("postSaveWebEntry(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function renderEditWebEntry(drawerId) {
@@ -1017,9 +968,7 @@ function renderEditWebEntry(drawerId) {
 	catch(err) {
 		console.log("renderEditWebEntry(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function putSaveWebEntry(drawerId) {
@@ -1072,19 +1021,17 @@ function putSaveWebEntry(drawerId) {
 
 		xhr.onreadystatechange = function () {
 
-			var DONE = 4;
-			var OK = 200;
+			if (xhr.readyState !== 4) {
+				return;
+			}
 
-			if (xhr.readyState === DONE) {
-				if (xhr.status === OK) {
+			if (xhr.status === 200) {
+				dataObj.drawerJson = xhr.responseText;
 
-					dataObj.drawerJson = xhr.responseText;
+				renderDrawer();
 
-					renderDrawer();
-
-				} else {
-					console.log('Error: ' + xhr.status);
-				}
+			} else {
+				console.log('Error: ' + xhr.status);
 			}
 		};
 
@@ -1102,11 +1049,8 @@ function putSaveWebEntry(drawerId) {
 	catch(err) {
 		console.log("putSaveWebEntry(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
-
 
 function renderAddMediaEntry() {
 
@@ -1124,9 +1068,7 @@ function renderAddMediaEntry() {
 	catch(err) {
 		console.log("renderAddMediaEntry(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function postFetchMediaFile() {
@@ -1174,9 +1116,7 @@ function postFetchMediaFile() {
 	catch(err) {
 		console.log("postFetchMediaFile(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function postSaveMediaEntry() {
@@ -1260,23 +1200,21 @@ function postUploadMediaFile(stringJSON) {
 
 		xhr.onreadystatechange = function () {
 
-			var DONE = 4;
-			var OK = 200;
+			if (xhr.readyState !== 4) {
+				return;
+			}
 
-			if (xhr.readyState === DONE) {
-				if (xhr.status === OK) {
+			if (xhr.status === 200) {
+				var data = JSON.parse(xhr.responseText);
 
-					var data = JSON.parse(xhr.responseText);
+				var htmlContent = data.htmlContent;
 
-					var htmlContent = data.htmlContent;
+				document.getElementById('template-content').innerHTML = htmlContent;
 
-					document.getElementById('template-content').innerHTML = htmlContent;
+				menu.reset();
 
-					menu.reset();
-
-				} else {
-					console.log('Error: ' + xhr.status);
-				}
+			} else {
+				console.log('Error: ' + xhr.status);
 			}
 		};
 
@@ -1292,9 +1230,7 @@ function postUploadMediaFile(stringJSON) {
 	catch(err) {
 		document.getElementById('error').innerHTML = 'We are sorry but we cannot post your file at this time.  Please try again in a little bit.';
 	}
-	finally {
-
-	}
+	finally {}
 }
 
 function deleteDrawerItem(drawerId){
@@ -1315,19 +1251,17 @@ function deleteDrawerItem(drawerId){
 
 		xhr.onreadystatechange = function () {
 
-			var DONE = 4;
-			var OK = 200;
+			if (xhr.readyState !== 4) {
+				return;
+			}
 
-			if (xhr.readyState === DONE) {
-				if (xhr.status === OK) {
+			if (xhr.status === 200) {
+				dataObj.drawerJson = xhr.responseText;
 
-					dataObj.drawerJson = xhr.responseText;
+				renderDrawer();
 
-					renderDrawer();
-
-				} else {
-					console.log('Error: ' + xhr.status);
-				}
+			} else {
+				console.log('Error: ' + xhr.status);
 			}
 		};
 
@@ -1345,7 +1279,5 @@ function deleteDrawerItem(drawerId){
 	catch(err) {
 		console.log("deleteDrawerItem(): " + err);
 	}
-	finally {
-
-	}
+	finally {}
 }

@@ -41,6 +41,11 @@
 		"method":"GET", 
 		"handler":"getResource"
 	},
+	"/listeners-js": {
+		"path": "./js/listeners.js", 
+		"method":"GET", 
+		"handler":"getResource"
+	},
 
 	"/favicon-image": {
 		"path": "./images/favicon.ico", 

@@ -12,12 +12,6 @@ function renderSignIn() {
 
 			var data = {};
 			component.render("t-sign-in", "template-content", data);
-
-			document.body.addEventListener("keydown", function(e) {
-				if (e.keyCode === 13) {
-					postSignIn();
-				}
-			});
 		}
 
 		menu.reset();
@@ -113,7 +107,7 @@ function renderSignInError() {
 
 	try {
 		var data = {};
-		component.render("t-sign-error", "template-content", data);
+		component.render("t-sign-in-error", "template-content", data);
 
 		menu.reset();
 	}
