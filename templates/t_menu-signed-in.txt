@@ -1,0 +1,35 @@
+<script id="t-menu-signed-in" type="text/template">
+
+<div id="command-menu" class="add-items-menu" style="margin-bottom:9px;">
+
+	<h5 style="color: #0000ff;">Would You like To</h5>
+
+	<a href="#" style="margin-top:9px;" class="e-render-add-text">Add a Text Item</a>
+	<a href="#" style="margin-top:5px;" class="e-render-add-web">Add a Web Article or Video</a>
+	<a href="#" style="margin-top:5px;" class="e-render-add-media">Add Media (Picture, PDF, Doc)</a>
+
+	<hr style="margin-top:7px; margin-bottom:7px;">
+
+	<a href="#" style="margin-top:9px;" class="e-get-drawer-list-by-tray-id">View Your Favorites</a>
+
+	<hr style="margin-top:7px; margin-bottom:7px;">
+
+	View Your Items in: {{trayListSelectTag}}
+
+	<hr style="margin-top:7px; margin-bottom:7px;">
+
+	<a href="#" style="margin-top:5px;" class="e-get-tray-list">Manage Your Trays</a>
+
+	<hr style="margin-top:7px; margin-bottom:7px;">
+
+	<a href="#" style="margin-top:5px;" class="e-render-contact-us">Contact Us</a>
+	<a href="#" style="margin-top:5px;" class="e-render-about">Learn About My Drawer</a>
+
+	<hr style="margin-top:7px; margin-bottom:7px;">
+
+	<a href="#" style="margin-top:5px;" class="e-sign-out">Sign Out</a>
+
+	<hr style="margin-top:7px; margin-bottom:7px;">
+</div>
+
+</script>

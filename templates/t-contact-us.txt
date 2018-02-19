@@ -22,7 +22,7 @@
 	<label for="message">Message</label>
 	<textarea class="u-full-width hide-textarea-resize" placeholder="Enter your message" rows="6" id="message" name="message"></textarea>
 
-	<a class="button button-primary" onclick="postContactUs();" style="font-size:16px;">Send</a>
+	<a class="button button-primary e-add-contact-us" style="font-size:16px;">Send</a>
 </form>
 
 </script>

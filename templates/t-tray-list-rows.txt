@@ -9,10 +9,10 @@
 			</a>
 		</td>
 		<td>
-			<a href="#" onclick='renderEditTray("{{trayId}}","{{trayName}}");'>Edit</a>
+			<a href="#" class="e-render-edit-tray" id="{{trayId}}|{{trayName}}">Edit</a>
 		</td>
 		<td style="padding-right: 9px;">
-			<a href="#" onclick='checkIfTrayCanBeDeleted("{{trayId}}","{{trayName}}");'>Delete</a>
+			<a href="#" class="e-delete-tray" id="{{trayId}}|{{trayName}}">Delete</a>
 		</td>
 	</tr>
 

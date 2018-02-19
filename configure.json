@@ -26,23 +26,8 @@
 		"method":"GET", 
 		"handler":"getResource"
 	},
-	"/tray-js": {
-		"path": "./js/tray.js", 
-		"method":"GET", 
-		"handler":"getResource"
-	},
-	"/user-js": {
-		"path": "./js/user.js", 
-		"method":"GET", 
-		"handler":"getResource"
-	},
 	"/library-js": {
 		"path": "./js/library.js", 
-		"method":"GET", 
-		"handler":"getResource"
-	},
-	"/listeners-js": {
-		"path": "./js/listeners.js", 
 		"method":"GET", 
 		"handler":"getResource"
 	},

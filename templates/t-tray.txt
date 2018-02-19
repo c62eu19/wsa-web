@@ -5,7 +5,7 @@
 <div id="error" style="margin-bottom: 9px; color: #ff0000"></div>
 
 <p style="font-size:18px;">
-	<a href="#" onclick='getTrays();'>Return to Tray List</a>
+	<a href="#" class="e-get-tray-list">Return to Tray List</a>
 </p>
 
 <form>
@@ -23,7 +23,7 @@
 		</div>
 		<div class="ten columns">
 			<label class="u-full-width">
-				<a class="button button-primary" href="#" onclick='{{saveFunction}}' style="font-size:16px;">Save</a>
+				<a class="button button-primary {{event-class}}" id="{{event-data}}" href="#" style="font-size:16px;">Save</a>
 			</label>
 		</div>
 	</div>

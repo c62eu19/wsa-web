@@ -77,68 +77,6 @@ var component = {
 
 };
 
-var menu = {
-
-	reset: function() {
-
-		try {
-			document.getElementById('id-hamburger').style.display = '';
-			document.getElementById('id-cross').style.display = 'none';
-		}
-		catch(err) {
-			console.log("reset(): " + err);
-		}
-		finally {}
-	},
-
-	openHamburger: function(e) {
-
-		try {
-			document.getElementById('id-hamburger').style.display = 'none';
-			document.getElementById('id-cross').style.display = '';
-
-			var tm = "";
-			var tmHtml = "";
-
-			dataObj.origTemplateContent = document.getElementById('template-content').innerHTML;
-
-			if(isEmpty(dataObj.collectionName)) {
-				var signedOutData = {};
-				component.render("t-menu-signed-out", "template-content", signedOutData);
-
-			} else {
-
-				var trayListSelectTag = createTraySelectTag("", "add-onchange");
-
-				var signedInData = {
-					"{{favoriteTraTokens}}" : dataObj.favoriteTraTokens,
-					"{{trayListSelectTag}}" : trayListSelectTag
-				};
-
-				component.render("t-menu-signed-in", "template-content", signedInData);
-			}
-		}
-		catch(err) {
-			console.log("openHamburger(): " + err);
-		}
-		finally {}
-	},
-
-	closeHamburger: function(e) {
-
-		try {
-			document.getElementById('id-cross').style.display = 'none';
-			document.getElementById('id-hamburger').style.display = '';
-
-			document.getElementById('template-content').innerHTML = dataObj.origTemplateContent;
-		}
-		catch(err) {
-			console.log("closeHamburger(): " + err);
-		}
-		finally {}
-	}
-};
-
 function cursorWait() {
 	document.body.style.cursor = "wait";
 }

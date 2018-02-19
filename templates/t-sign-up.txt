@@ -4,7 +4,7 @@
 
 <div id="error" style="margin-bottom: 9px; color: #ff0000"></div>
 
-<form id="f-sign-up" onsubmit="postSignUp();return false;">
+<form id="e-f-sign-up">
 	<div class="row">
 		<div class="six columns">
 			<label for="email">Email</label>
@@ -28,13 +28,13 @@
 		</div>
 	</div>
 
-	<a class="button button-primary" href="#" onclick="postSignUp();" style="font-size:16px;">Sign Up</a>
+	<a href="#" class="button button-primary e-sign-up" style="font-size:16px;">Sign Up</a>
 
 	<p style="font-size: 18px;">
 		Already have your own drawer? 
 	</p>
 
-	<a href="#" onclick="renderSignIn();" style="font-size:18px;">Click here to Sign In</a>
+	<a href="#" class="e-render-sign-in" style="font-size:18px;">Click here to Sign In</a>
 </form>
 
 </script>

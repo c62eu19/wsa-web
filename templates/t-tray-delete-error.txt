@@ -13,7 +13,7 @@
 </p>
 
 <p style="font-size: 18px;">
-	<a href="#" onclick="getTrays();">Return to My Trays</a>
+	<a href="#" class="e-get-tray-list">Return to My Trays</a>
 
 </p>
 

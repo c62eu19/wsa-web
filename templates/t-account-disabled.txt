@@ -4,7 +4,7 @@
 
 <p style="font-size: 18px;">
 	We're sorry but it looks like your account has been disabled. To find out why your account 
-	has been diabled please contact us at XXX.
+	has been disabled please contact us at XXX.
 </p>
 
 <p style="font-size: 18px;">

@@ -4,8 +4,8 @@
 
 	<h5 style="color: #0000ff;">Would You like To</h5>
 
-	<a href="#" style="margin-top:5px;" onclick="renderContactUs();">Contact Us</a>
-	<a href="#" style="margin-top:5px;" onclick="renderAbout();">Learn About My Drawer</a>
+	<a href="#" style="margin-top:5px;" class="e-render-contact-us">Contact Us</a>
+	<a href="#" style="margin-top:5px;" class="e-render-about">Learn About My Drawer</a>
 
 	<hr style="margin-top:7px; margin-bottom:7px;">
 </div>
