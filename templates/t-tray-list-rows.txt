@@ -1,18 +1,19 @@
+
 <script id="t-tray-list-rows" type="text/template">
 
 	<tr>
 		<td style="padding-left: 9px;">
-			<a href="#" onclick='postSearchDrawerByTraId("{{trayId}}|{{trayName}}");'>
+			<a href="#" onclick="{{onclick:searchDrawerByTrayId}}" data-tray-id="{{data:trayId}}" data-tray-name="{{data:trayName}}">
 				<span style="font-size:18px; color:blue;">
-					{{trayName}}
+					{{data:trayName}}
 				</span>
 			</a>
 		</td>
 		<td>
-			<a href="#" class="e-render-edit-tray" id="{{trayId}}|{{trayName}}">Edit</a>
+			<a href="#" onclick="{{onclick:renderEditTray}}" data-tray-id="{{data:trayId}}" data-tray-name="{{data:trayName}}">Edit</a>
 		</td>
 		<td style="padding-right: 9px;">
-			<a href="#" class="e-delete-tray" id="{{trayId}}|{{trayName}}">Delete</a>
+			<a href="#" onclick="{{onclick:deleteItem}}" data-tray-id="{{data:trayId}}" data-tray-name="{{data:trayName}}">Delete</a>
 		</td>
 	</tr>
 

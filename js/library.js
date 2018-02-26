@@ -60,7 +60,7 @@ var component = {
 		return componentHtml;
 	},
 
-	addEvent: function(event, elementId, callbackFunction, capture) {
+	addListener: function(event, elementId, callbackFunction, capture) {
 
 		try {
 			var element = document.getElementById(elementId);
@@ -70,7 +70,7 @@ var component = {
 			element.addEventListener(event, callbackFunction, capture);
 		}
 		catch(err) {
-			console.log("addEvent(): " + err);
+			console.log("addListener(): " + err);
 		}
 		finally {}
 	}

@@ -1,0 +1,26 @@
+<script id="t-drawer-columns" type="text/template">
+
+<p style="text-align:left; margin-bottom:9px;">
+	{{data:itemTitle}}
+	{{data:trayName}}
+	<br/>
+	{{data:text}}
+	<br/>
+	<span><small>(Updated: {{data:updatedDate}})</small></span>
+</p>
+<ul class="icons" style="text-align:left;">
+	<li>
+		{{data:viewButton}}
+	</li>
+	<li>
+		{{data:editButton}}
+	</li>
+	<li>
+		{{data:deleteButton}}
+	</li>
+	<li>
+		<a href="#"><span style="color: #000;"><strong>S</strong>hare</span></a>
+	</li>
+</ul>
+
+</script>

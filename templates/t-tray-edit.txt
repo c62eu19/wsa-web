@@ -1,0 +1,32 @@
+<script id="t-tray-edit" type="text/template">
+
+<h5 style="color: #0000ff;">Change the Name of Your Tray</h5>
+
+<div id="error" style="margin-bottom: 9px; color: #ff0000"></div>
+
+<p style="font-size:18px;">
+	<a href="#" onclick="{{onclick:getTrayList}}">Return to Tray List</a>
+</p>
+
+<form>
+	<div class="row">
+		<div class="two columns">
+			<label for="name">Tray</label>
+		</div>
+		<div class="ten columns">
+			<input class="u-full-width" type="text" id="name" name="name" value="{{data:trayName}}" {{data:trayName}}" placeholder="Enter a Tray Name here">
+		</div>
+	</div>
+	<div class="row">
+		<div class="two columns">
+			&nbsp;
+		</div>
+		<div class="ten columns">
+			<label class="u-full-width">
+				<a href="#" class="button button-primary onclick="{{onclick:editItem}} data-tray-id="{{data:trayId}}" style="font-size:16px;">Save</a>
+			</label>
+		</div>
+	</div>
+</form>
+
+</script>

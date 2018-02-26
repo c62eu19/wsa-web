@@ -1,8 +1,8 @@
 <script id="t-drawer-title-text-view" type="text/template">
 
-<a href="#" onclick='renderViewTextEntry("{{drawerId}}");'>
+<a href="#" onclick="{{onclick:renderViewTextItem}}" data-drawer-id="{{data:drawerId}}">
 	<span style="font-size:20px; color:blue;">
-		{{title}}
+		{{data:title}}
 	</span>
 </a>
 

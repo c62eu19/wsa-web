@@ -1,23 +1,11 @@
 <script id="t-drawer-rows" type="text/template">
 
 <div class="row">
-	<div class="twelve columns">
-		<p style="text-align:left; margin-bottom:9px;">
-			{{itemTitle}}
-			{{trayName}}
-			<br/>
-			{{text}}
-			<br/>
-			<span><small>(Updated: {{updatedDate}})</small></span>
-		</p>
-		<ul class="icons" style="text-align:left;">
-			<li>{{viewButton}}</li>
-			<li>{{editButton}}</li>
-			<li>{{deleteButton}}</li>
-			<li>
-				<a href="#"><span style="color: #000;"><strong>S</strong>hare</span></a>
-			</li>
-		</ul>
+	<div class="six columns">
+		{{data:columnLeft}}
+	</div>
+	<div class="six columns">
+		{{data:columnRight}}
 	</div>
 </div>
 

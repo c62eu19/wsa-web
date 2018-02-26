@@ -12,8 +12,23 @@ var entry = {
 		try {
 			if(isEmpty(dataObj.collectionName)) {
 
-				var data = {};
+				var data = {
+					"{{onclick:renderSignUp}}" : "entry.renderSignUp();",
+					"{{onclick:signIn}}" : "entry.signIn();"
+				};
+
 				component.render("t-sign-in", "template-content", data);
+
+				dataObj.origTemplateContent = document.getElementById("template-content").innerHTML;
+
+				document.body.addEventListener("keydown", function(event) {
+					if(event.keyCode === 13) {
+						var element = document.getElementById("e-sign-in");
+						if(element != null) {
+							entry.signIn();
+						}
+					}
+				});
 			}
 
 			menu.reset();
@@ -107,7 +122,10 @@ var entry = {
 	renderSignInError: function() {
 
 		try {
-			var data = {};
+			var data = {
+				"{{onclick:renderSignIn}}" : "entry.renderSignIn();"
+			};
+
 			component.render("t-sign-in-error", "template-content", data);
 
 			menu.reset();
@@ -137,12 +155,19 @@ var entry = {
 		try {
 			dataObj = {};
 
-			var data = {};
+			var data = {
+				"{{onclick:renderSignIn}}" : "entry.renderSignin();",
+				"{{onclick:signUp}}" : "entry.signUp();"
+			};
+
 			component.render("t-sign-up", "template-content", data);
 
-			document.body.addEventListener("keydown", function(e) {
-				if (e.keyCode === 13) {
-					entry.postSignUp();
+			document.body.addEventListener("keydown", function(event) {
+				if(event.keyCode === 13) {
+					var element = document.getElementById("e-sign-up");
+					if(element != null) {
+						entry.signUp();
+					}
 				}
 			});
 
@@ -262,7 +287,8 @@ var entry = {
 
 		try {
 			var data = {
-				"{{errorMsg}}": errorMsg
+				"{{value:errorMsg}}": errorMsg,
+				"{{onclick:renderSignIn}}" : "entry.renderSignin();"
 			};
 
 			component.render("t-signup-error", "template-content", data);
@@ -284,7 +310,7 @@ var entry = {
 			dataObj.CollectionName = "";
 
 			var data = {};
-			component.render("t-sign-in", "template-content", data);
+			entry.renderSignIn();
 
 			menu.reset();
 		}
@@ -315,25 +341,19 @@ var menu = {
 			document.getElementById('id-hamburger').style.display = 'none';
 			document.getElementById('id-cross').style.display = '';
 
-			var tm = "";
-			var tmHtml = "";
+			var menuElement = document.getElementById("command-menu");
 
-			dataObj.origTemplateContent = document.getElementById('template-content').innerHTML;
+			if(menuElement == null) {
 
-			if(isEmpty(dataObj.collectionName)) {
-				var signedOutData = {};
-				component.render("t-menu-signed-out", "template-content", signedOutData);
+				if(isEmpty(dataObj.collectionName)) {
+					menu.renderMenuSignedOut();
+
+				} else {
+					menu.renderMenuSignedIn();
+				}
 
 			} else {
-
-				var trayListSelectTag = tray.createSelectTag("", "add-onchange");
-
-				var signedInData = {
-					"{{favoriteTraTokens}}" : dataObj.favoriteTraTokens,
-					"{{trayListSelectTag}}" : trayListSelectTag
-				};
-
-				component.render("t-menu-signed-in", "template-content", signedInData);
+				document.getElementById('template-content').innerHTML = dataObj.origTemplateContent;
 			}
 		}
 		catch(err) {
@@ -354,7 +374,53 @@ var menu = {
 			console.log("closeHamburger(): " + err);
 		}
 		finally {}
+	},
+
+	renderMenuSignedIn: function() {
+
+		try {
+			var trayListSelectTag = tray.createSelectTag("", "add-onchange");
+
+			var data = {
+				"{{onclick:renderAddTextItem}}": "drawer.renderAddTextItem();",
+				"{{onclick:renderAddWebItem}}": "drawer.renderAddWebItem();",
+				"{{onclick:renderAddMediaItem}}": "drawer.renderAddMediaItem();",
+				"{{onclick:getTrayList}}": "tray.getList();",
+				"{{onclick:renderContactUs}}": "general.renderContactUs();",
+				"{{onclick:renderAbout}}": "general.renderAbout();",
+				"{{onclick:signOut}}": "entry.signOut();",
+				"{{favoriteTraTokens}}" : dataObj.favoriteTraTokens,
+				"{{trayListSelectTag}}" : trayListSelectTag
+			};
+
+			component.render("t-menu-signed-in", "template-content", data);
+
+			menu.reset();
+		}
+		catch(err) {
+			console.log("renderMenuSignedIn(): " + err);
+		}
+		finally {}
+	},
+
+	renderMenuSignedOut: function() {
+
+		try {
+			var data = {
+				"{{onclick:renderContactUs}}": "general.renderContactUs();",
+				"{{onclick:renderAbout}}": "general.renderAbout();"
+			};
+
+			component.render("t-menu-signed-out", "template-content", data);
+
+			menu.reset();
+		}
+		catch(err) {
+			console.log("renderMenuSignedOut(): " + err);
+		}
+		finally {}
 	}
+
 };
 
 var general = {
@@ -364,7 +430,10 @@ var general = {
 		try {
 			dataObj.origTemplateContent = document.getElementById('template-content').innerHTML;
 
-			var data = {};
+			var data = {
+				"{{onclick:addContactUs}}" : "general.addContactUs();"
+			};
+
 			component.render("t-contact-us", "template-content", data);
 
 			menu.reset();
@@ -467,7 +536,7 @@ var general = {
 
 var drawer = {
 
-	list: function() {
+	getList: function() {
 
 		try {
 			if(isEmpty(dataObj.collectionName)) {
@@ -499,7 +568,7 @@ var drawer = {
 				};
 
 				xhr.onerror = function () {
-					console.log("list(): An error occurred during the transaction");
+					console.log("getList(): An error occurred during the transaction");
 				};
 
 				var url = "http://localhost:8080/mydrawer/DrawerList/" + dataObj.collectionName;
@@ -509,7 +578,7 @@ var drawer = {
 			}
 		}
 		catch(err) {
-			console.log("list(): " + err);
+			console.log("getList(): " + err);
 		}
 		finally {}
 	},
@@ -521,7 +590,9 @@ var drawer = {
 			var drawerArray = JSON.parse(dataObj.drawerJson);
 
 			var rowHtml = "";
-			var rowData = {};
+			var columnData = {};
+
+			var columnCount = 0;
 
 			for(var i=0; i<drawerArray.length; i++) {
 
@@ -536,17 +607,34 @@ var drawer = {
 				var editButton = drawer.createEditButton(item.drawerId);
 				var deleteButton = drawer.createDeleteButton(item.drawerId);
 
-				rowData = {
-					"{{itemTitle}}" : itemTitle,
-					"{{trayName}}" : item.trayName,
-					"{{text}}" : sanitizedText,
-					"{{updatedDate}}" : item.updatedDate,
-					"{{viewButton}}" : viewButton,
-					"{{editButton}}" : editButton,
-					"{{deleteButton}}" : deleteButton
+				columnData = {
+					"{{data:itemTitle}}" : itemTitle,
+					"{{data:trayName}}" : item.trayName,
+					"{{data:text}}" : sanitizedText,
+					"{{data:url}}" : item.url,
+					"{{data:updatedDate}}" : item.updatedDate,
+					"{{data:viewButton}}" : viewButton,
+					"{{data:editButton}}" : editButton,
+					"{{data:deleteButton}}" : deleteButton
 				};
 
-				rowHtml += component.create("t-drawer-rows", rowData);
+				columnCount++;
+
+				if(columnCount == 1) {
+					var columnLeft = component.create("t-drawer-columns", columnData);
+				}
+
+				if(columnCount == 2) {
+					var columnRight = component.create("t-drawer-columns", columnData);
+					var rowData = {
+						"{{data:columnLeft}}" : columnLeft,
+						"{{data:columnRight}}" : columnRight
+					};
+
+					rowHtml += component.create("t-drawer-rows", rowData);
+					columnCount = 0;
+				}
+
 			}
 
 			if(drawerArray.length <= 0) {
@@ -554,22 +642,33 @@ var drawer = {
 			}
 
 			var tableData = {
+				"{{onclick:getTrayList}}" : "tray.getList();",
 				"{{favoriteTraTokens}}" : dataObj.favoriteTraTokens,
-				"{{totalItems}}" : drawerArray.length,
-				"{{traySelected}}" : dataObj.traySelected,
-				"{{drawerRows}}" : rowHtml
+				"{{data:totalItems}}" : drawerArray.length,
+				"{{data:traySelected}}" : dataObj.traySelected,
+				"{{data:drawerRows}}" : rowHtml
 			};
 
 			component.render("t-drawer", "template-content", tableData);
 
-			document.body.addEventListener("keydown", function(e) {
-				if (e.keyCode === 13) {
-					postSearchDrawerByWildcard();
-				}
-			});
 		}
 		catch(err) {
 			console.log("render(): " + err);
+		}
+		finally {}
+	},
+
+	renderNoResultsFound: function() {
+
+		try {
+			var data = {};
+
+			component.render("t-no-results-found", "template-content", data);
+
+			menu.reset();
+		}
+		catch(err) {
+			console.log("renderNoResultsFound(): " + err);
 		}
 		finally {}
 	},
@@ -613,7 +712,42 @@ var drawer = {
 		return drawerItem;
 	},
 
-	renderAddTextEntry: function() {
+	renderViewTextItem: function(element) {
+
+		try {
+			var drawerId = element.getAttribute("data-drawer-id");
+
+			drawerItem = {};
+			drawerItem = drawer.getItem(drawerId);
+
+			var editButtonComponent = drawer.createEditButton(drawerItem.drawerId);
+			var deleteButtonComponent = drawer.createDeleteButton(drawerItem.drawerId);
+
+			var buttonBarData = {
+				"{{editButton}}" : editButtonComponent,
+				"{{deleteButton}}" : deleteButtonComponent
+			};
+
+			var buttonBarComponent = component.create("t-view-button-bar", buttonBarData);
+
+			var data = {
+				"{{buttonBar}}" : buttonBarComponent,
+				"{{title}}" : drawerItem.title,
+				"{{trayName}}" : drawerItem.trayName,
+				"{{text}}" : drawerItem.text
+			};
+
+			component.render("t-text-view", "template-content", data);
+
+			menu.reset();
+		}
+		catch(err) {
+			console.log("renderViewTextItem(): " + err);
+		}
+		finally {}
+	},
+
+	renderAddTextItem: function() {
 
 		try {
 			var trayListSelectTag = createTraySelectTag("", "N");
@@ -621,7 +755,7 @@ var drawer = {
 			var data = {
 				"{{buttonBar}}": "",
 				"{{trayListSelectTag}}": trayListSelectTag,
-				"{{saveFunction}}": 'postSaveTextEntry();'
+				"{{event-class}}": "e-add-text-item"
 			};
 
 			component.render("t-text-entry", "template-content", data);
@@ -629,12 +763,53 @@ var drawer = {
 			menu.reset();
 		}
 		catch(err) {
-			console.log("renderAddTextEntry(): " + err);
+			console.log("renderAddTextItem(): " + err);
 		}
 		finally {}
 	},
 
-	renderAddWebEntry: function() {
+	renderEditTextItem: function(element) {
+
+		try {
+			var drawerId = element.getAttribute("data-drawer-id");
+
+			drawerItem = {};
+			drawerItem = drawer.getItem(drawerId);
+
+			var viewButtonComponent = drawer.createViewButton(drawerItem.drawerId);
+			var deleteButtonComponent = drawer.createDeleteButton(drawerItem.drawerId);
+
+			var buttonBarData = {
+				"{{viewButton}}" : viewButtonComponent,
+				"{{deleteButton}}" : deleteButtonComponent
+			};
+
+			var buttonBarComponent = component.create("t-edit-button-bar", buttonBarData);
+
+			var trayListSelectTag = createTraySelectTag(drawerItem.trayId, "N");
+
+			var data = {
+				"{{buttonBar}}" : buttonBarComponent,
+				"{{trayListSelectTag}}" : trayListSelectTag,
+				"{{drawerId}}" : drawerId,
+				"{{event-class}}": "e-edit-text-item",
+				"{{drawerId}}": drawerItem
+			};
+
+			component.render("t-text-entry", "template-content", data);
+
+			document.getElementById("title").value = drawerItem.title;
+			document.getElementById("text").value = drawerItem.text;
+
+			menu.reset();
+		}
+		catch(err) {
+			console.log("renderEditTextItem(): " + err);
+		}
+		finally {}
+	},
+
+	renderAddWebItem: function() {
 
 		try {
 			var trayListSelectTag = createTraySelectTag("", "N");
@@ -642,7 +817,7 @@ var drawer = {
 			var data = {
 				"{{buttonBar}}": "",
 				"{{trayListSelectTag}}": trayListSelectTag,
-				"{{saveFunction}}": 'postSaveWebEntry();'
+				"{{event-class}}": "e-add-web-item"
 			};
 
 			component.render("t-web-entry", "template-content", data);
@@ -650,12 +825,111 @@ var drawer = {
 			menu.reset();
 		}
 		catch(err) {
-			console.log("renderAddWebEntry(): " + err);
+			console.log("renderAddWebItem(): " + err);
 		}
 		finally {}
 	},
 
-	renderAddMediaEntry: function() {
+	renderEditWebItem: function(element) {
+
+		try {
+			var drawerId = element.getAttribute("data-drawer-id");
+
+			drawerItem = {};
+			drawerItem = drawer.getItem(drawerId);
+
+			var viewButtonComponent = drawer.createViewButton(drawerItem.drawerId);
+			var deleteButtonComponent = drawer.createDeleteButton(drawerItem.drawerId);
+
+			var buttonBarData = {
+				"{{viewButton}}" : viewButtonComponent,
+				"{{deleteButton}}" : deleteButtonComponent
+			};
+
+			var buttonBarComponent = component.create("t-edit-button-bar", buttonBarData);
+
+			var trayListSelectTag = createTraySelectTag(drawerItem.trayId, "N");
+
+			var data = {
+				"{{buttonBar}}" : buttonBarComponent,
+				"{{trayListSelectTag}}" : trayListSelectTag,
+				"{{drawerId}}" : drawerId,
+				"{{event-class}}": "e-edit-web-item",
+				"{{drawerId}}": drawerId
+			};
+
+			component.render("t-web-entry", "template-content", data);
+
+			var decodeUrl = decodeURIComponent(drawerItem.url);
+
+			document.getElementById("url").value = decodeUrl;
+			document.getElementById("title").value = drawerItem.title;
+			document.getElementById("text").value = drawerItem.text;
+
+			menu.reset();
+		}
+		catch(err) {
+			console.log("renderEditWebItem(): " + err);
+		}
+		finally {}
+	},
+
+	renderViewVideoItem: function(element) {
+
+		try {
+			var drawerId = element.getAttribute("data-drawer-id");
+
+			drawerItem = {};
+			drawerItem = drawer.getItem(drawerId);
+
+			var editButtonComponent = drawer.createEditButton(drawerItem.drawerId);
+			var deleteButtonComponent = drawer.createDeleteButton(drawerItem.drawerId);
+
+			var buttonBarData = {
+				"{{editButton}}" : editButtonComponent,
+				"{{deleteButton}}" : deleteButtonComponent
+			};
+
+			var buttonBarComponent = component.create("t-view-button-bar", buttonBarData);
+
+			var id = "";
+			var embeddedLink = "";
+
+			var decodeUrl = decodeURIComponent(drawerItem.url);
+
+			if(decodeUrl.indexOf("www.youtube.com") > -1) {
+				id = decodeUrl.split("?v=")[1];
+				embeddedlink = "https://www.youtube.com/embed/" + id;
+
+			} else if(decodeUrl.indexOf("www.vimeo.com") > -1) {
+				id = decodeUrl.split("/")[2];
+				embeddedlink="https://player.vimeo.com/video/" + id;
+
+			} else if(decodeUrl.indexOf("www.ted.com") > -1) {
+
+			} else {
+
+			}
+
+			var data = {
+				"{{buttonBar}}" : buttonBarComponent,
+				"{{title}}" : drawerItem.title,
+				"{{traName}}" : drawerItem.traName
+			};
+
+			component.render("t-video-view", "template-content", data);
+
+			document.getElementById("embedded-video").src = embeddedlink;
+
+			menu.reset();
+		}
+		catch(err) {
+			console.log("renderViewVideoItem(): " + err);
+		}
+		finally {}
+	},
+
+	renderAddMediaItem: function() {
 
 		try {
 			var trayListSelectTag = createTraySelectTag("", "N");
@@ -669,7 +943,7 @@ var drawer = {
 			menu.reset();
 		}
 		catch(err) {
-			console.log("renderAddMediaEntry(): " + err);
+			console.log("renderAddMediaItem(): " + err);
 		}
 		finally {}
 	},
@@ -682,19 +956,33 @@ var drawer = {
 			drawerItem = {};
 			drawerItem = drawer.getItem(drawerId);
 
-			var data = {
-				"{{drawerId}}" : drawerId,
-				"{{title}}" : drawerItem.title,
-				"{{url}}" : drawerItem.url
-			};
+			var data = null;
 
 			if(drawerItem.type == "1") {
+				data = {
+					"{{data:drawerId}}" : drawerId,
+					"{{data:title}}" : drawerItem.title,
+					"{{onclick:renderViewTextItem}}" : "drawer.renderViewTextItem(this);"
+				};
+
 				componentHtml = component.create("t-drawer-title-text-view", data);
 
 			} else if(drawerItem.type == "4") {
+				data = {
+					"{{data:drawerId}}" : drawerId,
+					"{{data:title}}" : drawerItem.title,
+					"{{data:url}}" : drawerItem.url
+				};
+
 				componentHtml = component.create("t-drawer-title-article-view", data);
 
 			} else if(drawerItem.type == "5") {
+				data = {
+					"{{data:drawerId}}" : drawerId,
+					"{{data:title}}" : drawerItem.title,
+					"{{onclick:renderViewVideoItem}}" : "drawer.renderViewVideoItem(this);"
+				};
+
 				componentHtml = component.create("t-drawer-title-video-view", data);
 			}
 		}
@@ -714,18 +1002,29 @@ var drawer = {
 			drawerItem = {};
 			drawerItem = drawer.getItem(drawerId);
 
-			var data = {
-				"{{drawerId}}" : drawerId,
-				"{{url}}" : drawerItem.url
-			};
+			var data = null;
 
 			if(drawerItem.type == "1") {
+				data = {
+					"{{onclick:renderViewTextItem}}" : "drawer.renderViewTextItem(this);",
+					"{{data:drawerId}}" : drawerId
+				};
+
 				componentHtml = component.create("t-drawer-button-text-view", data);
 
 			} else if(drawerItem.type == "4") {
+				data = {
+					"{{data:url}}" : drawerItem.url
+				};
+
 				componentHtml = component.create("t-drawer-button-article-view", data);
 
 			} else if(drawerItem.type == "5") {
+				data = {
+					"{{onclick:renderViewVideoItem}}" : "drawer.renderViewVideoItem(this);",
+					"{{data:drawerId}}" : drawerId,
+				};
+
 				componentHtml = component.create("t-drawer-button-video-view", data);
 			}
 		}
@@ -745,14 +1044,22 @@ var drawer = {
 			drawerItem = {};
 			drawerItem = drawer.getItem(drawerId);
 
-			var data = {
-				"{{drawerId}}" : drawerId
-			};
+			var data = null;
 
 			if(drawerItem.type == "1") {
+				var data = {
+					"{{onclick:renderEditTextItem}}" : "drawer.renderEditTextItem(this);",
+					"{{data:drawerId}}" : drawerId
+				};
+
 				componentHtml = component.create("t-drawer-button-text-edit", data);
 
 			} else if(drawerItem.type == "4" || drawerItem.type == "5") {
+				var data = {
+					"{{onclick:renderEditWebItem}}" : "drawer.renderEditWebItem(this);",
+					"{{data:drawerId}}" : drawerId
+				};
+
 				componentHtml = component.create("t-drawer-button-web-edit", data);
 			}
 		}
@@ -770,7 +1077,8 @@ var drawer = {
 
 		try {
 			var data = {
-				"{{drawerId}}" : drawerId
+				"{{onclick:deleteItem}}" : "drawer.deleteItem(this);",
+				"{{data:drawerId}}" : drawerId
 			};
 
 			componentHtml = component.create("t-drawer-button-delete", data);
@@ -781,7 +1089,449 @@ var drawer = {
 		finally {}
 
 		return componentHtml;
+	},
+
+	addTextItem: function(){
+
+		try {
+			var trayId = document.forms[0].trayId.value;
+			var title = document.forms[0].title.value;
+			var text = document.forms[0].text.value;
+
+			if(isEmpty(trayId)) {
+				document.getElementById('error').innerHTML = 'Please select a Tray.';
+				return false;
+			}
+
+			if(isEmpty(title)) {
+				document.getElementById('error').innerHTML = 'Please enter a Title.';
+				return false;
+			}
+
+			if(isEmpty(text)) {
+				document.getElementById('error').innerHTML = 'Please enter some Text to describe your entry.';
+				return false;
+			}
+
+			var cleanedTitle = replaceSpecialChars(title);
+			var cleanedText = replaceSpecialChars(text);
+
+			var inputFields = {
+				"collectionName":dataObj.collectionName, 
+				"trayId":trayId, 
+				"type":"1", 
+				"url":".", 
+				"title":cleanedTitle, 
+				"text":cleanedText};
+
+			var inputJSON = {};
+			inputJSON.inputArgs = inputFields;
+
+			var stringJSON = JSON.stringify(inputJSON);
+
+			var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+
+			xhr.onreadystatechange = function () {
+
+				if (xhr.readyState !== 4) {
+					return;
+				}
+
+				if (xhr.status === 200) {
+					dataObj.drawerJson = xhr.responseText;
+
+					drawer.render();
+
+				} else {
+					console.log('Error: ' + xhr.status);
+				}
+			};
+
+			xhr.onerror = function () {
+				console.log("addTextItem(): An error occurred during the transaction");
+			};
+
+			var url = "http://localhost:8080/mydrawer/DrawerEntry/";
+
+			xhr.open("POST", url, true);
+			xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xhr.send("inputJSON=" + stringJSON);
+		}
+		catch(err) {
+			console.log("addTextItem(): " + err);
+		}
+		finally {}
+	},
+
+	editTextItem: function(drawerId){
+
+		try {
+			var trayId = document.forms[0].traId.value;
+			var title = document.forms[0].title.value;
+			var text = document.forms[0].text.value;
+
+			if(isEmpty(trayId)) {
+				document.getElementById('error').innerHTML = 'Please select a Tray.';
+				return false;
+			}
+
+			if(isEmpty(title)) {
+				document.getElementById('error').innerHTML = 'Please enter a Title.';
+				return false;
+			}
+
+			if(isEmpty(text)) {
+				document.getElementById('error').innerHTML = 'Please enter some Text to describe your entry.';
+				return false;
+			}
+
+			var cleanedTitle = replaceSpecialChars(title);
+			var cleanedText = replaceSpecialChars(text);
+
+			var inputFields = {
+				"collectionName":dataObj.collectionName, 
+				"drawerId":drawerId, 
+				"trayId":trayId, 
+				"url":".", 
+				"title":cleanedTitle, 
+				"text":cleanedText};
+
+			var inputJSON = {};
+			inputJSON.inputArgs = inputFields;
+
+			var stringJSON = JSON.stringify(inputJSON);
+
+			var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+
+			xhr.onreadystatechange = function () {
+
+				if (xhr.readyState !== 4) {
+					return;
+				}
+
+				if (xhr.status === 200) {
+					dataObj.drawerJson = xhr.responseText;
+
+					drawer.render();
+
+				} else {
+					console.log('Error: ' + xhr.status);
+				}
+			};
+
+			xhr.onerror = function () {
+				console.log("editTextItem(): An error occurred during the transaction");
+			};
+
+			var url = "http://localhost:8080/mydrawer/DrawerEntry/";
+
+			xhr.open("PUT", url, true);
+			xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xhr.send(stringJSON);
+		}
+		catch(err) {
+			console.log("editTextItem: " + err);
+		}
+		finally {}
+	},
+
+	addWebItem: function(){
+
+		try {
+			var pastedUrl = document.forms[0].url.value;
+			var trayId = document.forms[0].trayId.value;
+			var title = document.forms[0].title.value;
+			var text = document.forms[0].text.value;
+
+			if(isEmpty(pastedUrl)) {
+				document.getElementById('error').innerHTML = 'Please enter a URL.';
+				return false;
+			}
+
+			if(isEmpty(trayId)) {
+				document.getElementById('error').innerHTML = 'Please select a Tray.';
+				return false;
+			}
+
+			if(isEmpty(title)) {
+				document.getElementById('error').innerHTML = 'Please enter a Title.';
+				return false;
+			}
+
+			if(isEmpty(text)) {
+				document.getElementById('error').innerHTML = 'Please enter some Text to describe your entry.';
+				return false;
+			}
+
+			var cleanedTitle = replaceSpecialChars(title);
+			var cleanedText = replaceSpecialChars(text);
+
+			var encodeUrl = encodeURIComponent(pastedUrl);
+
+			var type = "4";
+
+			if(pastedUrl.indexOf("www.youtube.com") > -1) {
+				type = "5";
+			} else if(pastedUrl.indexOf("www.vimeo.com") > -1) {
+				type = "5";
+			} else if(pastedUrl.indexOf("www.ted.com") > -1) {
+				type = "5";
+			} else {
+				type = "4";
+			}
+
+			var inputFields = {
+				"collectionName":dataObj.collectionName, 
+				"trayId":trayId, 
+				"type":type, 
+				"url":encodeUrl, 
+				"title":cleanedTitle, 
+				"text":cleanedText};
+
+			var inputJSON = {};
+			inputJSON.inputArgs = inputFields;
+
+			var stringJSON = JSON.stringify(inputJSON);
+
+			var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+
+			xhr.onreadystatechange = function () {
+
+				if (xhr.readyState !== 4) {
+					return;
+				}
+
+				if (xhr.status === 200) {
+					dataObj.drawerJson = xhr.responseText;
+
+					drawer.render();
+
+				} else {
+					console.log('Error: ' + xhr.status);
+				}
+			};
+
+			xhr.onerror = function () {
+				console.log("addWebItem(): An error occurred during the transaction");
+			};
+
+			var url = "http://localhost:8080/mydrawer/DrawerEntry/";
+
+			xhr.open("POST", url, true);
+			xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xhr.send("inputJSON=" + stringJSON);
+		}
+		catch(err) {
+			console.log("addWebItem: " + err);
+		}
+		finally {}
+	},
+
+	editWebItem: function(drawerId) {
+
+		try {
+			var pastedUrl = document.forms[0].url.value;
+			var trayId = document.forms[0].trayId.value;
+			var title = document.forms[0].title.value;
+			var text = document.forms[0].text.value;
+
+			if(isEmpty(pastedUrl)) {
+				document.getElementById('error').innerHTML = 'Please enter a URL.';
+				return false;
+			}
+
+			if(isEmpty(trayId)) {
+				document.getElementById('error').innerHTML = 'Please select a Tray.';
+				return false;
+			}
+
+			if(isEmpty(title)) {
+				document.getElementById('error').innerHTML = 'Please enter a Title.';
+				return false;
+			}
+
+			if(isEmpty(text)) {
+				document.getElementById('error').innerHTML = 'Please enter some Text to describe your entry.';
+				return false;
+			}
+
+			var cleanedTitle = replaceSpecialChars(title);
+			var cleanedText = replaceSpecialChars(text);
+
+			var encodeUrl = encodeURIComponent(pastedUrl);
+
+			var inputFields = {
+				"collectionName":dataObj.collectionName, 
+				"drawerId":drawerId, 
+				"trayId":trayId, 
+				"url":encodeUrl, 
+				"title":cleanedTitle, 
+				"text":cleanedText};
+
+			var inputJSON = {};
+			inputJSON.inputArgs = inputFields;
+
+			var stringJSON = JSON.stringify(inputJSON);
+
+			var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+
+			xhr.onreadystatechange = function () {
+
+				if (xhr.readyState !== 4) {
+					return;
+				}
+
+				if (xhr.status === 200) {
+					dataObj.drawerJson = xhr.responseText;
+
+					drawer.render();
+
+				} else {
+					console.log('Error: ' + xhr.status);
+				}
+			};
+
+			xhr.onerror = function () {
+				console.log("editWebItem(): An error occurred during the transaction");
+			};
+
+			var url = "http://localhost:8080/mydrawer/DrawerEntry/";
+
+			xhr.open("PUT", url, true);
+			xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xhr.send(stringJSON);
+		}
+		catch(err) {
+			console.log("editWebItem(): " + err);
+		}
+		finally {}
+	},
+
+	addMediaItem() {
+
+		try {
+			var title = document.getElementById("title").value;
+
+			if(isEmpty(title)) {
+				document.getElementById('error').innerHTML = 'Please enter a valid Title for your post.';
+				return false;
+			}
+
+			var cleanedTitle = replaceSpecialChars(title);
+
+			/* get selected file element */
+			var oFile = document.getElementById("inputFile").files[0];
+
+			/* filter for image files */
+
+	/*		var rFilter = /^(image\/bmp|image\/gif|image\/jpeg|image\/png|image\/tiff)$/i;
+
+			if (!rFilter.test(oFile.type)) {
+				document.getElementById('error').innerHTML = 'The file is not an image file type (jpeg, gif, png, tiff, bmp).';
+				return;
+			}
+	*/
+			/* No File was selected */
+			if (oFile.size <= 0) {
+				document.getElementById('error').innerHTML = 'You have not selected a file to upload.';
+				return;
+			}
+
+			/* The file type will tell the server what to convert as */
+			var fileType = oFile.type;
+
+	alert("File Type: " + fileType);
+	alert("File Size: " + oFile.size);
+
+			/* prepare HTML5 FileReader */
+			var oReader = new FileReader();
+
+			oReader.onload = function(e){
+
+				/* Capture the base64 to send to the server. */
+				var base64Code = e.target.result;
+
+				/* encode the base64 so that it transfers properly to the server otherwise we'll not get the image */
+				var base64 = encodeURIComponent(base64Code);
+
+				var inputFields = {
+					"title":cleanedTitle, 
+					"fileType":fileType, 
+					"base64Code":base64};
+
+				var inputJSON = {};
+				inputJSON.inputArgs = inputFields;
+
+				var stringJSON = JSON.stringify(inputJSON);
+
+				/* Post the file and other fields to the server */
+	/*			postUploadMediaFile(stringJSON);  */
+			};
+
+			/* read selected file as DataURL */
+			oReader.readAsDataURL(oFile);
+		}
+		catch(err) {
+			document.getElementById('error').innerHTML = 'We are sorry but we cannot post your file at this time.  Please try again in a little bit.';
+		}
+		finally {
+			document.getElementById("preview").style.display = '';
+		}
+	},
+
+	deleteItem: function(drawerId){
+
+		try {
+
+			var inputFields = {
+				"collectionName":dataObj.collectionName, 
+				"drawerId":drawerId
+			};
+
+			var inputJSON = {};
+			inputJSON.inputArgs = inputFields;
+
+			var stringJSON = JSON.stringify(inputJSON);
+
+			var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+
+			xhr.onreadystatechange = function () {
+
+				if (xhr.readyState !== 4) {
+					return;
+				}
+
+				if (xhr.status === 200) {
+					dataObj.drawerJson = xhr.responseText;
+
+					drawer.render();
+
+				} else {
+					console.log('Error: ' + xhr.status);
+				}
+			};
+
+			xhr.onerror = function () {
+				console.log("deleteItem(): An error occurred during the transaction");
+			};
+
+			var url = "http://localhost:8080/mydrawer/DrawerEntry/";
+
+			xhr.open("DELETE", url, true);
+			xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xhr.send(stringJSON);
+		}
+		catch(err) {
+			console.log("deleteItem(): " + err);
+		}
+		finally {}
 	}
+
 
 };
 
@@ -799,10 +1549,13 @@ function init() {
 		dataObj.traySelected = "";
 		dataObj.favoriteTraTokens = "";
 
-		/*
-		 * Create all event listeners for the app
-		 */
-		listener.create();
+		var data = {
+			"{{onclick:getDrawerList}}" : "drawer.getList();",
+			"{{onclick:openHamburger}}" : "menu.openHamburger();",
+			"{{onclick:closeHamburger}}" : "menu.closeHamburger();"
+		};
+
+		component.render("t-header", "template-header", data);
 
 		/*
 		 * Render the sign in template
@@ -942,291 +1695,6 @@ function postSearchDrawerByTraId(traTokens) {
 	finally {}
 }
 
-function renderNoResultsFound() {
-
-	try {
-		var data = {};
-
-		component.render("t-no-results-found", "template-content", data);
-
-		menu.reset();
-	}
-	catch(err) {
-		console.log("renderNoResultsFound(): " + err);
-	}
-	finally {}
-}
-
-function renderViewTextEntry(drawerId) {
-
-	try {
-		drawerItem = {};
-		drawerItem = drawer.getItem(drawerId);
-
-		var editButtonComponent = drawer.createEditButton(drawerItem.drawerId);
-		var deleteButtonComponent = drawer.createDeleteButton(drawerItem.drawerId);
-
-		var buttonBarData = {
-			"{{editButton}}" : editButtonComponent,
-			"{{deleteButton}}" : deleteButtonComponent
-		};
-
-		var buttonBarComponent = component.create("t-view-button-bar", buttonBarData);
-
-		var data = {
-			"{{buttonBar}}" : buttonBarComponent,
-			"{{title}}" : drawerItem.title,
-			"{{trayName}}" : drawerItem.trayName,
-			"{{text}}" : drawerItem.text
-		};
-
-		component.render("t-text-view", "template-content", data);
-
-		menu.reset();
-	}
-	catch(err) {
-		console.log("renderViewTextEntry(): " + err);
-	}
-	finally {}
-}
-
-function renderViewVideoEntry(drawerId) {
-
-	try {
-		drawerItem = {};
-		drawerItem = drawer.getItem(drawerId);
-
-		var editButtonComponent = drawer.createEditButton(drawerItem.drawerId);
-		var deleteButtonComponent = drawer.createDeleteButton(drawerItem.drawerId);
-
-		var buttonBarData = {
-			"{{editButton}}" : editButtonComponent,
-			"{{deleteButton}}" : deleteButtonComponent
-		};
-
-		var buttonBarComponent = component.create("t-view-button-bar", buttonBarData);
-
-		var id = "";
-		var embeddedLink = "";
-
-		var decodeUrl = decodeURIComponent(drawerItem.url);
-
-		if(decodeUrl.indexOf("www.youtube.com") > -1) {
-			id = decodeUrl.split("?v=")[1];
-			embeddedlink = "https://www.youtube.com/embed/" + id;
-
-		} else if(decodeUrl.indexOf("www.vimeo.com") > -1) {
-			id = decodeUrl.split("/")[2];
-			embeddedlink="https://player.vimeo.com/video/" + id;
-
-		} else if(decodeUrl.indexOf("www.ted.com") > -1) {
-
-		} else {
-
-		}
-
-		var data = {
-			"{{buttonBar}}" : buttonBarComponent,
-			"{{title}}" : drawerItem.title,
-			"{{traName}}" : drawerItem.traName
-		};
-
-		component.render("t-video-view", "template-content", data);
-
-		document.getElementById("embedded-video").src = embeddedlink;
-
-		menu.reset();
-	}
-	catch(err) {
-		console.log("renderViewVideoEntry(): " + err);
-	}
-	finally {}
-}
-
-function postSaveTextEntry(){
-
-	try {
-		var trayId = document.forms[0].trayId.value;
-		var title = document.forms[0].title.value;
-		var text = document.forms[0].text.value;
-
-		if(isEmpty(trayId)) {
-			document.getElementById('error').innerHTML = 'Please select a Tray.';
-			return false;
-		}
-
-		if(isEmpty(title)) {
-			document.getElementById('error').innerHTML = 'Please enter a Title.';
-			return false;
-		}
-
-		if(isEmpty(text)) {
-			document.getElementById('error').innerHTML = 'Please enter some Text to describe your entry.';
-			return false;
-		}
-
-		var cleanedTitle = replaceSpecialChars(title);
-		var cleanedText = replaceSpecialChars(text);
-
-		var inputFields = {
-			"collectionName":dataObj.collectionName, 
-			"trayId":trayId, 
-			"type":"1", 
-			"url":".", 
-			"title":cleanedTitle, 
-			"text":cleanedText};
-
-		var inputJSON = {};
-		inputJSON.inputArgs = inputFields;
-
-		var stringJSON = JSON.stringify(inputJSON);
-
-		var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-
-		xhr.onreadystatechange = function () {
-
-			if (xhr.readyState !== 4) {
-				return;
-			}
-
-			if (xhr.status === 200) {
-				dataObj.drawerJson = xhr.responseText;
-
-				drawer.render();
-
-			} else {
-				console.log('Error: ' + xhr.status);
-			}
-		};
-
-		xhr.onerror = function () {
-			console.log("postSaveTextEntry(): An error occurred during the transaction");
-		};
-
-		var url = "http://localhost:8080/mydrawer/DrawerEntry/";
-
-		xhr.open("POST", url, true);
-		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		xhr.send("inputJSON=" + stringJSON);
-	}
-	catch(err) {
-		console.log("postSaveTextEntry(): " + err);
-	}
-	finally {}
-}
-
-function renderEditTextEntry(drawerId) {
-
-	try {
-		drawerItem = {};
-		drawerItem = drawer.getItem(drawerId);
-
-		var viewButtonComponent = drawer.createViewButton(drawerItem.drawerId);
-		var deleteButtonComponent = drawer.createDeleteButton(drawerItem.drawerId);
-
-		var buttonBarData = {
-			"{{viewButton}}" : viewButtonComponent,
-			"{{deleteButton}}" : deleteButtonComponent
-		};
-
-		var buttonBarComponent = component.create("t-edit-button-bar", buttonBarData);
-
-		var trayListSelectTag = createTraySelectTag(drawerItem.trayId, "N");
-
-		var data = {
-			"{{buttonBar}}" : buttonBarComponent,
-			"{{trayListSelectTag}}" : trayListSelectTag,
-			"{{drawerId}}" : drawerId,
-			"{{saveFunction}}" : 'putSaveTextEntry("' + drawerId + '");'
-		};
-
-		component.render("t-text-entry", "template-content", data);
-
-		document.getElementById("title").value = drawerItem.title;
-		document.getElementById("text").value = drawerItem.text;
-
-		menu.reset();
-	}
-	catch(err) {
-		console.log("renderEditTextEntry(): " + err);
-	}
-	finally {}
-}
-
-function putSaveTextEntry(drawerId){
-
-	try {
-		var trayId = document.forms[0].traId.value;
-		var title = document.forms[0].title.value;
-		var text = document.forms[0].text.value;
-
-		if(isEmpty(trayId)) {
-			document.getElementById('error').innerHTML = 'Please select a Tray.';
-			return false;
-		}
-
-		if(isEmpty(title)) {
-			document.getElementById('error').innerHTML = 'Please enter a Title.';
-			return false;
-		}
-
-		if(isEmpty(text)) {
-			document.getElementById('error').innerHTML = 'Please enter some Text to describe your entry.';
-			return false;
-		}
-
-		var cleanedTitle = replaceSpecialChars(title);
-		var cleanedText = replaceSpecialChars(text);
-
-		var inputFields = {
-			"collectionName":dataObj.collectionName, 
-			"drawerId":drawerId, 
-			"trayId":trayId, 
-			"url":".", 
-			"title":cleanedTitle, 
-			"text":cleanedText};
-
-		var inputJSON = {};
-		inputJSON.inputArgs = inputFields;
-
-		var stringJSON = JSON.stringify(inputJSON);
-
-		var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-
-		xhr.onreadystatechange = function () {
-
-			if (xhr.readyState !== 4) {
-				return;
-			}
-
-			if (xhr.status === 200) {
-				dataObj.drawerJson = xhr.responseText;
-
-				drawer.render();
-
-			} else {
-				console.log('Error: ' + xhr.status);
-			}
-		};
-
-		xhr.onerror = function () {
-			console.log("putSaveTextEntry(): An error occurred during the transaction");
-		};
-
-		var url = "http://localhost:8080/mydrawer/DrawerEntry/";
-
-		xhr.open("PUT", url, true);
-		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		xhr.send(stringJSON);
-	}
-	catch(err) {
-		console.log("putSaveTextEntry(): " + err);
-	}
-	finally {}
-}
-
 function postPasteUrl(e) {
 
 	try {
@@ -1323,220 +1791,6 @@ function getUrlParts(url) {
 	finally {}
 }
 
-function postSaveWebEntry(){
-
-	try {
-		var pastedUrl = document.forms[0].url.value;
-		var trayId = document.forms[0].trayId.value;
-		var title = document.forms[0].title.value;
-		var text = document.forms[0].text.value;
-
-		if(isEmpty(pastedUrl)) {
-			document.getElementById('error').innerHTML = 'Please enter a URL.';
-			return false;
-		}
-
-		if(isEmpty(trayId)) {
-			document.getElementById('error').innerHTML = 'Please select a Tray.';
-			return false;
-		}
-
-		if(isEmpty(title)) {
-			document.getElementById('error').innerHTML = 'Please enter a Title.';
-			return false;
-		}
-
-		if(isEmpty(text)) {
-			document.getElementById('error').innerHTML = 'Please enter some Text to describe your entry.';
-			return false;
-		}
-
-		var cleanedTitle = replaceSpecialChars(title);
-		var cleanedText = replaceSpecialChars(text);
-
-		var encodeUrl = encodeURIComponent(pastedUrl);
-
-		var type = "4";
-
-		if(pastedUrl.indexOf("www.youtube.com") > -1) {
-			type = "5";
-		} else if(pastedUrl.indexOf("www.vimeo.com") > -1) {
-			type = "5";
-		} else if(pastedUrl.indexOf("www.ted.com") > -1) {
-			type = "5";
-		} else {
-			type = "4";
-		}
-
-		var inputFields = {
-			"collectionName":dataObj.collectionName, 
-			"trayId":trayId, 
-			"type":type, 
-			"url":encodeUrl, 
-			"title":cleanedTitle, 
-			"text":cleanedText};
-
-		var inputJSON = {};
-		inputJSON.inputArgs = inputFields;
-
-		var stringJSON = JSON.stringify(inputJSON);
-
-		var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-
-		xhr.onreadystatechange = function () {
-
-			if (xhr.readyState !== 4) {
-				return;
-			}
-
-			if (xhr.status === 200) {
-				dataObj.drawerJson = xhr.responseText;
-
-				drawer.render();
-
-			} else {
-				console.log('Error: ' + xhr.status);
-			}
-		};
-
-		xhr.onerror = function () {
-			console.log("postSaveWebEntry(): An error occurred during the transaction");
-		};
-
-		var url = "http://localhost:8080/mydrawer/DrawerEntry/";
-
-		xhr.open("POST", url, true);
-		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		xhr.send("inputJSON=" + stringJSON);
-	}
-	catch(err) {
-		console.log("postSaveWebEntry(): " + err);
-	}
-	finally {}
-}
-
-function renderEditWebEntry(drawerId) {
-
-	try {
-		drawerItem = {};
-		drawerItem = drawer.getItem(drawerId);
-
-		var viewButtonComponent = drawer.createViewButton(drawerItem.drawerId);
-		var deleteButtonComponent = drawer.createDeleteButton(drawerItem.drawerId);
-
-		var buttonBarData = {
-			"{{viewButton}}" : viewButtonComponent,
-			"{{deleteButton}}" : deleteButtonComponent
-		};
-
-		var buttonBarComponent = component.create("t-edit-button-bar", buttonBarData);
-
-		var trayListSelectTag = createTraySelectTag(drawerItem.trayId, "N");
-
-		var data = {
-			"{{buttonBar}}" : buttonBarComponent,
-			"{{trayListSelectTag}}" : trayListSelectTag,
-			"{{drawerId}}" : drawerId,
-			"{{saveFunction}}" : 'putSaveWebEntry("' + drawerId + '");'
-		};
-
-		component.render("t-web-entry", "template-content", data);
-
-		var decodeUrl = decodeURIComponent(drawerItem.url);
-
-		document.getElementById("url").value = decodeUrl;
-		document.getElementById("title").value = drawerItem.title;
-		document.getElementById("text").value = drawerItem.text;
-
-		menu.reset();
-	}
-	catch(err) {
-		console.log("renderEditWebEntry(): " + err);
-	}
-	finally {}
-}
-
-function putSaveWebEntry(drawerId) {
-
-	try {
-		var pastedUrl = document.forms[0].url.value;
-		var trayId = document.forms[0].trayId.value;
-		var title = document.forms[0].title.value;
-		var text = document.forms[0].text.value;
-
-		if(isEmpty(pastedUrl)) {
-			document.getElementById('error').innerHTML = 'Please enter a URL.';
-			return false;
-		}
-
-		if(isEmpty(trayId)) {
-			document.getElementById('error').innerHTML = 'Please select a Tray.';
-			return false;
-		}
-
-		if(isEmpty(title)) {
-			document.getElementById('error').innerHTML = 'Please enter a Title.';
-			return false;
-		}
-
-		if(isEmpty(text)) {
-			document.getElementById('error').innerHTML = 'Please enter some Text to describe your entry.';
-			return false;
-		}
-
-		var cleanedTitle = replaceSpecialChars(title);
-		var cleanedText = replaceSpecialChars(text);
-
-		var encodeUrl = encodeURIComponent(pastedUrl);
-
-		var inputFields = {
-			"collectionName":dataObj.collectionName, 
-			"drawerId":drawerId, 
-			"trayId":trayId, 
-			"url":encodeUrl, 
-			"title":cleanedTitle, 
-			"text":cleanedText};
-
-		var inputJSON = {};
-		inputJSON.inputArgs = inputFields;
-
-		var stringJSON = JSON.stringify(inputJSON);
-
-		var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-
-		xhr.onreadystatechange = function () {
-
-			if (xhr.readyState !== 4) {
-				return;
-			}
-
-			if (xhr.status === 200) {
-				dataObj.drawerJson = xhr.responseText;
-
-				drawer.render();
-
-			} else {
-				console.log('Error: ' + xhr.status);
-			}
-		};
-
-		xhr.onerror = function () {
-			console.log("putSaveWebEntry(): An error occurred during the transaction");
-		};
-
-		var url = "http://localhost:8080/mydrawer/DrawerEntry/";
-
-		xhr.open("PUT", url, true);
-		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		xhr.send(stringJSON);
-	}
-	catch(err) {
-		console.log("putSaveWebEntry(): " + err);
-	}
-	finally {}
-}
 
 function postFetchMediaFile() {
 
@@ -1586,78 +1840,6 @@ function postFetchMediaFile() {
 	finally {}
 }
 
-function postSaveMediaEntry() {
-
-	try {
-		var title = document.getElementById("title").value;
-
-		if(isEmpty(title)) {
-			document.getElementById('error').innerHTML = 'Please enter a valid Title for your post.';
-			return false;
-		}
-
-		var cleanedTitle = replaceSpecialChars(title);
-
-		/* get selected file element */
-		var oFile = document.getElementById("inputFile").files[0];
-
-		/* filter for image files */
-
-/*		var rFilter = /^(image\/bmp|image\/gif|image\/jpeg|image\/png|image\/tiff)$/i;
-
-		if (!rFilter.test(oFile.type)) {
-			document.getElementById('error').innerHTML = 'The file is not an image file type (jpeg, gif, png, tiff, bmp).';
-			return;
-		}
-*/
-		/* No File was selected */
-		if (oFile.size <= 0) {
-			document.getElementById('error').innerHTML = 'You have not selected a file to upload.';
-			return;
-		}
-
-		/* The file type will tell the server what to convert as */
-		var fileType = oFile.type;
-
-alert("File Type: " + fileType);
-alert("File Size: " + oFile.size);
-
-		/* prepare HTML5 FileReader */
-		var oReader = new FileReader();
-
-		oReader.onload = function(e){
-
-			/* Capture the base64 to send to the server. */
-			var base64Code = e.target.result;
-
-			/* encode the base64 so that it transfers properly to the server otherwise we'll not get the image */
-			var base64 = encodeURIComponent(base64Code);
-
-			var inputFields = {
-				"title":cleanedTitle, 
-				"fileType":fileType, 
-				"base64Code":base64};
-
-			var inputJSON = {};
-			inputJSON.inputArgs = inputFields;
-
-			var stringJSON = JSON.stringify(inputJSON);
-
-			/* Post the file and other fields to the server */
-/*			postUploadMediaFile(stringJSON);  */
-		};
-
-		/* read selected file as DataURL */
-		oReader.readAsDataURL(oFile);
-	}
-	catch(err) {
-		document.getElementById('error').innerHTML = 'We are sorry but we cannot post your file at this time.  Please try again in a little bit.';
-	}
-	finally {
-		document.getElementById("preview").style.display = '';
-	}
-}
-
 function postUploadMediaFile(stringJSON) {
 
 	try {
@@ -1700,55 +1882,6 @@ function postUploadMediaFile(stringJSON) {
 	finally {}
 }
 
-function deleteDrawerItem(drawerId){
-
-	try {
-
-		var inputFields = {
-			"collectionName":dataObj.collectionName, 
-			"drawerId":drawerId
-		};
-
-		var inputJSON = {};
-		inputJSON.inputArgs = inputFields;
-
-		var stringJSON = JSON.stringify(inputJSON);
-
-		var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-
-		xhr.onreadystatechange = function () {
-
-			if (xhr.readyState !== 4) {
-				return;
-			}
-
-			if (xhr.status === 200) {
-				dataObj.drawerJson = xhr.responseText;
-
-				drawer.render();
-
-			} else {
-				console.log('Error: ' + xhr.status);
-			}
-		};
-
-		xhr.onerror = function () {
-			console.log("deleteDrawerItem(): An error occurred during the transaction");
-		};
-
-		var url = "http://localhost:8080/mydrawer/DrawerEntry/";
-
-		xhr.open("DELETE", url, true);
-		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		xhr.send(stringJSON);
-	}
-	catch(err) {
-		console.log("deleteDrawerItem(): " + err);
-	}
-	finally {}
-}
-
 var tray = {
 
 	createSelectTag: function(trayId, includeChangeFunctionFlag) {
@@ -1771,9 +1904,9 @@ var tray = {
 				}
 
 				var optionData = {
-					"{{trayId}}" : tray.trayId,
-					"{{selected}}" : selected,
-					"{{trayName}}" : tray.trayName
+					"{{data:trayId}}" : tray.trayId,
+					"{{data:selected}}" : selected,
+					"{{data:trayName}}" : tray.trayName
 				};
 
 				optionHtml += component.create("t-tray-select-option-tag", optionData);
@@ -1783,11 +1916,13 @@ var tray = {
 
 			if(includeChangeFunctionFlag == "add-onchange") {
 				changeFunction = 'onchange="tray.getSelectedList(this);"';
+			} else {
+				changeFunction = "return false;"
 			}
 
 			var selectData = {
-				"{{changeFunction}}" : changeFunction,
-				"{{trayOptions}}" : optionHtml
+				"{{onchange:getSelectedList}}" : changeFunction,
+				"{{data:trayOptions}}" : optionHtml
 			};
 
 			trayListSelectTag = component.create("t-tray-select-tag", selectData);
@@ -1831,22 +1966,27 @@ var tray = {
 					var trayJson = xhr.responseText;
 					var trayArray = JSON.parse(xhr.responseText);
 
-					var rowHtml = "";
+					var trayRows = "";
 
 					for(var i=0; i<trayArray.length; i++) {
 
 						var tray = trayArray[i];
 
 						var rowData = {
-							"{{trayId}}" : tray.trayId,
-							"{{trayName}}" : tray.trayName
+							"{{data:trayId}}" : tray.trayId,
+							"{{data:trayName}}" : tray.trayName,
+							"{{onclick:searchDrawerByTrayId}}" : "drawer.searchDrawerByTrayId(this);",
+							"{{onclick:renderEditTray}}" : "tray.renderEditTray(this);",
+							"{{onclick:deleteItem}}" : "tray.deleteItem(this);"
 						};
 
-						rowHtml += component.create("t-tray-list-rows", rowData);
+						trayRows += component.create("t-tray-list-rows", rowData);
 					}
 
 					var tableData = {
-						"{{trayRows}}" : rowHtml
+						"{{onclick:renderAddTray}}" : "tray.renderAddTray();",
+						"{{onclick:getDrawerList}}" : "drawer.getList();",
+						"{{data:trayRows}}" : trayRows
 					};
 
 					component.render("t-tray-list", "template-content", tableData);
@@ -1905,13 +2045,11 @@ var tray = {
 
 		try {
 			var data = {
-				"{{heading}}": "Add a New Tray",
-				"{{name}}": "",
-				"{{event-class}}": "e-add-tray",
-				"{{event-data}}": ""
+				"{{onclick:getTrayList}}": "tray.getList();",
+				"{{onclick:addItem}}": "tray.additem();"
 			};
 
-			component.render("t-tray", "template-content", data);
+			component.render("t-tray-add", "template-content", data);
 
 			menu.reset();
 		}
@@ -1979,25 +2117,24 @@ var tray = {
 		finally {}
 	},
 
-	renderEditTray: function(data) {
+	renderEditTray: function(element) {
 
 		try {
-			var tokens = data.split("|");
-			var trayId = tokens[0];
-			var trayName = tokens[1];
+			var trayId = element.getAttribute('data-tray-id');
+			var trayName = element.getAttribute('data-tray-name');
 
 			if(trayName.toLowerCase() == "favorites") {
 				tray.renderTrayError();
 
 			} else {
 				var data = {
-					"{{heading}}": "Change the Name of Your Tray",
-					"{{name}}": trayName,
-					"{{event-class}}": "e-edit-tray",
-					"{{event-data}}": trayId
+					"{{data:trayId}}": trayId,
+					"{{data:trayName}}": trayName,
+					"{{onclick:getTrayList}}": "tray.getList();",
+					"{{onclick:editItem}}": "tray.editItem(this);"
 				};
 
-				component.render("t-tray", "template-content", data);
+				component.render("t-tray-edit", "template-content", data);
 			}
 
 			menu.reset();
@@ -2008,9 +2145,12 @@ var tray = {
 		finally {}
 	},
 
-	editItem: function(trayId) {
+	editItem: function(element) {
 
 		try {
+			var trayId = element.getAttribute('data-tray-id');
+			var trayName = element.getAttribute('data-tray-name');
+
 			var name = document.getElementById("name").value;
 
 			if(isEmpty(name)) {
@@ -2019,7 +2159,7 @@ var tray = {
 			}
 
 			var nameEl = document.getElementById("name");
-			var origName = nameEl.getAttribute('data-name');
+			var origName = nameEl.getAttribute('data-tray-name');
 
 			if(tray.isDuplicate(name)) {
 				document.getElementById('error').innerHTML = 'You already have a Tray with this name.';
@@ -2151,9 +2291,12 @@ var tray = {
 		return duplicate;
 	},
 
-	deleteItem: function(trayId) {
+	deleteItem: function(element) {
 
 		try {
+			var trayId = element.getAttribute('data-tray-id');
+			var trayName = element.getAttribute('data-tray-name');
+
 			var inputFields = {
 				"collectionName":dataObj.collectionName, 
 				"trayId":trayId
@@ -2267,48 +2410,45 @@ var listener = {
 			var elementId = event.target.classList.toString();
 console.log(elementId);
 
-			if(elementId.indexOf("e-get-drawer-list") >= 0) {
-				drawer.list();
+			if(elementId.indexOf("e-render-view-text-item") >= 0) {
+				var data = event.target.id.toString();
+				drawer.renderViewTextItem(data);
 			}
 
-			if(elementId.indexOf("e-open-hamburger") >= 0) {
-				menu.openHamburger();
+			if(elementId.indexOf("e-add-text-item") >= 0) {
+				drawer.addTextItem();
 			}
 
-			if(elementId.indexOf("e-close-hamburger") >= 0) {
-				menu.closeHamburger();
+			if(elementId.indexOf("e-render-edit-text-item") >= 0) {
+				var data = event.target.id.toString();
+				drawer.editTextItem(data);
 			}
 
-			if(elementId.indexOf("e-render-sign-in") >= 0) {
-				entry.renderSignIn();
+			if(elementId.indexOf("e-add-web-item") >= 0) {
+				drawer.addWebItem();
 			}
 
-			if(elementId.indexOf("e-sign-in") >= 0) {
-				entry.signIn();
+			if(elementId.indexOf("e-edit-web-item") >= 0) {
+				var data = event.target.id.toString();
+				drawer.editWebItem(data);
 			}
 
-			if(elementId.indexOf("e-render-sign-up") >= 0) {
-				entry.renderSignUp();
+			if(elementId.indexOf("e-add-media-item") >= 0) {
+				drawer.addMediaItem();
 			}
 
-			if(elementId.indexOf("e-sign-up") >= 0) {
-				entry.signUp();
-			}
-
-			if(elementId.indexOf("e-render-add-text") >= 0) {
-				drawer.renderAddTextEntry();
-			}
-
-			if(elementId.indexOf("e-render-add-web") >= 0) {
-				drawer.renderAddWebEntry();
-			}
-
-			if(elementId.indexOf("e-render-add-media") >= 0) {
-				drawer.renderAddMediaEntry();
+			if(elementId.indexOf("e-render-view-video-item") >= 0) {
+				var data = event.target.id.toString();
+				drawer.renderViewVideoItem(data);
 			}
 
 			if(elementId.indexOf("e-post-search-drawer-by-tra-id") >= 0) {
 				postSearchDrawerByTraId("{{favoriteTraTokens}}");
+			}
+
+			if(elementId.indexOf("e-delete-drawer-item") >= 0) {
+				var data = event.target.id.toString();
+				drawer.deleteItem(data);
 			}
 
 			if(elementId.indexOf("e-render-contact-us") >= 0) {
@@ -2317,14 +2457,6 @@ console.log(elementId);
 
 			if(elementId.indexOf("e-add-contact-us") >= 0) {
 				general.addContactUs();
-			}
-
-			if(elementId.indexOf("e-render-about") >= 0) {
-				general.renderAbout();
-			}
-
-			if(elementId.indexOf("e-sign-out") >= 0) {
-				entry.signOut();
 			}
 
 			if(elementId.indexOf("e-get-tray-list") >= 0) {
@@ -2362,28 +2494,28 @@ console.log(elementId);
 
 			if(event.keyCode === 13) {
 
-				var elementId = event.target.classList.toString();
-			console.log(elementId);
-
 				/*
-				 * Check which template is being displayed by interrogating 
-				 * the form id
+				 * Check which template is being displayed by checking for the 
+				 * presence of a hidden field that is specific for that template 
 				 */
-				var elementHtml = "";
-
-/*				elementHtml = document.getElementById("e-f-sign-in");
-console.log(elementHtml);
-				if(elementHtml != null && elementHtml.toString().indexOf("e-f-sign-in") >= 0) {
-					signIn();
+				var element = document.getElementById("signin");
+				if(element != null) {
+					entry.signIn();
 				}
 
-				elementHtml = document.getElementById("e-f-sign-up");
-				if(elementHtml != null && elementHtml.toString().indexOf("e-f-sign-up") >= 0) {
-					signUp();
+				var element = document.getElementById("signup");
+				if(element != null) {
+					entry.signUp();
 				}
-*/
+
+				var element = document.getElementById("contactus");
+				if(element != null) {
+					general.addContactUs();
+				}
+
 			}
 		});
 
 	}
+
 };

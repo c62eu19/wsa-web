@@ -1,8 +1,8 @@
 <script id="t-drawer-title-video-view" type="text/template">
 
-<a href="#" onclick='renderViewVideoEntry("{{drawerId}}");'>
+<a href="#" onclick="{{onclick:renderViewVideoItem}}" data-drawer-id="{{data:drawerId}}">
 	<span style="font-size:20px; color:blue;">
-		{{title}}
+		{{data:title}}
 	</span>
 </a>
 

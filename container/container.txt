@@ -36,18 +36,7 @@
 
 <div class="container">
 
-	<nav class="menu-bar" style="background-color:#eff6fc;">
-		<div class="container">&nbsp;
-
-			<a href="#" id="id-logo" class="logo"><h3 class="e-get-drawer-list">My Drawer</h3></a>
-
-			<button id="id-hamburger" class="hamburger e-open-hamburger">&#9776;</button>
-			<button id="id-cross" class="cross e-close-hamburger" style="display:none;">&#9776;</button>
-
-		</div>
-	</nav>
-
-	<div id="template-menu">
+	<div id="template-header">
 
 	</div>
 

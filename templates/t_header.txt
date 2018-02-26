@@ -1,0 +1,14 @@
+<script id="t-header" type="text/template">
+
+<nav class="menu-bar" style="background-color:#eff6fc;">
+	<div class="container">&nbsp;
+
+		<a href="#" onclick="{{onclick:getDrawerList}}" class="logo"><h3>My Drawer</h3></a>
+
+		<button id="id-hamburger" onclick="{{onclick:openHamburger}}" class="hamburger">&#9776;</button>
+		<button id="id-cross" onclick="{{onclick:closeHamburger}}" class="cross" style="display:none;">&#9776;</button>
+
+	</div>
+</nav>
+
+</script>

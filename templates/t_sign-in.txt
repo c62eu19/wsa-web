@@ -4,7 +4,7 @@
 
 <div id="error" style="margin-bottom: 9px; color: #ff0000"></div>
 
-<form id="e-f-sign-in">
+<form>
 	<div class="row">
 		<div class="six columns">
 			<label for="email">Email</label>
@@ -18,15 +18,17 @@
 		</div>
 	</div>
 
-	<a href="#" id="id-sign-in" class="button button-primary e-sign-in" style="font-size:16px;">Sign In</a>
+	<a href="#" onclick="{{onclick:signIn}}" class="button button-primary" style="font-size:16px;">Sign In</a>
 
 	<p style="font-size: 18px;">
 		You don't have your own drawer? 
 	<p>
 
-	<a href="#" id="id-a-sign-up" class="e-render-sign-up" style="font-size:18px;">
+	<a href="#" onclick="{{onclick:renderSignUp}}" style="font-size:18px;">
 		Click here to Sign Up now and create your own drawer!
 	</a>
+
+	<input id="e-sign-in" name="sign-in" type="hidden" value="">
 </form>
 
 </script>

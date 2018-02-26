@@ -1,16 +1,16 @@
 <script id="t-menu-signed-in" type="text/template">
 
-<div id="command-menu" class="add-items-menu" style="margin-bottom:9px;">
+<div id="command-menu" style="margin-bottom:9px;">
 
 	<h5 style="color: #0000ff;">Would You like To</h5>
 
-	<a href="#" style="margin-top:9px;" class="e-render-add-text">Add a Text Item</a>
-	<a href="#" style="margin-top:5px;" class="e-render-add-web">Add a Web Article or Video</a>
-	<a href="#" style="margin-top:5px;" class="e-render-add-media">Add Media (Picture, PDF, Doc)</a>
+	<a href="#" onclick="{{onclick:renderAddTextItem}}' style="margin-top:9px;">Add a Text Item</a>
+	<a href="#" onclick="{{onclick:renderAddWebItem}}" style="margin-top:5px;">Add a Web Article or Video</a>
+	<a href="#" onclick="{{onclick:renderAddMediaItem}}" style="margin-top:5px;">Add Media (Picture, PDF, Doc)</a>
 
 	<hr style="margin-top:7px; margin-bottom:7px;">
 
-	<a href="#" style="margin-top:9px;" class="e-get-drawer-list-by-tray-id">View Your Favorites</a>
+	<a href="#" onclick="{{onclick:getDrawerListByTrayId}}" style="margin-top:9px;">View Your Favorites</a>
 
 	<hr style="margin-top:7px; margin-bottom:7px;">
 
@@ -18,16 +18,16 @@
 
 	<hr style="margin-top:7px; margin-bottom:7px;">
 
-	<a href="#" style="margin-top:5px;" class="e-get-tray-list">Manage Your Trays</a>
+	<a href="#" onclick="{{onclick:getTrayList}}" style="margin-top:5px;">Manage Your Trays</a>
 
 	<hr style="margin-top:7px; margin-bottom:7px;">
 
-	<a href="#" style="margin-top:5px;" class="e-render-contact-us">Contact Us</a>
-	<a href="#" style="margin-top:5px;" class="e-render-about">Learn About My Drawer</a>
+	<a href="#" onclick="{{onclick:renderContactUs}}" style="margin-top:5px;">Contact Us</a>
+	<a href="#" onclick="{{onclick:renderAbout}}" style="margin-top:5px;">Learn About My Drawer</a>
 
 	<hr style="margin-top:7px; margin-bottom:7px;">
 
-	<a href="#" style="margin-top:5px;" class="e-sign-out">Sign Out</a>
+	<a href="#" onclick="{{onclick:signOut}}" style="margin-top:5px;">Sign Out</a>
 
 	<hr style="margin-top:7px; margin-bottom:7px;">
 </div>

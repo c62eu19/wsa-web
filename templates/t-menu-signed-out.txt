@@ -1,11 +1,11 @@
 <script id="t-menu-signed-out" type="text/template">
 
-<div id="command-menu" class="add-items-menu" style="margin-bottom:9px;">
+<div id="command-menu" style="margin-bottom:9px;">
 
 	<h5 style="color: #0000ff;">Would You like To</h5>
 
-	<a href="#" style="margin-top:5px;" class="e-render-contact-us">Contact Us</a>
-	<a href="#" style="margin-top:5px;" class="e-render-about">Learn About My Drawer</a>
+	<a href="#" onclick="{{onclick:renderContactUs}}" style="margin-top:5px;">Contact Us</a>
+	<a href="#" onclick="{{onclick:renderAbout}}" style="margin-top:5px;">Learn About My Drawer</a>
 
 	<hr style="margin-top:7px; margin-bottom:7px;">
 </div>

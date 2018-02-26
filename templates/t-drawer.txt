@@ -16,7 +16,7 @@
 				<a href="#" onclick='postSearchDrawerByTraId("{{favoriteTraTokens}}");'>Favorites</a>
 			</li>
 			<li style="padding-left: 7px;">
-				<a href="#" class="e-get-tray-list">Trays</a>
+				<a href="#" onclick="{{onclick:getTrayList}}">Trays</a>
 			</li>
 			<li style="padding-left: 7px;">
 				<a href="#">Inbasket <sup>2</sup></a>
@@ -29,10 +29,10 @@
 
 <ul class="icons" style="text-align:left; margin-bottom:2px; padding-bottom:2px;">
 	<li style="font-size:18px;">
-		<strong>{{totalItems}} items {{traySelected}}</strong>
+		<strong>{{data:totalItems}} items {{data:traySelected}}</strong>
 	</li>
 </ul>
 
-{{drawerRows}}
+{{data:drawerRows}}
 
 </script>
