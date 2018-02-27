@@ -1,0 +1,28 @@
+<script id="t-web-add" type="text/template">
+
+<h5 style="color: #0000ff;">Save an Article or Video from the Web</h5>
+
+<div id="error" style="margin-bottom: 9px; color: #ff0000"></div>
+
+<form>
+	<label for="name">URL</label>
+	<textarea class="u-full-width hide-textarea-resize" style="height:75px;" onpaste="postPasteUrl(event);" rows="4" id="url" name="url" placeholder="Paste an Article or Video (Youtube, Vimeo, TED) Link here from the web and wait for your content to appear below"></textarea>
+
+	<div class="row">
+		<div class="eight columns">
+			<label for="name">Title</label>
+			<input class="u-full-width" type="text" id="title" name="title" placeholder="Enter a Title here">
+		</div>
+		<div class="four columns">
+			<label for="name">Tray</label>
+			{{data:trayListSelectTag}}
+		</div>
+	</div>
+
+	<label for="name">Text</label>
+	<textarea class="u-full-width hide-textarea-resize" style="height:100px;" id="text" name="text" placeholder="Link Text" rows="10"></textarea>
+
+	<a href="#" class="button button-primary" onclick="{{onclick:addWebItem}}" style="font-size:14px;">Save</a>
+</form>
+
+</script>

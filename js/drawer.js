@@ -723,18 +723,12 @@ var drawer = {
 			var editButtonComponent = drawer.createEditButton(drawerItem.drawerId);
 			var deleteButtonComponent = drawer.createDeleteButton(drawerItem.drawerId);
 
-			var buttonBarData = {
-				"{{editButton}}" : editButtonComponent,
-				"{{deleteButton}}" : deleteButtonComponent
-			};
-
-			var buttonBarComponent = component.create("t-view-button-bar", buttonBarData);
-
 			var data = {
-				"{{buttonBar}}" : buttonBarComponent,
-				"{{title}}" : drawerItem.title,
-				"{{trayName}}" : drawerItem.trayName,
-				"{{text}}" : drawerItem.text
+				"{{data:editButton}}" : editButtonComponent,
+				"{{data:deleteButton}}" : deleteButtonComponent,
+				"{{data:title}}" : drawerItem.title,
+				"{{data:trayName}}" : drawerItem.trayName,
+				"{{data:text}}" : drawerItem.text
 			};
 
 			component.render("t-text-view", "template-content", data);
@@ -750,15 +744,14 @@ var drawer = {
 	renderAddTextItem: function() {
 
 		try {
-			var trayListSelectTag = createTraySelectTag("", "N");
+			var trayListSelectTag = tray.createSelectTag("", "N");
 
 			var data = {
-				"{{buttonBar}}": "",
-				"{{trayListSelectTag}}": trayListSelectTag,
-				"{{event-class}}": "e-add-text-item"
+				"{{data:trayListSelectTag}}": trayListSelectTag,
+				"{{onclick:addTextItem}}": "drawer.addTextItem();"
 			};
 
-			component.render("t-text-entry", "template-content", data);
+			component.render("t-text-add", "template-content", data);
 
 			menu.reset();
 		}
@@ -779,24 +772,17 @@ var drawer = {
 			var viewButtonComponent = drawer.createViewButton(drawerItem.drawerId);
 			var deleteButtonComponent = drawer.createDeleteButton(drawerItem.drawerId);
 
-			var buttonBarData = {
-				"{{viewButton}}" : viewButtonComponent,
-				"{{deleteButton}}" : deleteButtonComponent
-			};
-
-			var buttonBarComponent = component.create("t-edit-button-bar", buttonBarData);
-
-			var trayListSelectTag = createTraySelectTag(drawerItem.trayId, "N");
+			var trayListSelectTag = tray.createSelectTag(drawerItem.trayId, "N");
 
 			var data = {
-				"{{buttonBar}}" : buttonBarComponent,
-				"{{trayListSelectTag}}" : trayListSelectTag,
-				"{{drawerId}}" : drawerId,
-				"{{event-class}}": "e-edit-text-item",
-				"{{drawerId}}": drawerItem
+				"{{data:viewButton}}" : viewButtonComponent,
+				"{{data:deleteButton}}" : deleteButtonComponent,
+				"{{data:trayListSelectTag}}" : trayListSelectTag,
+				"{{data:drawerId}}" : drawerId,
+				"{{onclick:editTextItem}}": "drawer.editTextItem(this);"
 			};
 
-			component.render("t-text-entry", "template-content", data);
+			component.render("t-text-edit", "template-content", data);
 
 			document.getElementById("title").value = drawerItem.title;
 			document.getElementById("text").value = drawerItem.text;
@@ -812,15 +798,14 @@ var drawer = {
 	renderAddWebItem: function() {
 
 		try {
-			var trayListSelectTag = createTraySelectTag("", "N");
+			var trayListSelectTag = tray.createSelectTag("", "N");
 
 			var data = {
-				"{{buttonBar}}": "",
-				"{{trayListSelectTag}}": trayListSelectTag,
-				"{{event-class}}": "e-add-web-item"
+				"{{data:trayListSelectTag}}": trayListSelectTag,
+				"{{onclick:addWebItem}}": "drawer.addWebItem();"
 			};
 
-			component.render("t-web-entry", "template-content", data);
+			component.render("t-web-add", "template-content", data);
 
 			menu.reset();
 		}
@@ -841,24 +826,17 @@ var drawer = {
 			var viewButtonComponent = drawer.createViewButton(drawerItem.drawerId);
 			var deleteButtonComponent = drawer.createDeleteButton(drawerItem.drawerId);
 
-			var buttonBarData = {
-				"{{viewButton}}" : viewButtonComponent,
-				"{{deleteButton}}" : deleteButtonComponent
-			};
-
-			var buttonBarComponent = component.create("t-edit-button-bar", buttonBarData);
-
-			var trayListSelectTag = createTraySelectTag(drawerItem.trayId, "N");
+			var trayListSelectTag = tray.createSelectTag(drawerItem.trayId, "N");
 
 			var data = {
-				"{{buttonBar}}" : buttonBarComponent,
-				"{{trayListSelectTag}}" : trayListSelectTag,
-				"{{drawerId}}" : drawerId,
-				"{{event-class}}": "e-edit-web-item",
-				"{{drawerId}}": drawerId
+				"{{data:viewButton}}" : viewButtonComponent,
+				"{{data:deleteButton}}" : deleteButtonComponent,
+				"{{data:trayListSelectTag}}" : trayListSelectTag,
+				"{{data:drawerId}}" : drawerId,
+				"{{onclick:editWebItem}}": "drawer.editWebItem(this);"
 			};
 
-			component.render("t-web-entry", "template-content", data);
+			component.render("t-web-edit", "template-content", data);
 
 			var decodeUrl = decodeURIComponent(drawerItem.url);
 
@@ -932,7 +910,7 @@ var drawer = {
 	renderAddMediaItem: function() {
 
 		try {
-			var trayListSelectTag = createTraySelectTag("", "N");
+			var trayListSelectTag = tray.createSelectTag("", "N");
 
 			var data = {
 				"{{trayListSelectTag}}": trayListSelectTag,
@@ -1164,9 +1142,11 @@ var drawer = {
 		finally {}
 	},
 
-	editTextItem: function(drawerId){
+	editTextItem: function(element){
 
 		try {
+			var drawerId = element.getAttribute("data-drawer-id");
+
 			var trayId = document.forms[0].traId.value;
 			var title = document.forms[0].title.value;
 			var text = document.forms[0].text.value;
@@ -1330,9 +1310,11 @@ var drawer = {
 		finally {}
 	},
 
-	editWebItem: function(drawerId) {
+	editWebItem: function(element) {
 
 		try {
+			var drawerId = element.getAttribute("data-drawer-id");
+
 			var pastedUrl = document.forms[0].url.value;
 			var trayId = document.forms[0].trayId.value;
 			var title = document.forms[0].title.value;

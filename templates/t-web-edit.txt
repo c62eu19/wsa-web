@@ -1,6 +1,12 @@
-<script id="t-web-entry" type="text/template">
+<script id="t-web-edit" type="text/template">
 
-{{buttonBar}}
+<ul class="icons" style="text-align:right; margin-bottom:2px;">
+	<li>{{data:viewButton}}</li>
+	<li>{{data:deleteButton}}</li>
+	<li>
+		<a href="#"><span style="color: #000;"><strong>S</strong>hare</span></a>
+	</li>
+</ul>
 
 <h5 style="color: #0000ff;">Save an Article or Video from the Web</h5>
 
@@ -17,14 +23,14 @@
 		</div>
 		<div class="four columns">
 			<label for="name">Tray</label>
-			{{trayListSelectTag}}
+			{{data:trayListSelectTag}}
 		</div>
 	</div>
 
 	<label for="name">Text</label>
 	<textarea class="u-full-width hide-textarea-resize" style="height:100px;" id="text" name="text" placeholder="Link Text" rows="10"></textarea>
 
-	<a class="button button-primary e-edit-web-item" id="{{drawerId}}" href="#" style="font-size:14px;">Save</a>
+	<a href="#" class="button button-primary" onclick="{{onclick:editWebItem}}" data-drawer-id="{{data:drawerId}}" style="font-size:14px;">Save</a>
 </form>
 
 </script>

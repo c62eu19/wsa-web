@@ -1,6 +1,12 @@
-<script id="t-text-entry" type="text/template">
+<script id="t-text-edit" type="text/template">
 
-{{buttonBar}}
+<ul class="icons" style="text-align:right; margin-bottom:2px;">
+	<li>{{data:viewButton}}</li>
+	<li>{{data:deleteButton}}</li>
+	<li>
+		<a href="#"><span style="color: #000;"><strong>S</strong>hare</span></a>
+	</li>
+</ul>
 
 <h5 style="color: #0000ff;">Enter any Text that you want to Save</h5>
 
@@ -14,7 +20,7 @@
 		</div>
 		<div class="four columns">
 			<label for="name">Tray</label>
-			{{trayListSelectTag}}
+			{{data:trayListSelectTag}}
 		</div>
 	</div>
 	<label for="name">Text</label>

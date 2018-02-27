@@ -4,7 +4,7 @@
 
 	<h5 style="color: #0000ff;">Would You like To</h5>
 
-	<a href="#" onclick="{{onclick:renderAddTextItem}}' style="margin-top:9px;">Add a Text Item</a>
+	<a href="#" onclick="{{onclick:renderAddTextItem}}" style="margin-top:9px;">Add a Text Item</a>
 	<a href="#" onclick="{{onclick:renderAddWebItem}}" style="margin-top:5px;">Add a Web Article or Video</a>
 	<a href="#" onclick="{{onclick:renderAddMediaItem}}" style="margin-top:5px;">Add Media (Picture, PDF, Doc)</a>
 
