@@ -3,7 +3,7 @@
 <h5 style="color: #0000ff;">Error</h5>
 
 <p style="font-size: 18px;">
-	{{value:errorMsg}}
+	{{data:errorMsg}}
 </p>
 
 <p style="font-size: 18px;">

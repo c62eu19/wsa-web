@@ -14,7 +14,7 @@
 
 <form>
 	<label for="name">URL</label>
-	<textarea class="u-full-width hide-textarea-resize" style="height:75px;" onpaste="postPasteUrl(event);" rows="4" id="url" name="url" placeholder="Paste an Article or Video (Youtube, Vimeo, TED) Link here from the web and wait for your content to appear below"></textarea>
+	<textarea class="u-full-width hide-textarea-resize" style="height:75px;" onpaste="drawer.pasteUrl(event);" rows="4" id="url" name="url" placeholder="Paste an Article or Video (Youtube, Vimeo, TED) Link here from the web and wait for your content to appear below"></textarea>
 
 	<div class="row">
 		<div class="eight columns">

@@ -60,6 +60,39 @@ var component = {
 		return componentHtml;
 	},
 
+	saveInitialState: function(container) {
+
+		try {
+			dataObj.initialState = document.getElementById(container).innerHTML;
+		}
+		catch(err) {
+			console.log("saveInitialState(): " + err);
+		}
+		finally {}
+	},
+
+	restoreInitialState: function(container) {
+
+		try {
+			document.getElementById(container).innerHTML = dataObj.initialState;
+		}
+		catch(err) {
+			console.log("restoreInitialState(): " + err);
+		}
+		finally {}
+	},
+
+	setText: function(element, text) {
+
+		try {
+			document.getElementById(element).innerHTML = text;
+		}
+		catch(err) {
+			console.log("setText(): " + err);
+		}
+		finally {}
+	},
+
 	addListener: function(event, elementId, callbackFunction, capture) {
 
 		try {

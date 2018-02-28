@@ -19,7 +19,7 @@ var entry = {
 
 				component.render("t-sign-in", "template-content", data);
 
-				dataObj.origTemplateContent = document.getElementById("template-content").innerHTML;
+				component.saveInitialState("template-content");
 
 				document.body.addEventListener("keydown", function(event) {
 					if(event.keyCode === 13) {
@@ -47,12 +47,12 @@ var entry = {
 			var password = document.getElementById("password").value;
 
 			if(isEmpty(email)) {
-				document.getElementById('error').innerHTML = 'Please enter a valid Email.';
+				component.setText("error", "Please enter a valid Email.");
 				return false;
 			}
 
 			if(isEmpty(password)) {
-				document.getElementById('error').innerHTML = 'Please enter a Password.';
+				component.setText("error", "Please enter a Password.");
 				return false;
 			}
 
@@ -128,7 +128,7 @@ var entry = {
 
 			component.render("t-sign-in-error", "template-content", data);
 
-			menu.reset();
+			component.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderSignInError(): " + err);
@@ -142,7 +142,7 @@ var entry = {
 			var data = {};
 			component.render("t-account-disabled", "template-content", data);
 
-			menu.reset();
+			component.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderAccountDisabled(): " + err);
@@ -156,11 +156,13 @@ var entry = {
 			dataObj = {};
 
 			var data = {
-				"{{onclick:renderSignIn}}" : "entry.renderSignin();",
+				"{{onclick:renderSignIn}}" : "entry.renderSignIn();",
 				"{{onclick:signUp}}" : "entry.signUp();"
 			};
 
 			component.render("t-sign-up", "template-content", data);
+
+			component.saveInitialState("template-content");
 
 			document.body.addEventListener("keydown", function(event) {
 				if(event.keyCode === 13) {
@@ -188,37 +190,37 @@ var entry = {
 			var name = document.getElementById("name").value;
 
 			if(isEmpty(email)) {
-				document.getElementById('error').innerHTML = 'Your Email is required.';
+				component.setText("error", "Your Email is required.");
 				return false;
 			}
 
 			if(!isValidEmail(email)) {
-				document.getElementById('error').innerHTML = 'You have entered an invalid Email.';
+				component.setText("error", "You have entered an invalid Email.");
 				return false;
 			}
 
 			if(isEmpty(password)) {
-				document.getElementById('error').innerHTML = 'Your Password is required.';
+				component.setText("error", "Your Password is required.");
 				return false;
 			}
 
 			if(password.length < 6) {
-				document.getElementById('error').innerHTML = 'Your password must be at least 6 characters.';
+				component.setText("error", "Your password must be at least 6 characters.");
 				return false;
 			}
 
 			if(isEmpty(passwordReentry)) {
-				document.getElementById('error').innerHTML = 'Please reenter your Password.';
+				component.setText("error", "Please reenter your Password.");
 				return false;
 			}
 
 			if(password != passwordReentry) {
-				document.getElementById('error').innerHTML = 'The reentered Password does not match your Password.';
+				component.setText("error", "The reentered Password does not match your Password.");
 				return false;
 			}
 
 			if(isEmpty(name)) {
-				document.getElementById('error').innerHTML = 'Your Name is required.';
+				component.setText("error", "Your Name is required.");
 				return false;
 			}
 
@@ -277,7 +279,7 @@ var entry = {
 			xhr.send("inputJSON=" + stringJSON);
 		}
 		catch(err) {
-			document.getElementById('error').innerHTML = "An error has occured in your account signup. Please try again.";
+			component.setText("error", "An error has occured in your account signup. Please try again.");
 			console.log("signUp(): " + err);
 		}
 		finally {}
@@ -287,13 +289,13 @@ var entry = {
 
 		try {
 			var data = {
-				"{{value:errorMsg}}": errorMsg,
+				"{{data:errorMsg}}": errorMsg,
 				"{{onclick:renderSignIn}}" : "entry.renderSignin();"
 			};
 
 			component.render("t-signup-error", "template-content", data);
 
-			menu.reset();
+			component.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderSignUpError(): " + err);
@@ -311,8 +313,6 @@ var entry = {
 
 			var data = {};
 			entry.renderSignIn();
-
-			menu.reset();
 		}
 		catch(err) {
 			console.log("signOut(): " + err);
@@ -326,8 +326,7 @@ var menu = {
 	reset: function() {
 
 		try {
-			document.getElementById('id-hamburger').style.display = '';
-			document.getElementById('id-cross').style.display = 'none';
+/*			document.getElementById('id-hamburger').style.display = ''; */
 		}
 		catch(err) {
 			console.log("reset(): " + err);
@@ -335,12 +334,9 @@ var menu = {
 		finally {}
 	},
 
-	openHamburger: function(e) {
+	toggle: function(e) {
 
 		try {
-			document.getElementById('id-hamburger').style.display = 'none';
-			document.getElementById('id-cross').style.display = '';
-
 			var menuElement = document.getElementById("command-menu");
 
 			if(menuElement == null) {
@@ -353,11 +349,11 @@ var menu = {
 				}
 
 			} else {
-				document.getElementById('template-content').innerHTML = dataObj.origTemplateContent;
+				component.restoreInitialState("template-content");
 			}
 		}
 		catch(err) {
-			console.log("openHamburger(): " + err);
+			console.log("toggle(): " + err);
 		}
 		finally {}
 	},
@@ -368,7 +364,7 @@ var menu = {
 			document.getElementById('id-cross').style.display = 'none';
 			document.getElementById('id-hamburger').style.display = '';
 
-			document.getElementById('template-content').innerHTML = dataObj.origTemplateContent;
+			component.restoreInitialState("template-content");
 		}
 		catch(err) {
 			console.log("closeHamburger(): " + err);
@@ -394,8 +390,6 @@ var menu = {
 			};
 
 			component.render("t-menu-signed-in", "template-content", data);
-
-			menu.reset();
 		}
 		catch(err) {
 			console.log("renderMenuSignedIn(): " + err);
@@ -412,8 +406,6 @@ var menu = {
 			};
 
 			component.render("t-menu-signed-out", "template-content", data);
-
-			menu.reset();
 		}
 		catch(err) {
 			console.log("renderMenuSignedOut(): " + err);
@@ -436,7 +428,7 @@ var general = {
 
 			component.render("t-contact-us", "template-content", data);
 
-			menu.reset();
+			component.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderContactUs(): " + err);
@@ -455,22 +447,22 @@ var general = {
 			var message = document.getElementById("message").value;
 
 			if(isEmpty(email)) {
-				document.getElementById('error').innerHTML = 'Your Email is required.';
+				component.setText("error", "Your Email is required.");
 				return false;
 			}
 
 			if(!isValidEmail(email)) {
-				document.getElementById('error').innerHTML = 'You have entered an invalid Email.';
+				component.setText("error", "You have entered an invalid Email.");
 				return false;
 			}
 
 			if(isEmpty(subject)) {
-				document.getElementById('error').innerHTML = ' The Subject is required.';
+				component.setText("error", "The Subject is required.");
 				return false;
 			}
 
 			if(isEmpty(message)) {
-				document.getElementById('error').innerHTML = 'The Message is required.';
+				component.setText("error", "The Message is required.");
 				return false;
 			}
 
@@ -490,9 +482,7 @@ var general = {
 				}
 
 				if (xhr.status === 200) {
-					menu.reset();
 
-					document.getElementById('template-content').innerHTML = dataObj.origTemplateContent;
 				} else {
 					console.log('Error: ' + xhr.status);
 				}
@@ -511,7 +501,6 @@ var general = {
 		}
 		catch(err) {
 			console.log("addContactUs(): " + err);
-			document.getElementById('template-content').innerHTML = dataObj.origTemplateContent;
 		}
 		finally {}
 	},
@@ -519,12 +508,10 @@ var general = {
 	renderAbout: function() {
 
 		try {
-			dataObj.origTemplateContent = document.getElementById('template-content').innerHTML;
-
 			var data = {};
 			component.render("t-about", "template-content", data);
 
-			menu.reset();
+			component.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderAbout(): " + err);
@@ -559,7 +546,6 @@ var drawer = {
 
 						dataObj.traySelected = "in your drawer";
 
-						menu.reset();
 						drawer.render();
 
 					} else {
@@ -651,6 +637,7 @@ var drawer = {
 
 			component.render("t-drawer", "template-content", tableData);
 
+			component.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("render(): " + err);
@@ -665,7 +652,7 @@ var drawer = {
 
 			component.render("t-no-results-found", "template-content", data);
 
-			menu.reset();
+			component.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderNoResultsFound(): " + err);
@@ -733,7 +720,7 @@ var drawer = {
 
 			component.render("t-text-view", "template-content", data);
 
-			menu.reset();
+			component.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderViewTextItem(): " + err);
@@ -753,7 +740,7 @@ var drawer = {
 
 			component.render("t-text-add", "template-content", data);
 
-			menu.reset();
+			component.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderAddTextItem(): " + err);
@@ -787,7 +774,7 @@ var drawer = {
 			document.getElementById("title").value = drawerItem.title;
 			document.getElementById("text").value = drawerItem.text;
 
-			menu.reset();
+			component.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderEditTextItem(): " + err);
@@ -807,7 +794,7 @@ var drawer = {
 
 			component.render("t-web-add", "template-content", data);
 
-			menu.reset();
+			component.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderAddWebItem(): " + err);
@@ -844,7 +831,7 @@ var drawer = {
 			document.getElementById("title").value = drawerItem.title;
 			document.getElementById("text").value = drawerItem.text;
 
-			menu.reset();
+			component.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderEditWebItem(): " + err);
@@ -899,7 +886,7 @@ var drawer = {
 
 			document.getElementById("embedded-video").src = embeddedlink;
 
-			menu.reset();
+			component.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderViewVideoItem(): " + err);
@@ -918,7 +905,7 @@ var drawer = {
 
 			component.render("t-media-entry", "template-content", data);
 
-			menu.reset();
+			component.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderAddMediaItem(): " + err);
@@ -1077,17 +1064,17 @@ var drawer = {
 			var text = document.forms[0].text.value;
 
 			if(isEmpty(trayId)) {
-				document.getElementById('error').innerHTML = 'Please select a Tray.';
+				component.setText("error", "Please select a Tray.");
 				return false;
 			}
 
 			if(isEmpty(title)) {
-				document.getElementById('error').innerHTML = 'Please enter a Title.';
+				component.setText("error", "Please enter a Title.");
 				return false;
 			}
 
 			if(isEmpty(text)) {
-				document.getElementById('error').innerHTML = 'Please enter some Text to describe your entry.';
+				component.setText("error", "Please enter some Text to describe your entry.");
 				return false;
 			}
 
@@ -1152,17 +1139,17 @@ var drawer = {
 			var text = document.forms[0].text.value;
 
 			if(isEmpty(trayId)) {
-				document.getElementById('error').innerHTML = 'Please select a Tray.';
+				component.setText("error", "Please select a Tray.");
 				return false;
 			}
 
 			if(isEmpty(title)) {
-				document.getElementById('error').innerHTML = 'Please enter a Title.';
+				component.setText("error", "Please enter a Title.");
 				return false;
 			}
 
 			if(isEmpty(text)) {
-				document.getElementById('error').innerHTML = 'Please enter some Text to describe your entry.';
+				component.setText("error", "Please enter some Text to describe your entry.");
 				return false;
 			}
 
@@ -1226,22 +1213,22 @@ var drawer = {
 			var text = document.forms[0].text.value;
 
 			if(isEmpty(pastedUrl)) {
-				document.getElementById('error').innerHTML = 'Please enter a URL.';
+				component.setText("error", "Please enter a URL.");
 				return false;
 			}
 
 			if(isEmpty(trayId)) {
-				document.getElementById('error').innerHTML = 'Please select a Tray.';
+				component.setText("error", "Please select a Tray.");
 				return false;
 			}
 
 			if(isEmpty(title)) {
-				document.getElementById('error').innerHTML = 'Please enter a Title.';
+				component.setText("error", "Please enter a Title.");
 				return false;
 			}
 
 			if(isEmpty(text)) {
-				document.getElementById('error').innerHTML = 'Please enter some Text to describe your entry.';
+				component.setText("error", "Please enter some Text to describe your entry.");
 				return false;
 			}
 
@@ -1321,22 +1308,22 @@ var drawer = {
 			var text = document.forms[0].text.value;
 
 			if(isEmpty(pastedUrl)) {
-				document.getElementById('error').innerHTML = 'Please enter a URL.';
+				component.setText("error", "Please enter a URL.");
 				return false;
 			}
 
 			if(isEmpty(trayId)) {
-				document.getElementById('error').innerHTML = 'Please select a Tray.';
+				component.setText("error", "Please select a Tray.");
 				return false;
 			}
 
 			if(isEmpty(title)) {
-				document.getElementById('error').innerHTML = 'Please enter a Title.';
+				component.setText("error", "Please enter a Title.");
 				return false;
 			}
 
 			if(isEmpty(text)) {
-				document.getElementById('error').innerHTML = 'Please enter some Text to describe your entry.';
+				component.setText("error", "Please enter some Text to describe your entry.");
 				return false;
 			}
 
@@ -1399,7 +1386,7 @@ var drawer = {
 			var title = document.getElementById("title").value;
 
 			if(isEmpty(title)) {
-				document.getElementById('error').innerHTML = 'Please enter a valid Title for your post.';
+				component.setText("error", "Please enter a valid Title for your post.");
 				return false;
 			}
 
@@ -1413,13 +1400,13 @@ var drawer = {
 	/*		var rFilter = /^(image\/bmp|image\/gif|image\/jpeg|image\/png|image\/tiff)$/i;
 
 			if (!rFilter.test(oFile.type)) {
-				document.getElementById('error').innerHTML = 'The file is not an image file type (jpeg, gif, png, tiff, bmp).';
+				component.setText("error", "The file is not an image file type (jpeg, gif, png, tiff, bmp).");
 				return;
 			}
 	*/
 			/* No File was selected */
 			if (oFile.size <= 0) {
-				document.getElementById('error').innerHTML = 'You have not selected a file to upload.';
+				component.setText("error", "You have not selected a file to upload.");
 				return;
 			}
 
@@ -1458,7 +1445,7 @@ var drawer = {
 			oReader.readAsDataURL(oFile);
 		}
 		catch(err) {
-			document.getElementById('error').innerHTML = 'We are sorry but we cannot post your file at this time.  Please try again in a little bit.';
+			component.setText("error", "We are sorry but we cannot post your file at this time.  Please try again in a little bit.");
 		}
 		finally {
 			document.getElementById("preview").style.display = '';
@@ -1512,8 +1499,103 @@ var drawer = {
 			console.log("deleteItem(): " + err);
 		}
 		finally {}
-	}
+	},
 
+	pasteUrl: function(e) {
+
+		try {
+			document.body.style.cursor = "wait";
+
+			/* gets the copied text after a specified time (200 milliseconds) */
+			setTimeout(function() {
+
+				var url = document.forms[0].url.value;
+				drawer.getUrlParts(url); 
+				document.body.style.cursor = "default";
+			}, 200);
+
+		}
+		catch(err) {
+			document.body.style.cursor = "default";
+			component.setText("url","");
+			component.setText("error", "We are sorry but there is a problem with the Link that you are trying to fetch.");
+		}
+		finally {}
+	},
+
+	getUrlParts: function(url) {
+
+		try {
+			if(isEmpty(url)) {
+				component.setText("error", "Please paste a valid Url.");
+				return false;
+			}
+
+			document.body.style.cursor = "wait";
+
+			/* 
+			 * encode the base64 so that it transfers properly to the server 
+			 */
+			var encodeUrl = encodeURIComponent(url);
+
+			var inputFields = {"url":encodeUrl};
+
+			var inputJSON = {};
+			inputJSON.inputArgs = inputFields;
+		
+			var stringJSON = JSON.stringify(inputJSON);
+
+			var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+
+			xhr.onreadystatechange = function () {
+
+				if (xhr.readyState !== 4) {
+					return;
+				}
+
+				if (xhr.status === 200) {
+					var data = JSON.parse(xhr.responseText);
+
+					var statusCd = data.statusCd;
+					var title = data.title;
+					var text = data.text;
+
+					if(statusCd == "0") {
+						document.getElementById("title").value = title;
+						document.getElementById("text").value = text;
+
+					} else {
+						component.setText("error", "We are sorry but we could not fetch the title or description for your link.");
+						component.setText("url","");
+					}
+
+					document.body.style.cursor = "default";
+
+				} else {
+					component.setText("url","");
+					document.body.style.cursor = "default";
+					console.log('Error: ' + xhr.status);
+				}
+			};
+
+			xhr.onerror = function () {
+				console.log("getUrlParts(): An error occurred during the transaction");
+			};
+
+			var url = "http://localhost:8080/mydrawer/UrlParts/";
+
+			xhr.open("POST", url, true);
+			xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xhr.send("inputJSON=" + stringJSON);
+		}
+		catch(err) {
+			document.body.style.cursor = "default";
+			component.setText("url","");
+			component.setText("error", "We are sorry but there is a problem with the Link that you are trying to fetch.");
+		}
+		finally {}
+	}
 
 };
 
@@ -1527,14 +1609,13 @@ function init() {
 		dataObj.userName = "";
 		dataObj.trayJson = "";
 		dataObj.drawerJson = "";
-		dataObj.origTemplateContent = "";
+		dataObj.initialState = "";
 		dataObj.traySelected = "";
 		dataObj.favoriteTraTokens = "";
 
 		var data = {
 			"{{onclick:getDrawerList}}" : "drawer.getList();",
-			"{{onclick:openHamburger}}" : "menu.openHamburger();",
-			"{{onclick:closeHamburger}}" : "menu.closeHamburger();"
+			"{{onclick:toggle}}" : "menu.toggle();"
 		};
 
 		component.render("t-header", "template-header", data);
@@ -1677,103 +1758,6 @@ function postSearchDrawerByTraId(traTokens) {
 	finally {}
 }
 
-function postPasteUrl(e) {
-
-	try {
-		document.body.style.cursor = "wait";
-
-		/* gets the copied text after a specified time (200 milliseconds) */
-		setTimeout(function() {
-
-			var url = document.forms[0].url.value;
-			getUrlParts(url); 
-			document.body.style.cursor = "default";
-		}, 200);
-
-	}
-	catch(err) {
-		document.body.style.cursor = "default";
-		document.getElementById('url').innerHTML = "";
-		document.getElementById('error').innerHTML = 'We are sorry but there is a problem with the Link that you are trying to fetch.';
-	}
-	finally {}
-}
-
-function getUrlParts(url) {
-
-	try {
-		if(isEmpty(url)) {
-			document.getElementById('error').innerHTML = 'Please paste a valid Url.';
-			return false;
-		}
-
-		document.body.style.cursor = "wait";
-
-		/* 
-		 * encode the base64 so that it transfers properly to the server 
-		 */
-		var encodeUrl = encodeURIComponent(url);
-
-		var inputFields = {"url":encodeUrl};
-
-		var inputJSON = {};
-		inputJSON.inputArgs = inputFields;
-	
-		var stringJSON = JSON.stringify(inputJSON);
-
-		var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-
-		xhr.onreadystatechange = function () {
-
-			if (xhr.readyState !== 4) {
-				return;
-			}
-
-			if (xhr.status === 200) {
-				var data = JSON.parse(xhr.responseText);
-
-				var statusCd = data.statusCd;
-				var title = data.title;
-				var text = data.text;
-
-				if(statusCd == "0") {
-					document.getElementById("title").value = title;
-					document.getElementById("text").value = text;
-
-				} else {
-					document.getElementById('error').innerHTML = "We are sorry but we could not fetch the title or description for your link.";
-					document.getElementById('url').innerHTML = "";
-				}
-
-				document.body.style.cursor = "default";
-
-			} else {
-				document.getElementById('url').innerHTML = "";
-				document.body.style.cursor = "default";
-				console.log('Error: ' + xhr.status);
-			}
-		};
-
-		xhr.onerror = function () {
-			console.log("getUrlParts(): An error occurred during the transaction");
-		};
-
-		var url = "http://localhost:8080/mydrawer/UrlParts/";
-
-		xhr.open("POST", url, true);
-		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		xhr.send("inputJSON=" + stringJSON);
-	}
-	catch(err) {
-		document.body.style.cursor = "default";
-		document.getElementById('url').innerHTML = "";
-		document.getElementById('error').innerHTML = 'We are sorry but there is a problem with the Link that you are trying to fetch.';
-	}
-	finally {}
-}
-
-
 function postFetchMediaFile() {
 
 	try {
@@ -1797,7 +1781,7 @@ function postFetchMediaFile() {
 */
 		/* Maximum file size is 10MB */
 		if (oFile.size > 10485760) {
-			document.getElementById('error').innerHTML = 'The file is too big. You can only upload up to a 10MB file.';
+			component.setText("error", "The file is too big. You can only upload up to a 10MB file.");
 			return;
 		}
 
@@ -1859,7 +1843,7 @@ function postUploadMediaFile(stringJSON) {
 		xhr.send("inputJSON=" + stringJSON);
 	}
 	catch(err) {
-		document.getElementById('error').innerHTML = 'We are sorry but we cannot post your file at this time.  Please try again in a little bit.';
+		component.setText("error", "We are sorry but we cannot post your file at this time.  Please try again in a little bit.");
 	}
 	finally {}
 }
@@ -1973,7 +1957,7 @@ var tray = {
 
 					component.render("t-tray-list", "template-content", tableData);
 
-					menu.reset();
+					component.saveInitialState("template-content");
 				} else {
 					console.log('Error: ' + xhr.status);
 				}
@@ -2033,7 +2017,7 @@ var tray = {
 
 			component.render("t-tray-add", "template-content", data);
 
-			menu.reset();
+			component.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderAddTray(): " + err);
@@ -2047,12 +2031,12 @@ var tray = {
 			var name = document.getElementById("name").value;
 
 			if(isEmpty(name)) {
-				document.getElementById('error').innerHTML = 'Please enter a Tray Name.';
+				component.setText("error", "Please enter a Tray Name.");
 				return false;
 			}
 
 			if(tray.isDuplicate(name)) {
-				document.getElementById('error').innerHTML = 'You already have this Tray in your Drawer.';
+				component.setText("error", "You already have this Tray in your Drawer.");
 				return false;
 			}
 
@@ -2119,7 +2103,7 @@ var tray = {
 				component.render("t-tray-edit", "template-content", data);
 			}
 
-			menu.reset();
+			component.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderEditTray(): " + err);
@@ -2136,7 +2120,7 @@ var tray = {
 			var name = document.getElementById("name").value;
 
 			if(isEmpty(name)) {
-				document.getElementById('error').innerHTML = 'Please enter a Tray Name.';
+				component.setText("error", "Please enter a Tray Name.");
 				return false;
 			}
 
@@ -2144,7 +2128,7 @@ var tray = {
 			var origName = nameEl.getAttribute('data-tray-name');
 
 			if(tray.isDuplicate(name)) {
-				document.getElementById('error').innerHTML = 'You already have a Tray with this name.';
+				component.setText("error", "You already have a Tray with this name.");
 				document.getElementById("name").value = origName;
 				return false;
 			}
@@ -2358,7 +2342,7 @@ var tray = {
 
 			component.render("t-tray-delete-error", "template-content", data);
 
-			menu.reset();
+			component.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderCannotDeleteTray(): " + err);
@@ -2373,7 +2357,7 @@ var tray = {
 
 			component.render("t-tray-error", "template-content", data);
 
-			menu.reset();
+			component.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderTrayError(): " + err);
@@ -2386,91 +2370,6 @@ var tray = {
 var listener = {
 
 	create: function() {
-
-		document.addEventListener('click', function(event) {
-
-			var elementId = event.target.classList.toString();
-console.log(elementId);
-
-			if(elementId.indexOf("e-render-view-text-item") >= 0) {
-				var data = event.target.id.toString();
-				drawer.renderViewTextItem(data);
-			}
-
-			if(elementId.indexOf("e-add-text-item") >= 0) {
-				drawer.addTextItem();
-			}
-
-			if(elementId.indexOf("e-render-edit-text-item") >= 0) {
-				var data = event.target.id.toString();
-				drawer.editTextItem(data);
-			}
-
-			if(elementId.indexOf("e-add-web-item") >= 0) {
-				drawer.addWebItem();
-			}
-
-			if(elementId.indexOf("e-edit-web-item") >= 0) {
-				var data = event.target.id.toString();
-				drawer.editWebItem(data);
-			}
-
-			if(elementId.indexOf("e-add-media-item") >= 0) {
-				drawer.addMediaItem();
-			}
-
-			if(elementId.indexOf("e-render-view-video-item") >= 0) {
-				var data = event.target.id.toString();
-				drawer.renderViewVideoItem(data);
-			}
-
-			if(elementId.indexOf("e-post-search-drawer-by-tra-id") >= 0) {
-				postSearchDrawerByTraId("{{favoriteTraTokens}}");
-			}
-
-			if(elementId.indexOf("e-delete-drawer-item") >= 0) {
-				var data = event.target.id.toString();
-				drawer.deleteItem(data);
-			}
-
-			if(elementId.indexOf("e-render-contact-us") >= 0) {
-				general.renderContactUs();
-			}
-
-			if(elementId.indexOf("e-add-contact-us") >= 0) {
-				general.addContactUs();
-			}
-
-			if(elementId.indexOf("e-get-tray-list") >= 0) {
-				tray.getList();
-			}
-
-			if(elementId.indexOf("e-render-add-tray") >= 0) {
-				tray.renderAddTray();
-			}
-
-			if(elementId.indexOf("e-add-tray") >= 0) {
-				var data = event.target.id.toString();
-				tray.addItem();
-			}
-
-			if(elementId.indexOf("e-render-edit-tray") >= 0) {
-				var data = event.target.id.toString();
-				tray.renderEditTray(data);
-			}
-
-			if(elementId.indexOf("e-edit-tray") >= 0) {
-				var data = event.target.id.toString();
-				tray.editItem(data);
-			}
-
-			if(elementId.indexOf("e-delete-tray") >= 0) {
-				var data = event.target.id.toString();
-				tray.checkIfCanBeDeleted(data);
-			}
-
-
-		}, false);
 
 		document.body.addEventListener("keydown", function(event) {
 
