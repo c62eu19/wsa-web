@@ -1,6 +1,6 @@
 <script id="t-drawer-button-delete" type="text/template">
 
-<a href="#" onclick="{{onclick:deleteItem}}" data-drawer-id="{{data:drawerId}}">
+<a href="#" onclick="{{func:deleteItem}}" data-drawer-id="{{data:drawerId}}">
 	<span style="color: #000;">
 		<strong>D</strong>elete
 	</span>

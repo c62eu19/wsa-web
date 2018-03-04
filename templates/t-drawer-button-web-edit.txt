@@ -1,6 +1,6 @@
 <script id="t-drawer-button-web-edit" type="text/template">
 
-<a href="#" onclick="{{onclick:renderEditWebItem}}" data-drawer-id="{{data:drawerId}}>
+<a href="#" onclick="{{func:renderEditWebItem}}" data-drawer-id="{{data:drawerId}}">
 	<span style="color: #000;">
 		<strong>E</strong>dit
 	</span>

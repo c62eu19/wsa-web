@@ -8,25 +8,144 @@
 */
 
 /*
- * Data Object for apps to use to house all relevant data
+ * Data Object for apps to use to store and retrieve specific data for their app
  */
-var dataObj = {};
+var appData = {
+
+	data: {},
+
+	initialize: function() {
+		this.data = {};
+	},
+
+	set: function(dataKey, dataVal) {
+
+		try {
+			this.data[dataKey] = dataVal;
+		}
+		catch(err) {
+			console.log("set(): " + err);
+		}
+		finally {}
+	},
+
+	get: function(dataKey) {
+
+		try {
+			return this.data[dataKey];
+		}
+		catch(err) {
+			console.log("get(): " + err);
+		}
+		finally {}
+	}
+};
+
+/*
+ * Data Object for apps to use to store and retrieve state
+ */
+var state = {
+
+	initialState: "",
+
+	saveInitialState: function(container) {
+
+		try {
+			this.initialState = document.getElementById(container).innerHTML;
+		}
+		catch(err) {
+			console.log("saveInitialState(): " + err);
+		}
+	},
+
+	restoreInitialState: function(container) {
+
+		try {
+			document.getElementById(container).innerHTML = this.initialState;
+		}
+		catch(err) {
+			console.log("restoreInitialState(): " + err);
+		}
+		finally {}
+	}
+};
 
 var component = {
 
-	render: function(template, container, data) {
+	events: {},
+	data: {},
+
+	initializeEventRegistry: function() {
+		this.events = {};
+	},
+
+	registerEvent: function(funcKey, funcVal) {
+
+		try {
+			/*
+			 * Add the template braces to the event for substitution purposes
+			 */
+			var templateVar = "{{" + funcKey + "}}";
+
+			this.events[templateVar] = funcVal;
+		}
+		catch(err) {
+			console.log("registerEvent(): " + err);
+		}
+		finally {}
+	},
+
+	initializeDataRegistry: function() {
+		this.data = {};
+	},
+
+	registerData: function(dataKey, dataVal) {
+
+		try {
+			/*
+			 * Add the template braces to the dataKey for substitution purposes
+			 */
+			var templateVar = "{{" + dataKey + "}}";
+
+			this.data[templateVar] = dataVal;
+		}
+		catch(err) {
+			console.log("registerData(): " + err);
+		}
+		finally {}
+	},
+
+	render: function(template, container) {
 
 		try {
 			var t = document.getElementById(template);
 			var tHtml = t.innerHTML;
 
-			Object.keys(data).forEach(function(key, idx) {
-				var regex = new RegExp(key, "g");
+			for(var key in this.data) {
+				if(this.data.hasOwnProperty(key)) {
 
-				if(tHtml.indexOf(key) >= 0) {
-					tHtml = tHtml.replace(regex, data[key]);
+					var val = this.data[key];
+
+					var regex = new RegExp(key, "g");
+
+					if(tHtml.indexOf(key) >= 0) {
+						tHtml = tHtml.replace(regex, val);
+					}
 				}
-			}); 
+			}
+
+			for(var key in this.events) {
+				if(this.events.hasOwnProperty(key)) {
+
+					var val = this.events[key];
+
+					var regex = new RegExp(key, "g");
+
+					if(tHtml.indexOf(key) >= 0) {
+						tHtml = tHtml.replace(regex, val);
+					}
+				}
+			}
 
 			document.getElementById(container).innerHTML = tHtml;
 		}
@@ -36,7 +155,7 @@ var component = {
 		finally {}
 	},
 
-	create:	function(template, data) {
+	create:	function(template) {
 
 		var componentHtml = "";
 
@@ -44,13 +163,31 @@ var component = {
 			var t = document.getElementById(template);
 			componentHtml = t.innerHTML;
 
-			Object.keys(data).forEach(function(key, idx) {
-				var regex = new RegExp(key, "g");
+			for(var key in this.data) {
+				if(this.data.hasOwnProperty(key)) {
 
-				if(componentHtml.indexOf(key) >- 0) {
-					componentHtml = componentHtml.replace(regex, data[key]);
+					var val = this.data[key];
+
+					var regex = new RegExp(key, "g");
+
+					if(componentHtml.indexOf(key) >= 0) {
+						componentHtml = componentHtml.replace(regex, val);
+					}
 				}
-			}); 
+			}
+
+			for(var key in this.events) {
+				if(this.events.hasOwnProperty(key)) {
+
+					var val = this.events[key];
+
+					var regex = new RegExp(key, "g");
+
+					if(componentHtml.indexOf(key) >= 0) {
+						componentHtml = componentHtml.replace(regex, val);
+					}
+				}
+			}
 		}
 		catch(err) {
 			console.log("create(): " + err);
@@ -58,28 +195,6 @@ var component = {
 		finally {}
 
 		return componentHtml;
-	},
-
-	saveInitialState: function(container) {
-
-		try {
-			dataObj.initialState = document.getElementById(container).innerHTML;
-		}
-		catch(err) {
-			console.log("saveInitialState(): " + err);
-		}
-		finally {}
-	},
-
-	restoreInitialState: function(container) {
-
-		try {
-			document.getElementById(container).innerHTML = dataObj.initialState;
-		}
-		catch(err) {
-			console.log("restoreInitialState(): " + err);
-		}
-		finally {}
 	},
 
 	setText: function(element, text) {
@@ -100,6 +215,14 @@ var component = {
 
 			capture = capture ? true : false;
 
+			/*
+			 * Remove the event since we don't want to add multiples of the same listener
+			 */
+			element.removeEventListener(event, callbackFunction, capture);
+
+			/*
+			 * Add the event listener for the passed in element
+			 */
 			element.addEventListener(event, callbackFunction, capture);
 		}
 		catch(err) {

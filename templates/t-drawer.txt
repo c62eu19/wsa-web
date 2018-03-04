@@ -2,21 +2,21 @@
 
 <div class="row">
 	<div class="five columns" padding-top:9px;">
-		<form id="f-search" onsubmit="postSearchDrawerByWildcard();return false;">
+		<form>
 			<input type="text" placeholder="Search..." style="float:left;" id="searchTerm" name="searchTerm"/>
 
 			<div id="button-holder">
-				<img src="/search-image" onclick='postSearchDrawerByWildcard();'/>
+				<img src="/search-image" onclick="{{func:searchDrawerByWildcard}}"/>
 			</div>
 		</form>
 	</div>
 	<div class="seven columns" style="padding-top:9px;">
 		<ul class="icons" style="text-align:right; margin-bottom:9px;">
 			<li style="padding-left: 7px;">
-				<a href="#" onclick='postSearchDrawerByTraId("{{favoriteTraTokens}}");'>Favorites</a>
+				<a href="#" onclick="{{func:searchDrawerByTrayId}}" data-tray-id="{{data:trayId}}" data-tray-name="Favorites">Favorites</a>
 			</li>
 			<li style="padding-left: 7px;">
-				<a href="#" onclick="{{onclick:getTrayList}}">Trays</a>
+				<a href="#" onclick="{{func:getTrayList}}">Trays</a>
 			</li>
 			<li style="padding-left: 7px;">
 				<a href="#">Inbasket <sup>2</sup></a>

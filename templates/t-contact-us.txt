@@ -22,7 +22,7 @@
 	<label for="message">Message</label>
 	<textarea class="u-full-width hide-textarea-resize" placeholder="Enter your message" rows="6" id="message" name="message"></textarea>
 
-	<a onclick="{{onclick:addContactUs}}" class="button button-primary" style="font-size:16px;">Send</a>
+	<a onclick="{{func:addContactUs}}" class="button button-primary" style="font-size:16px;">Send</a>
 
 	<input id="contactus" name="contactus" type="hidden" value="">
 </form>

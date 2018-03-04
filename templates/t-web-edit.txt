@@ -14,7 +14,7 @@
 
 <form>
 	<label for="name">URL</label>
-	<textarea class="u-full-width hide-textarea-resize" style="height:75px;" onpaste="drawer.pasteUrl(event);" rows="4" id="url" name="url" placeholder="Paste an Article or Video (Youtube, Vimeo, TED) Link here from the web and wait for your content to appear below"></textarea>
+	<textarea class="u-full-width hide-textarea-resize" style="height:75px;" onpaste="{{func:pasteWebUrl}}" rows="4" id="url" name="url" placeholder="Paste an Article or Video (Youtube, Vimeo, TED) Link here from the web and wait for your content to appear below"></textarea>
 
 	<div class="row">
 		<div class="eight columns">
@@ -30,7 +30,7 @@
 	<label for="name">Text</label>
 	<textarea class="u-full-width hide-textarea-resize" style="height:100px;" id="text" name="text" placeholder="Link Text" rows="10"></textarea>
 
-	<a href="#" class="button button-primary" onclick="{{onclick:editWebItem}}" data-drawer-id="{{data:drawerId}}" style="font-size:14px;">Save</a>
+	<a href="#" class="button button-primary" onclick="{{func:editWebItem}}" data-drawer-id="{{data:drawerId}}" style="font-size:14px;">Save</a>
 </form>
 
 </script>

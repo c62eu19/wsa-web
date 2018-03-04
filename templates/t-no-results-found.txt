@@ -7,7 +7,7 @@
 </p>
 
 <p style="font-size: 18px;">
-	<strong><a href="#" class="e-get-drawer">Click here to try again.</strong></a>
+	<strong><a href="#" onclick="{{func:getDrawerList}}">Click here to try again.</strong></a>
 </p>
 
 </script>

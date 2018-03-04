@@ -26,7 +26,7 @@
 	<label for="name">Text</label>
 	<textarea class="u-full-width hide-textarea-resize" style="height:200px;" placeholder="Enter any text that you want to save" rows="15" id="text" name="text"></textarea>
 
-	<a class="button button-primary" onclick="{{onclick:editTextItem}}" data-drawer-id="{{data:drawerId}}" style="font-size:14px;">Save</a>
+	<a class="button button-primary" onclick="{{func:editTextItem}}" data-drawer-id="{{data:drawerId}}" style="font-size:14px;">Save</a>
 </form>
 
 </script>

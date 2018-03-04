@@ -9,10 +9,10 @@
 	<div class="eight columns" style="padding-top:9px;">
 		<ul class="icons" style="text-align:right; margin-bottom:9px;">
 			<li style="padding-left: 7px;">
-				<a href="#" onclick="{{onclick:renderAddTray}}">Add a Tray</a>
+				<a href="#" onclick="{{func:renderAddTray}}">Add a Tray</a>
 			</li>
 			<li style="padding-left: 7px;">
-				<a href="#" onclick="{{onclick:getDrawerList}}">My Drawer</a>
+				<a href="#" onclick="{{func:getDrawerList}}">My Drawer</a>
 			</li>
 			<li style="padding-left: 7px;">
 				<a href="#">Inbasket <sup>2</sup></a>

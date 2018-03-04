@@ -5,7 +5,11 @@
 <p style="font-size:18px;">
 	We all have that certain place at home where we keep all of our random stuff.  You know, that place you throw stuff in when you're not quite 
 	sure where to put it but you know that you want to save it for when you might need it.  The problem is though that when you finally do need it 
-	you just can't seem to find it.  Did you ever want to show someone a picture and it took forever to find it because you had to look through 
+	you just can't seem to find it.
+</p>
+
+<p style="font-size:18px;">
+	Did you ever want to show someone a picture and it took forever to find it because you had to look through 
 	the thousands of photos on your phone?  Did you ever want to remake a recipe you tried but forgot where you put it or which site you found it 
 	on?  All these problems and much more can be solved with My Drawer.  Now there's one place to store all your loose random things and you'll 
 	be able to search and find them in the blink of an eye. 

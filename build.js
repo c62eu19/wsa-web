@@ -42,31 +42,35 @@ fs.writeFile('./app.html', appHtml,  function(err) {
 	}
 });
 
+var test = "";
 fs.readFile('./app.html', 'utf-8', (err, file) => {
 	const lines = file.split('\n')
 
-	  for (let line of lines)
-		  if(line != "\n") {
-	    console.log(line)
+	  for (let line of lines) {
+		  var foo = line.replace(/\r?\n?/g, '');
+		  test += foo.trim();
 		  }
+	console.log(test);
  });
 
-console.log('MyDrawer (Init): Reading router configure.json file');
+var jstest = "";
+fs.readFile('./js/drawer.js', 'utf-8', (err, file) => {
+	const lines = file.split('\n')
+
+	  for (let line of lines) {
+		  var foo = line.replace(/\r?\n?/g, '');
+		  jstest += foo.trim();
+		  }
+	console.log(jstest);
+ });
+
+console.log('MyDrawer (Init): Reading router app.json file');
 
 /* Read the Router config file */
-var json = JSON.parse(fs.readFileSync('./configure.json', 'utf8'));
+var json = JSON.parse(fs.readFileSync('./app.json', 'utf8'));
 
-/* Utility Read app config file for all app content */
-getConfigValue = function(key, attribute) {
+for(var i = 0; i < json.length; i++) {
 
-	var value = "";
+	console.log(json[i].path);
+}
 
-	try {
-		value = json[key][attribute];
-	}
-	catch(e) {
-		console.log("Cannot find resource: " + e);
-	}
-
-	return value;
-};

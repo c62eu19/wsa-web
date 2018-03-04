@@ -5,21 +5,45 @@
  * @author Stan Zajdel
 */
 
+function init() {
+
+	try {
+		/*
+		 * Initialize the appData object
+		 */
+		appData.initialize();
+
+		component.initializeEventRegistry();
+		component.registerEvent("func:getDrawerList", "drawer.getList();");
+		component.registerEvent("func:toggle", "menu.toggle();");
+
+		component.render("t-header", "template-header");
+
+		/*
+		 * Render the sign in template
+		 */
+		entry.renderSignIn();
+	}
+	catch(err) {
+		console.log("init(): " + err);
+	}
+	finally {}
+}
+
 var entry = {
 
 	renderSignIn: function() {
 
 		try {
-			if(isEmpty(dataObj.collectionName)) {
+			if(isEmpty(appData.get("collectionName"))) {
 
-				var data = {
-					"{{onclick:renderSignUp}}" : "entry.renderSignUp();",
-					"{{onclick:signIn}}" : "entry.signIn();"
-				};
+				component.initializeEventRegistry();
+				component.registerEvent("func:signIn", "entry.signIn();");
+				component.registerEvent("func:renderSignUp", "entry.renderSignUp();");
 
-				component.render("t-sign-in", "template-content", data);
+				component.render("t-sign-in", "template-content");
 
-				component.saveInitialState("template-content");
+				state.saveInitialState("template-content");
 
 				document.body.addEventListener("keydown", function(event) {
 					if(event.keyCode === 13) {
@@ -42,7 +66,6 @@ var entry = {
 	signIn: function(){
 
 		try {
-
 			var email = document.getElementById("email").value;
 			var password = document.getElementById("password").value;
 
@@ -77,15 +100,16 @@ var entry = {
 					var statusInd = data.statusInd;
 					var statusMsg = data.statusMsg;
 
-					dataObj.collectionName = data.collectionName;
-					dataObj.userName = data.userName;
-					dataObj.trayJson = data.trayJson;
-					dataObj.drawerJson = data.drawerJson;
+					appData.set("collectionName", data.collectionName);
+					appData.set("userName", data.userName);
+					appData.set("trayJson", data.trayJson);
+					appData.set("drawerJson", data.drawerJson);
 
 					if(statusInd == "A") {
-						dataObj.traySelected = "in your drawer";
+						appData.set("traySelected", "in your drawer");
 
-						dataObj.favoriteTraTokens = tray.getFavoriteTrayTokens();
+						var favoriteTrayId = tray.getFavoriteTrayId();
+						appData.set("favoriteTrayId", favoriteTrayId);
 
 						menu.reset();
 						drawer.render();
@@ -122,13 +146,12 @@ var entry = {
 	renderSignInError: function() {
 
 		try {
-			var data = {
-				"{{onclick:renderSignIn}}" : "entry.renderSignIn();"
-			};
+			component.initializeEventRegistry();
+			component.registerEvent("func:renderSignIn", "entry.renderSignIn();");
 
-			component.render("t-sign-in-error", "template-content", data);
+			component.render("t-sign-in-error", "template-content");
 
-			component.saveInitialState("template-content");
+			state.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderSignInError(): " + err);
@@ -139,10 +162,9 @@ var entry = {
 	renderAccountDisabled: function() {
 
 		try {
-			var data = {};
-			component.render("t-account-disabled", "template-content", data);
+			component.render("t-account-disabled", "template-content");
 
-			component.saveInitialState("template-content");
+			state.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderAccountDisabled(): " + err);
@@ -153,16 +175,15 @@ var entry = {
 	renderSignUp: function() {
 
 		try {
-			dataObj = {};
+			appData.initialize();
 
-			var data = {
-				"{{onclick:renderSignIn}}" : "entry.renderSignIn();",
-				"{{onclick:signUp}}" : "entry.signUp();"
-			};
+			component.initializeEventRegistry();
+			component.registerEvent("func:signUp", "entry.signUp();");
+			component.registerEvent("func:renderSignIn", "entry.renderSignIn();");
 
-			component.render("t-sign-up", "template-content", data);
+			component.render("t-sign-up", "template-content");
 
-			component.saveInitialState("template-content");
+			state.saveInitialState("template-content");
 
 			document.body.addEventListener("keydown", function(event) {
 				if(event.keyCode === 13) {
@@ -245,15 +266,17 @@ var entry = {
 					var statusInd = data.statusInd;
 					var statusMsg = data.statusMsg;
 
-					dataObj.collectionName = data.collectionName;
-					dataObj.userName = data.userName;
-					dataObj.trayJson = data.trayJson;
-					dataObj.drawerJson = data.drawerJson;
+					appData.set("collectionName", data.collectionName);
+					appData.set("userName", data.userName);
+					appData.set("trayJson", data.trayJson);
+					appData.set("drawerJson", data.drawerJson);
 
 					if(statusInd == "A") {
 
-						dataObj.traySelected = "in your drawer";
-						dataObj.favoriteTraTokens = tray.getFavoriteTrayTokens();
+						appData.set("traySelected", "in your drawer");
+
+						var favoriteTrayId = tray.getfavoriteTrayId();
+						appData.set("favoriteTrayId", favoriteTrayId);
 
 						drawer.render();
 
@@ -288,14 +311,15 @@ var entry = {
 	renderSignUpError: function(errorMsg) {
 
 		try {
-			var data = {
-				"{{data:errorMsg}}": errorMsg,
-				"{{onclick:renderSignIn}}" : "entry.renderSignin();"
-			};
+			component.initializeDataRegistry();
+			component.registerData("data:errorMsg", errorMsg);
 
-			component.render("t-signup-error", "template-content", data);
+			component.initializeEventRegistry();
+			component.registerEvent("func:renderSignUp", "entry.renderSignUp();");
 
-			component.saveInitialState("template-content");
+			component.render("t-signup-error", "template-content");
+
+			state.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderSignUpError(): " + err);
@@ -306,12 +330,8 @@ var entry = {
 	signOut: function() {
 
 		try {
-			/* Clear dataObj.collectionName */
-			dataObj = {};
+			appData.initialize();
 
-			dataObj.CollectionName = "";
-
-			var data = {};
 			entry.renderSignIn();
 		}
 		catch(err) {
@@ -341,7 +361,7 @@ var menu = {
 
 			if(menuElement == null) {
 
-				if(isEmpty(dataObj.collectionName)) {
+				if(isEmpty(appData.get("collectionName"))) {
 					menu.renderMenuSignedOut();
 
 				} else {
@@ -349,7 +369,7 @@ var menu = {
 				}
 
 			} else {
-				component.restoreInitialState("template-content");
+				state.restoreInitialState("template-content");
 			}
 		}
 		catch(err) {
@@ -364,7 +384,7 @@ var menu = {
 			document.getElementById('id-cross').style.display = 'none';
 			document.getElementById('id-hamburger').style.display = '';
 
-			component.restoreInitialState("template-content");
+			state.restoreInitialState("template-content");
 		}
 		catch(err) {
 			console.log("closeHamburger(): " + err);
@@ -377,19 +397,21 @@ var menu = {
 		try {
 			var trayListSelectTag = tray.createSelectTag("", "add-onchange");
 
-			var data = {
-				"{{onclick:renderAddTextItem}}": "drawer.renderAddTextItem();",
-				"{{onclick:renderAddWebItem}}": "drawer.renderAddWebItem();",
-				"{{onclick:renderAddMediaItem}}": "drawer.renderAddMediaItem();",
-				"{{onclick:getTrayList}}": "tray.getList();",
-				"{{onclick:renderContactUs}}": "general.renderContactUs();",
-				"{{onclick:renderAbout}}": "general.renderAbout();",
-				"{{onclick:signOut}}": "entry.signOut();",
-				"{{favoriteTraTokens}}" : dataObj.favoriteTraTokens,
-				"{{trayListSelectTag}}" : trayListSelectTag
-			};
+			component.initializeDataRegistry();
+			component.registerData("data:trayId", appData.get("favoriteTrayId"));
+			component.registerData("data:trayListSelectTag", trayListSelectTag);
 
-			component.render("t-menu-signed-in", "template-content", data);
+			component.initializeEventRegistry();
+			component.registerEvent("func:renderAddTextItem", "drawer.renderAddTextItem();");
+			component.registerEvent("func:renderAddWebItem", "drawer.renderAddWebItem();");
+			component.registerEvent("func:renderAddMediaItem", "drawer.renderAddMediaItem();");
+			component.registerEvent("func:searchDrawerByTrayId", "drawer.searchDrawerByTrayId(this);");
+			component.registerEvent("func:getTrayList", "tray.getList();");
+			component.registerEvent("func:renderContactUs", "general.renderContactUs();");
+			component.registerEvent("func:renderAbout", "general.renderAbout();");
+			component.registerEvent("func:signOut", "entry.signOut();");
+
+			component.render("t-menu-signed-in", "template-content");
 		}
 		catch(err) {
 			console.log("renderMenuSignedIn(): " + err);
@@ -400,12 +422,12 @@ var menu = {
 	renderMenuSignedOut: function() {
 
 		try {
-			var data = {
-				"{{onclick:renderContactUs}}": "general.renderContactUs();",
-				"{{onclick:renderAbout}}": "general.renderAbout();"
-			};
 
-			component.render("t-menu-signed-out", "template-content", data);
+			component.initializeEventRegistry();
+			component.registerEvent("func:renderContactUs", "general.renderContactUs();");
+			component.registerEvent("func:renderAbout", "general.renderAbout();");
+
+			component.render("t-menu-signed-out", "template-content");
 		}
 		catch(err) {
 			console.log("renderMenuSignedOut(): " + err);
@@ -420,15 +442,12 @@ var general = {
 	renderContactUs: function() {
 
 		try {
-			dataObj.origTemplateContent = document.getElementById('template-content').innerHTML;
+			component.initializeEventRegistry();
+			component.registerEvent("func:addContactUs", "general.addContactUs();");
 
-			var data = {
-				"{{onclick:addContactUs}}" : "general.addContactUs();"
-			};
+			component.render("t-contact-us", "template-content");
 
-			component.render("t-contact-us", "template-content", data);
-
-			component.saveInitialState("template-content");
+			state.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderContactUs(): " + err);
@@ -508,10 +527,9 @@ var general = {
 	renderAbout: function() {
 
 		try {
-			var data = {};
-			component.render("t-about", "template-content", data);
+			component.render("t-about", "template-content");
 
-			component.saveInitialState("template-content");
+			state.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderAbout(): " + err);
@@ -526,7 +544,7 @@ var drawer = {
 	getList: function() {
 
 		try {
-			if(isEmpty(dataObj.collectionName)) {
+			if(isEmpty(appData.get("collectionName"))) {
 				entry.renderSignIn();
 
 			} else {
@@ -540,11 +558,13 @@ var drawer = {
 					}
 
 					if (xhr.status === 200) {
-						dataObj.drawerJson = xhr.responseText;
+						var drawerJson = xhr.responseText;
 
-						var drawerArray = JSON.parse(dataObj.drawerJson);
+						appData.set("drawerJson", drawerJson);
 
-						dataObj.traySelected = "in your drawer";
+						var drawerArray = JSON.parse(drawerJson);
+
+						appData.set("traySelected", "in your drawer");
 
 						drawer.render();
 
@@ -557,7 +577,7 @@ var drawer = {
 					console.log("getList(): An error occurred during the transaction");
 				};
 
-				var url = "http://localhost:8080/mydrawer/DrawerList/" + dataObj.collectionName;
+				var url = "http://localhost:8080/mydrawer/DrawerList/" + appData.get("collectionName");
 
 				xhr.open("GET", url, true);
 				xhr.send();
@@ -569,15 +589,159 @@ var drawer = {
 		finally {}
 	},
 
+	searchDrawerByWildcard: function() {
+
+		try {
+			var searchTerm = document.getElementById("searchTerm").value;
+
+			if(isEmpty(searchTerm)) {
+				return false;
+			}
+
+			var inputFields = {
+				"searchType":"WILDCARD", 
+				"collectionName":appData.get("collectionName"), 
+				"searchTerm":searchTerm, 
+				"trayId":""
+			};
+
+			var inputJSON = {};
+			inputJSON.inputArgs = inputFields;
+		
+			var stringJSON = JSON.stringify(inputJSON);
+
+			var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+
+			xhr.onreadystatechange = function () {
+
+				if (xhr.readyState !== 4) {
+					return;
+				}
+
+				if (xhr.status === 200) {
+					var drawerJson = xhr.responseText;
+
+					appData.set("drawerJson", drawerJson);
+
+					var drawerArray = JSON.parse(drawerJson);
+
+					if(drawerArray.length <= 0) {
+						drawer.renderNoResultsFound();
+
+					} else {
+						appData.set("traySelected", "resulting in your search");
+
+						menu.reset();
+						drawer.render();
+					}
+				} else {
+					console.log('Error: ' + xhr.status);
+				}
+			};
+
+			xhr.onerror = function () {
+				console.log("postSearchDrawerByWildcard(): An error occurred during the transaction");
+			};
+
+			var url = "http://localhost:8080/mydrawer/DrawerList/";
+
+			xhr.open("POST", url, true);
+			xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xhr.send("inputJSON=" + stringJSON);
+		}
+		catch(err) {
+			console.log("searchDrawerByWildcard(): " + err);
+		}
+		finally {}
+	},
+
+	searchDrawerByTrayId: function(element) {
+
+		try {
+			var trayId = "";
+			var trayName = "";
+
+			trayId = element.getAttribute("data-tray-id");
+			trayName = element.getAttribute("data-tray-name");
+
+			/*
+			 * If the element is from the menu then...
+			 */
+			if(trayId == null) {
+				trayId = element.options[element.selectedIndex].value;
+				trayName = element.options[element.selectedIndex].innerText;
+			}
+
+			var inputFields = {
+				"searchType":"TRAY", 
+				"collectionName":appData.get("collectionName"), 
+				"searchTerm":"", 
+				"trayId":trayId
+			};
+
+			var inputJSON = {};
+			inputJSON.inputArgs = inputFields;
+		
+			var stringJSON = JSON.stringify(inputJSON);
+
+			var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+
+			xhr.onreadystatechange = function () {
+
+				if (xhr.readyState !== 4) {
+					return;
+				}
+
+				if (xhr.status === 200) {
+					var drawerJson = xhr.responseText;
+
+					appData.set("drawerJson", drawerJson);
+
+					var drawerArray = JSON.parse(drawerJson);
+
+					if(drawerArray.length <= 0) {
+						drawer.renderNoResultsFound();
+
+					} else {
+						appData.set("traySelected", "in your " + trayName + " tray");
+
+						menu.reset();
+						drawer.render();
+					}
+				} else {
+					console.log('Error: ' + xhr.status);
+				}
+			};
+
+			xhr.onerror = function () {
+				console.log("searchDrawerByTrayId(): An error occurred during the transaction");
+			};
+
+			var url = "http://localhost:8080/mydrawer/DrawerList/";
+
+			xhr.open("POST", url, true);
+			xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xhr.send("inputJSON=" + stringJSON);
+		}
+		catch(err) {
+			console.log("searchDrawerByTrayId(): " + err);
+		}
+		finally {}
+	},
+
 	render: function() {
 
 		try {
+			var drawerJson = appData.get("drawerJson");
 
-			var drawerArray = JSON.parse(dataObj.drawerJson);
+			var drawerArray = JSON.parse(drawerJson);
 
 			var rowHtml = "";
 			var columnData = {};
 
+			var rowCount = 0;
 			var columnCount = 0;
 
 			for(var i=0; i<drawerArray.length; i++) {
@@ -594,50 +758,70 @@ var drawer = {
 				var deleteButton = drawer.createDeleteButton(item.drawerId);
 
 				columnData = {
-					"{{data:itemTitle}}" : itemTitle,
-					"{{data:trayName}}" : item.trayName,
-					"{{data:text}}" : sanitizedText,
-					"{{data:url}}" : item.url,
-					"{{data:updatedDate}}" : item.updatedDate,
 					"{{data:viewButton}}" : viewButton,
 					"{{data:editButton}}" : editButton,
 					"{{data:deleteButton}}" : deleteButton
 				};
 
+				component.initializeDataRegistry();
+				component.registerData("data:itemTitle", itemTitle);
+				component.registerData("data:trayName", item.trayName);
+				component.registerData("data:itemTitle", itemTitle);
+				component.registerData("data:text", sanitizedText);
+				component.registerData("data:url", item.url);
+				component.registerData("data:updatedDate", item.updatedDate);
+				component.registerData("data:viewButton", viewButton);
+				component.registerData("data:editButton", editButton);
+				component.registerData("data:deleteButton", deleteButton);
+
+				rowCount++;
 				columnCount++;
 
 				if(columnCount == 1) {
-					var columnLeft = component.create("t-drawer-columns", columnData);
+					var columnLeft = component.create("t-drawer-columns");
+
+					/*
+					 * If column count == 1 and rowCount == array count
+					 */
+					if(rowCount == drawerArray.length) {
+						component.initializeDataRegistry();
+						component.registerData("data:columnLeft", columnLeft);
+						component.registerData("data:columnRight", "");
+
+						rowHtml += component.create("t-drawer-rows");
+					}
 				}
 
 				if(columnCount == 2) {
-					var columnRight = component.create("t-drawer-columns", columnData);
-					var rowData = {
-						"{{data:columnLeft}}" : columnLeft,
-						"{{data:columnRight}}" : columnRight
-					};
+					var columnRight = component.create("t-drawer-columns");
 
-					rowHtml += component.create("t-drawer-rows", rowData);
+					component.initializeDataRegistry();
+					component.registerData("data:columnLeft", columnLeft);
+					component.registerData("data:columnRight", columnRight);
+
+					rowHtml += component.create("t-drawer-rows");
 					columnCount = 0;
 				}
-
 			}
 
 			if(drawerArray.length <= 0) {
 				rowHtml = "";
 			}
 
-			var tableData = {
-				"{{onclick:getTrayList}}" : "tray.getList();",
-				"{{favoriteTraTokens}}" : dataObj.favoriteTraTokens,
-				"{{data:totalItems}}" : drawerArray.length,
-				"{{data:traySelected}}" : dataObj.traySelected,
-				"{{data:drawerRows}}" : rowHtml
-			};
+			component.initializeDataRegistry();
+			component.registerData("data:trayId", appData.get("favoriteTrayId"));
+			component.registerData("data:totalItems", drawerArray.length);
+			component.registerData("data:traySelected", appData.get("traySelected"));
+			component.registerData("data:drawerRows", rowHtml);
 
-			component.render("t-drawer", "template-content", tableData);
+			component.initializeEventRegistry();
+			component.registerEvent("func:searchDrawerByWildcard", "drawer.searchDrawerByWildcard();");
+			component.registerEvent("func:searchDrawerByTrayId", "drawer.searchDrawerByTrayId(this);");
+			component.registerEvent("func:getTrayList", "tray.getList();");
 
-			component.saveInitialState("template-content");
+			component.render("t-drawer", "template-content");
+
+			state.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("render(): " + err);
@@ -648,11 +832,12 @@ var drawer = {
 	renderNoResultsFound: function() {
 
 		try {
-			var data = {};
+			component.initializeEventRegistry();
+			component.registerEvent("func:getDrawerList", "drawer.getList();");
 
-			component.render("t-no-results-found", "template-content", data);
+			component.render("t-no-results-found", "template-content");
 
-			component.saveInitialState("template-content");
+			state.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderNoResultsFound(): " + err);
@@ -665,7 +850,7 @@ var drawer = {
 		var drawerItem = {};
 
 		try {
-			var drawerArray = JSON.parse(dataObj.drawerJson);
+			var drawerArray = JSON.parse(appData.get("drawerJson"));
 
 			if(drawerArray.length > 0) {
 
@@ -707,20 +892,19 @@ var drawer = {
 			drawerItem = {};
 			drawerItem = drawer.getItem(drawerId);
 
-			var editButtonComponent = drawer.createEditButton(drawerItem.drawerId);
-			var deleteButtonComponent = drawer.createDeleteButton(drawerItem.drawerId);
+			var editButton = drawer.createEditButton(drawerItem.drawerId);
+			var deleteButton = drawer.createDeleteButton(drawerItem.drawerId);
 
-			var data = {
-				"{{data:editButton}}" : editButtonComponent,
-				"{{data:deleteButton}}" : deleteButtonComponent,
-				"{{data:title}}" : drawerItem.title,
-				"{{data:trayName}}" : drawerItem.trayName,
-				"{{data:text}}" : drawerItem.text
-			};
+			component.initializeDataRegistry();
+			component.registerData("data:editButton", editButton);
+			component.registerData("data:deleteButton", deleteButton);
+			component.registerData("data:title", drawerItem.title);
+			component.registerData("data:trayName", drawerItem.trayName);
+			component.registerData("data:text", drawerItem.text);
 
-			component.render("t-text-view", "template-content", data);
+			component.render("t-text-view", "template-content");
 
-			component.saveInitialState("template-content");
+			state.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderViewTextItem(): " + err);
@@ -733,14 +917,15 @@ var drawer = {
 		try {
 			var trayListSelectTag = tray.createSelectTag("", "N");
 
-			var data = {
-				"{{data:trayListSelectTag}}": trayListSelectTag,
-				"{{onclick:addTextItem}}": "drawer.addTextItem();"
-			};
+			component.initializeDataRegistry();
+			component.registerData("data:trayListSelectTag", trayListSelectTag);
 
-			component.render("t-text-add", "template-content", data);
+			component.initializeEventRegistry();
+			component.registerEvent("func:addTextItem", "drawer.addTextItem();");
 
-			component.saveInitialState("template-content");
+			component.render("t-text-add", "template-content");
+
+			state.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderAddTextItem(): " + err);
@@ -756,25 +941,26 @@ var drawer = {
 			drawerItem = {};
 			drawerItem = drawer.getItem(drawerId);
 
-			var viewButtonComponent = drawer.createViewButton(drawerItem.drawerId);
-			var deleteButtonComponent = drawer.createDeleteButton(drawerItem.drawerId);
+			var viewButton = drawer.createViewButton(drawerItem.drawerId);
+			var deleteButton = drawer.createDeleteButton(drawerItem.drawerId);
 
 			var trayListSelectTag = tray.createSelectTag(drawerItem.trayId, "N");
 
-			var data = {
-				"{{data:viewButton}}" : viewButtonComponent,
-				"{{data:deleteButton}}" : deleteButtonComponent,
-				"{{data:trayListSelectTag}}" : trayListSelectTag,
-				"{{data:drawerId}}" : drawerId,
-				"{{onclick:editTextItem}}": "drawer.editTextItem(this);"
-			};
+			component.initializeDataRegistry();
+			component.registerData("data:viewButton", viewButton);
+			component.registerData("data:deleteButton", deleteButton);
+			component.registerData("data:trayListSelectTag", trayListSelectTag);
+			component.registerData("data:drawerId", drawerId);
 
-			component.render("t-text-edit", "template-content", data);
+			component.initializeEventRegistry();
+			component.registerEvent("func:editTextItem", "drawer.editTextItem(this);");
+
+			component.render("t-text-edit", "template-content");
 
 			document.getElementById("title").value = drawerItem.title;
 			document.getElementById("text").value = drawerItem.text;
 
-			component.saveInitialState("template-content");
+			state.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderEditTextItem(): " + err);
@@ -787,14 +973,15 @@ var drawer = {
 		try {
 			var trayListSelectTag = tray.createSelectTag("", "N");
 
-			var data = {
-				"{{data:trayListSelectTag}}": trayListSelectTag,
-				"{{onclick:addWebItem}}": "drawer.addWebItem();"
-			};
+			component.initializeDataRegistry();
+			component.registerData("data:trayListSelectTag", trayListSelectTag);
 
-			component.render("t-web-add", "template-content", data);
+			component.initializeEventRegistry();
+			component.registerEvent("func:addWebItem", "drawer.addWebItem();");
 
-			component.saveInitialState("template-content");
+			component.render("t-web-add", "template-content");
+
+			state.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderAddWebItem(): " + err);
@@ -810,20 +997,22 @@ var drawer = {
 			drawerItem = {};
 			drawerItem = drawer.getItem(drawerId);
 
-			var viewButtonComponent = drawer.createViewButton(drawerItem.drawerId);
-			var deleteButtonComponent = drawer.createDeleteButton(drawerItem.drawerId);
+			var viewButton = drawer.createViewButton(drawerItem.drawerId);
+			var deleteButton = drawer.createDeleteButton(drawerItem.drawerId);
 
 			var trayListSelectTag = tray.createSelectTag(drawerItem.trayId, "N");
 
-			var data = {
-				"{{data:viewButton}}" : viewButtonComponent,
-				"{{data:deleteButton}}" : deleteButtonComponent,
-				"{{data:trayListSelectTag}}" : trayListSelectTag,
-				"{{data:drawerId}}" : drawerId,
-				"{{onclick:editWebItem}}": "drawer.editWebItem(this);"
-			};
+			component.initializeDataRegistry();
+			component.registerData("data:viewButton", viewButton);
+			component.registerData("data:deleteButton", deleteButton);
+			component.registerData("data:trayListSelectTag", trayListSelectTag);
+			component.registerData("data:drawerId", drawerId);
 
-			component.render("t-web-edit", "template-content", data);
+			component.initializeEventRegistry();
+			component.registerEvent("func:pasteWebUrl", "drawer.pasteWebUrl(event);");
+			component.registerEvent("func:editWebItem", "drawer.editWebItem(this);");
+
+			component.render("t-web-edit", "template-content");
 
 			var decodeUrl = decodeURIComponent(drawerItem.url);
 
@@ -831,7 +1020,7 @@ var drawer = {
 			document.getElementById("title").value = drawerItem.title;
 			document.getElementById("text").value = drawerItem.text;
 
-			component.saveInitialState("template-content");
+			state.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderEditWebItem(): " + err);
@@ -847,12 +1036,12 @@ var drawer = {
 			drawerItem = {};
 			drawerItem = drawer.getItem(drawerId);
 
-			var editButtonComponent = drawer.createEditButton(drawerItem.drawerId);
-			var deleteButtonComponent = drawer.createDeleteButton(drawerItem.drawerId);
+			var editButton = drawer.createEditButton(drawerItem.drawerId);
+			var deleteButton = drawer.createDeleteButton(drawerItem.drawerId);
 
 			var buttonBarData = {
-				"{{editButton}}" : editButtonComponent,
-				"{{deleteButton}}" : deleteButtonComponent
+				"{{editButton}}" : editButton,
+				"{{deleteButton}}" : deleteButton
 			};
 
 			var buttonBarComponent = component.create("t-view-button-bar", buttonBarData);
@@ -886,7 +1075,7 @@ var drawer = {
 
 			document.getElementById("embedded-video").src = embeddedlink;
 
-			component.saveInitialState("template-content");
+			state.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderViewVideoItem(): " + err);
@@ -899,13 +1088,12 @@ var drawer = {
 		try {
 			var trayListSelectTag = tray.createSelectTag("", "N");
 
-			var data = {
-				"{{trayListSelectTag}}": trayListSelectTag,
-			};
+			component.initializeDataRegistry();
+			component.registerData("data:trayListSelectTag", trayListSelectTag);
 
-			component.render("t-media-entry", "template-content", data);
+			component.render("t-media-entry", "template-content");
 
-			component.saveInitialState("template-content");
+			state.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderAddMediaItem(): " + err);
@@ -921,34 +1109,36 @@ var drawer = {
 			drawerItem = {};
 			drawerItem = drawer.getItem(drawerId);
 
-			var data = null;
-
 			if(drawerItem.type == "1") {
-				data = {
-					"{{data:drawerId}}" : drawerId,
-					"{{data:title}}" : drawerItem.title,
-					"{{onclick:renderViewTextItem}}" : "drawer.renderViewTextItem(this);"
-				};
 
-				componentHtml = component.create("t-drawer-title-text-view", data);
+				component.initializeDataRegistry();
+				component.registerData("data:drawerId", drawerId);
+				component.registerData("data:title", drawerItem.title);
+
+				component.initializeEventRegistry();
+				component.registerEvent("func:renderViewTextItem", "drawer.renderViewTextItem(this);");
+
+				componentHtml = component.create("t-drawer-title-text-view");
 
 			} else if(drawerItem.type == "4") {
-				data = {
-					"{{data:drawerId}}" : drawerId,
-					"{{data:title}}" : drawerItem.title,
-					"{{data:url}}" : drawerItem.url
-				};
 
-				componentHtml = component.create("t-drawer-title-article-view", data);
+				component.initializeDataRegistry();
+				component.registerData("data:drawerId", drawerId);
+				component.registerData("data:title", drawerItem.title);
+				component.registerData("data:url", drawerItem.url);
+
+				componentHtml = component.create("t-drawer-title-article-view");
 
 			} else if(drawerItem.type == "5") {
-				data = {
-					"{{data:drawerId}}" : drawerId,
-					"{{data:title}}" : drawerItem.title,
-					"{{onclick:renderViewVideoItem}}" : "drawer.renderViewVideoItem(this);"
-				};
 
-				componentHtml = component.create("t-drawer-title-video-view", data);
+				component.initializeDataRegistry();
+				component.registerData("data:drawerId", drawerId);
+				component.registerData("data:title", drawerItem.title);
+
+				component.initializeEventRegistry();
+				component.registerEvent("func:renderViewVideoItem", "drawer.renderViewVideoItem(this);");
+
+				componentHtml = component.create("t-drawer-title-video-view");
 			}
 		}
 		catch(err) {
@@ -967,30 +1157,32 @@ var drawer = {
 			drawerItem = {};
 			drawerItem = drawer.getItem(drawerId);
 
-			var data = null;
-
 			if(drawerItem.type == "1") {
-				data = {
-					"{{onclick:renderViewTextItem}}" : "drawer.renderViewTextItem(this);",
-					"{{data:drawerId}}" : drawerId
-				};
 
-				componentHtml = component.create("t-drawer-button-text-view", data);
+				component.initializeDataRegistry();
+				component.registerData("data:drawerId", drawerId);
+
+				component.initializeEventRegistry();
+				component.registerEvent("func:renderViewTextItem", "drawer.renderViewTextItem(this);");
+
+				componentHtml = component.create("t-drawer-button-text-view");
 
 			} else if(drawerItem.type == "4") {
-				data = {
-					"{{data:url}}" : drawerItem.url
-				};
 
-				componentHtml = component.create("t-drawer-button-article-view", data);
+				component.initializeDataRegistry();
+				component.registerData("data:url", drawerItem.url);
+
+				componentHtml = component.create("t-drawer-button-article-view");
 
 			} else if(drawerItem.type == "5") {
-				data = {
-					"{{onclick:renderViewVideoItem}}" : "drawer.renderViewVideoItem(this);",
-					"{{data:drawerId}}" : drawerId,
-				};
 
-				componentHtml = component.create("t-drawer-button-video-view", data);
+				component.initializeDataRegistry();
+				component.registerData("data:drawerId", drawerId);
+
+				component.initializeEventRegistry();
+				component.registerEvent("func:renderViewVideoItem", "drawer.renderViewVideoItem(this);");
+
+				componentHtml = component.create("t-drawer-button-video-view");
 			}
 		}
 		catch(err) {
@@ -1009,23 +1201,24 @@ var drawer = {
 			drawerItem = {};
 			drawerItem = drawer.getItem(drawerId);
 
-			var data = null;
-
 			if(drawerItem.type == "1") {
-				var data = {
-					"{{onclick:renderEditTextItem}}" : "drawer.renderEditTextItem(this);",
-					"{{data:drawerId}}" : drawerId
-				};
+				component.initializeDataRegistry();
+				component.registerData("data:drawerId", drawerId);
 
-				componentHtml = component.create("t-drawer-button-text-edit", data);
+				component.initializeEventRegistry();
+				component.registerEvent("func:renderEditTextItem", "drawer.renderEditTextItem(this);");
+
+				componentHtml = component.create("t-drawer-button-text-edit");
 
 			} else if(drawerItem.type == "4" || drawerItem.type == "5") {
-				var data = {
-					"{{onclick:renderEditWebItem}}" : "drawer.renderEditWebItem(this);",
-					"{{data:drawerId}}" : drawerId
-				};
 
-				componentHtml = component.create("t-drawer-button-web-edit", data);
+				component.initializeDataRegistry();
+				component.registerData("data:drawerId", drawerId);
+
+				component.initializeEventRegistry();
+				component.registerEvent("func:renderEditWebItem", "drawer.renderEditWebItem(this);");
+
+				componentHtml = component.create("t-drawer-button-web-edit");
 			}
 		}
 		catch(err) {
@@ -1041,12 +1234,13 @@ var drawer = {
 		var componentHtml = "";
 
 		try {
-			var data = {
-				"{{onclick:deleteItem}}" : "drawer.deleteItem(this);",
-				"{{data:drawerId}}" : drawerId
-			};
+			component.initializeDataRegistry();
+			component.registerData("data:drawerId", drawerId);
 
-			componentHtml = component.create("t-drawer-button-delete", data);
+			component.initializeEventRegistry();
+			component.registerEvent("func:deleteItem", "drawer.deleteItem(this);");
+
+			componentHtml = component.create("t-drawer-button-delete");
 		}
 		catch(err) {
 			console.log("createDeleteTitle(): " + err);
@@ -1082,7 +1276,7 @@ var drawer = {
 			var cleanedText = replaceSpecialChars(text);
 
 			var inputFields = {
-				"collectionName":dataObj.collectionName, 
+				"collectionName":appData.get("collectionName"), 
 				"trayId":trayId, 
 				"type":"1", 
 				"url":".", 
@@ -1103,7 +1297,9 @@ var drawer = {
 				}
 
 				if (xhr.status === 200) {
-					dataObj.drawerJson = xhr.responseText;
+					var drawerJson = xhr.responseText;
+
+					appData.set("drawerJson", drawerJson);
 
 					drawer.render();
 
@@ -1134,7 +1330,7 @@ var drawer = {
 		try {
 			var drawerId = element.getAttribute("data-drawer-id");
 
-			var trayId = document.forms[0].traId.value;
+			var trayId = document.forms[0].trayId.value;
 			var title = document.forms[0].title.value;
 			var text = document.forms[0].text.value;
 
@@ -1157,7 +1353,7 @@ var drawer = {
 			var cleanedText = replaceSpecialChars(text);
 
 			var inputFields = {
-				"collectionName":dataObj.collectionName, 
+				"collectionName":appData.get("collectionName"), 
 				"drawerId":drawerId, 
 				"trayId":trayId, 
 				"url":".", 
@@ -1178,7 +1374,9 @@ var drawer = {
 				}
 
 				if (xhr.status === 200) {
-					dataObj.drawerJson = xhr.responseText;
+					var drawerJson = xhr.responseText;
+
+					appData.set("drawerJson", drawerJson);
 
 					drawer.render();
 
@@ -1250,7 +1448,7 @@ var drawer = {
 			}
 
 			var inputFields = {
-				"collectionName":dataObj.collectionName, 
+				"collectionName":appData.get("collectionName"), 
 				"trayId":trayId, 
 				"type":type, 
 				"url":encodeUrl, 
@@ -1271,7 +1469,9 @@ var drawer = {
 				}
 
 				if (xhr.status === 200) {
-					dataObj.drawerJson = xhr.responseText;
+					var drawerJson = xhr.responseText;
+
+					appData.set("drawerJson", drawerJson);
 
 					drawer.render();
 
@@ -1333,7 +1533,7 @@ var drawer = {
 			var encodeUrl = encodeURIComponent(pastedUrl);
 
 			var inputFields = {
-				"collectionName":dataObj.collectionName, 
+				"collectionName":appData.get("collectionName"), 
 				"drawerId":drawerId, 
 				"trayId":trayId, 
 				"url":encodeUrl, 
@@ -1354,7 +1554,9 @@ var drawer = {
 				}
 
 				if (xhr.status === 200) {
-					dataObj.drawerJson = xhr.responseText;
+					var drawerJson = xhr.responseText;
+
+					appData.set("drawerJson", drawerJson);
 
 					drawer.render();
 
@@ -1457,7 +1659,7 @@ var drawer = {
 		try {
 
 			var inputFields = {
-				"collectionName":dataObj.collectionName, 
+				"collectionName":appData.get("collectionName"), 
 				"drawerId":drawerId
 			};
 
@@ -1475,7 +1677,9 @@ var drawer = {
 				}
 
 				if (xhr.status === 200) {
-					dataObj.drawerJson = xhr.responseText;
+					var drawerJson = xhr.responseText;
+
+					appData.set("drawerJson", drawerJson);
 
 					drawer.render();
 
@@ -1501,7 +1705,7 @@ var drawer = {
 		finally {}
 	},
 
-	pasteUrl: function(e) {
+	pasteWebUrl: function(e) {
 
 		try {
 			document.body.style.cursor = "wait";
@@ -1598,165 +1802,6 @@ var drawer = {
 	}
 
 };
-
-function init() {
-
-	try {
-		/*
-		 * Initialize the dataObj
-		 */
-		dataObj.collectionName = "";
-		dataObj.userName = "";
-		dataObj.trayJson = "";
-		dataObj.drawerJson = "";
-		dataObj.initialState = "";
-		dataObj.traySelected = "";
-		dataObj.favoriteTraTokens = "";
-
-		var data = {
-			"{{onclick:getDrawerList}}" : "drawer.getList();",
-			"{{onclick:toggle}}" : "menu.toggle();"
-		};
-
-		component.render("t-header", "template-header", data);
-
-		/*
-		 * Render the sign in template
-		 */
-		entry.renderSignIn();
-	}
-	catch(err) {
-		console.log("init(): " + err);
-	}
-	finally {}
-}
-
-function postSearchDrawerByWildcard() {
-
-	try {
-		var searchTerm = document.getElementById("searchTerm").value;
-
-		if(isEmpty(searchTerm)) {
-			return false;
-		}
-
-		var inputFields = {
-			"searchType":"WILDCARD", 
-			"collectionName":dataObj.collectionName, 
-			"searchTerm":searchTerm, "trayId":""
-		};
-
-		var inputJSON = {};
-		inputJSON.inputArgs = inputFields;
-	
-		var stringJSON = JSON.stringify(inputJSON);
-
-		var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-
-		xhr.onreadystatechange = function () {
-
-			if (xhr.readyState !== 4) {
-				return;
-			}
-
-			if (xhr.status === 200) {
-				dataObj.drawerJson = xhr.responseText;
-
-				var drawerArray = JSON.parse(dataObj.drawerJson);
-
-				if(drawerArray.length <= 0) {
-					renderNoResultsFound();
-
-				} else {
-					dataObj.traySelected = "resulting in your search";
-
-					menu.reset();
-					drawer.render();
-				}
-			} else {
-				console.log('Error: ' + xhr.status);
-			}
-		};
-
-		xhr.onerror = function () {
-			console.log("postSearchDrawerByWildcard(): An error occurred during the transaction");
-		};
-
-		var url = "http://localhost:8080/mydrawer/DrawerList/";
-
-		xhr.open("POST", url, true);
-		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		xhr.send("inputJSON=" + stringJSON);
-	}
-	catch(err) {
-		console.log("postSearchDrawerByWildcard(): " + err);
-	}
-	finally {}
-}
-
-function postSearchDrawerByTraId(traTokens) {
-
-	try {
-		var tokens = traTokens.split("|");
-		var trayId = tokens[0];
-		var trayName = tokens[1];
-
-		var inputFields = {
-			"searchType":"TRAY", 
-			"collectionName":dataObj.collectionName, 
-			"searchTerm":"", 
-			"trayId":trayId
-		};
-
-		var inputJSON = {};
-		inputJSON.inputArgs = inputFields;
-	
-		var stringJSON = JSON.stringify(inputJSON);
-
-		var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-
-		xhr.onreadystatechange = function () {
-
-			if (xhr.readyState !== 4) {
-				return;
-			}
-
-			if (xhr.status === 200) {
-				dataObj.drawerJson = xhr.responseText;
-
-				var drawerArray = JSON.parse(dataObj.drawerJson);
-
-				if(drawerArray.length <= 0) {
-					renderNoResultsFound();
-
-				} else {
-					dataObj.traySelected = "in your " + trayName + " tray";
-
-					menu.reset();
-					drawer.render();
-				}
-			} else {
-				console.log('Error: ' + xhr.status);
-			}
-		};
-
-		xhr.onerror = function () {
-			console.log("postSearchDrawerByTraId(): An error occurred during the transaction");
-		};
-
-		var url = "http://localhost:8080/mydrawer/DrawerList/";
-
-		xhr.open("POST", url, true);
-		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		xhr.send("inputJSON=" + stringJSON);
-	}
-	catch(err) {
-		console.log("postSearchDrawerByTraId(): " + err);
-	}
-	finally {}
-}
 
 function postFetchMediaFile() {
 
@@ -1857,7 +1902,7 @@ var tray = {
 		try {
 			var optionHtml = "";
 
-			var trayArray = JSON.parse(dataObj.trayJson);
+			var trayArray = JSON.parse(appData.get("trayJson"));
 
 			for(var i=0; i<trayArray.length; i++) {
 
@@ -1869,13 +1914,12 @@ var tray = {
 					selected = " selected";
 				}
 
-				var optionData = {
-					"{{data:trayId}}" : tray.trayId,
-					"{{data:selected}}" : selected,
-					"{{data:trayName}}" : tray.trayName
-				};
+				component.initializeDataRegistry();
+				component.registerData("data:trayId", tray.trayId);
+				component.registerData("data:selected", selected);
+				component.registerData("data:trayName", tray.trayName);
 
-				optionHtml += component.create("t-tray-select-option-tag", optionData);
+				optionHtml += component.create("t-tray-select-option-tag");
 			}
 
 			var changeFunction = "";
@@ -1883,15 +1927,14 @@ var tray = {
 			if(includeChangeFunctionFlag == "add-onchange") {
 				changeFunction = 'onchange="tray.getSelectedList(this);"';
 			} else {
-				changeFunction = "return false;"
+				changeFunction = "";
 			}
 
-			var selectData = {
-				"{{onchange:getSelectedList}}" : changeFunction,
-				"{{data:trayOptions}}" : optionHtml
-			};
+			component.initializeDataRegistry();
+			component.registerData("onchange:getSelectedList", changeFunction);
+			component.registerData("data:trayOptions", optionHtml);
 
-			trayListSelectTag = component.create("t-tray-select-tag", selectData);
+			trayListSelectTag = component.create("t-tray-select-tag");
 		}
 		catch(err) {
 			console.log("createSelectTag(): " + err);
@@ -1904,12 +1947,7 @@ var tray = {
 	getSelectedList: function(element) {
 
 		try {
-			var trayId = element.options[element.selectedIndex].value;
-			var trayName = element.options[element.selectedIndex].text;
-
-			var trayTokens = trayId + "|" + trayName;
-
-			postSearchDrawerByTraId(trayTokens);
+			drawer.searchDrawerByTrayId(element);
 		}
 		catch(err) {
 			console.log("getSelectedList(): " + err);
@@ -1932,32 +1970,36 @@ var tray = {
 					var trayJson = xhr.responseText;
 					var trayArray = JSON.parse(xhr.responseText);
 
+					appData.set("trayJson", trayJson);
+
 					var trayRows = "";
 
 					for(var i=0; i<trayArray.length; i++) {
 
 						var tray = trayArray[i];
 
-						var rowData = {
-							"{{data:trayId}}" : tray.trayId,
-							"{{data:trayName}}" : tray.trayName,
-							"{{onclick:searchDrawerByTrayId}}" : "drawer.searchDrawerByTrayId(this);",
-							"{{onclick:renderEditTray}}" : "tray.renderEditTray(this);",
-							"{{onclick:deleteItem}}" : "tray.deleteItem(this);"
-						};
+						component.initializeDataRegistry();
+						component.registerData("data:trayId", tray.trayId);
+						component.registerData("data:trayName", tray.trayName);
 
-						trayRows += component.create("t-tray-list-rows", rowData);
+						component.initializeEventRegistry();
+						component.registerEvent("func:searchDrawerByTrayId", "drawer.searchDrawerByTrayId(this);");
+						component.registerEvent("func:renderEditTray", "tray.renderEditTray(this);");
+						component.registerEvent("func:deleteItem", "tray.deleteItem(this);");
+
+						trayRows += component.create("t-tray-list-rows");
 					}
 
-					var tableData = {
-						"{{onclick:renderAddTray}}" : "tray.renderAddTray();",
-						"{{onclick:getDrawerList}}" : "drawer.getList();",
-						"{{data:trayRows}}" : trayRows
-					};
+					component.initializeDataRegistry();
+					component.registerData("data:trayRows", trayRows);
 
-					component.render("t-tray-list", "template-content", tableData);
+					component.initializeEventRegistry();
+					component.registerEvent("func:renderAddTray", "tray.renderAddTray();");
+					component.registerEvent("func:getDrawerList", "drawer.getList();");
 
-					component.saveInitialState("template-content");
+					component.render("t-tray-list", "template-content");
+
+					state.saveInitialState("template-content");
 				} else {
 					console.log('Error: ' + xhr.status);
 				}
@@ -1967,7 +2009,7 @@ var tray = {
 				console.log("getList(): An error occurred during the transaction");
 			};
 
-			var url = "http://localhost:8080/mydrawer/Tray/" + dataObj.collectionName;
+			var url = "http://localhost:8080/mydrawer/Tray/" + appData.get("collectionName");
 
 			xhr.open("GET", url, true);
 			xhr.send();
@@ -1978,46 +2020,45 @@ var tray = {
 		finally {}
 	},
 
-	getFavoriteTrayTokens: function() {
+	getFavoriteTrayId: function() {
 
-		var trayTokens = "";
+		var trayId = "";
 
 		try {
-			var drawerArray = JSON.parse(dataObj.drawerJson);
+			var trayArray = JSON.parse(appData.get("trayJson"));
 
-			if(drawerArray.length > 0) {
+			if(trayArray.length > 0) {
 
-				for(var i=0; i<drawerArray.length; i++) {
+				for(var i=0; i<trayArray.length; i++) {
 
-					var item = drawerArray[i];
+					var item = trayArray[i];
 
 					if(item.trayName.toLowerCase() == "favorites") {
 
-						trayTokens = item.trayId + "|" + item.trayName;
+						trayId = item.trayId;
 						break;
 					}
 				}
 			}
 		}
 		catch(err) {
-			console.log("getFavoriteTrayTokens(): " + err);
+			console.log("getFavoriteTrayId(): " + err);
 		}
 		finally {}
 
-		return trayTokens;
+		return trayId;
 	},
 
 	renderAddTray: function() {
 
 		try {
-			var data = {
-				"{{onclick:getTrayList}}": "tray.getList();",
-				"{{onclick:addItem}}": "tray.additem();"
-			};
+			component.initializeEventRegistry();
+			component.registerEvent("func:getTrayList", "tray.getList();");
+			component.registerEvent("func:addItem", "tray.addItem();");
 
-			component.render("t-tray-add", "template-content", data);
+			component.render("t-tray-add", "template-content");
 
-			component.saveInitialState("template-content");
+			state.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderAddTray(): " + err);
@@ -2041,7 +2082,7 @@ var tray = {
 			}
 
 			var inputFields = {
-				"collectionName":dataObj.collectionName, 
+				"collectionName":appData.get("collectionName"), 
 				"trayName":name
 			};
 
@@ -2093,17 +2134,19 @@ var tray = {
 				tray.renderTrayError();
 
 			} else {
-				var data = {
-					"{{data:trayId}}": trayId,
-					"{{data:trayName}}": trayName,
-					"{{onclick:getTrayList}}": "tray.getList();",
-					"{{onclick:editItem}}": "tray.editItem(this);"
-				};
 
-				component.render("t-tray-edit", "template-content", data);
+				component.initializeDataRegistry();
+				component.registerData("data:trayId", trayId);
+				component.registerData("data:trayName", trayName);
+
+				component.initializeEventRegistry();
+				component.registerEvent("func:getTrayList", "tray.getList();");
+				component.registerEvent("func:editItem", "tray.editItem(this);");
+
+				component.render("t-tray-edit", "template-content");
 			}
 
-			component.saveInitialState("template-content");
+			state.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderEditTray(): " + err);
@@ -2129,12 +2172,12 @@ var tray = {
 
 			if(tray.isDuplicate(name)) {
 				component.setText("error", "You already have a Tray with this name.");
-				document.getElementById("name").value = origName;
+				state.restoreInitialState("template-content");
 				return false;
 			}
 
 			var inputFields = {
-				"collectionName":dataObj.collectionName, 
+				"collectionName":appData.get("collectionName"), 
 				"trayId":trayId, 
 				"trayName":name};
 
@@ -2190,7 +2233,7 @@ var tray = {
 
 				if(tray.isEmpty(trayId)) {
 
-					var trayArray = dataObj.trayJson;
+					var trayArray = appData.get("trayJson");
 
 					if(trayArray.length > 1) {
 						tray.deleteItem(trayId);
@@ -2233,7 +2276,7 @@ var tray = {
 		var duplicate = false;
 
 		try {
-			var drawerArray = JSON.parse(dataObj.drawerJson);
+			var drawerArray = JSON.parse(appData.get("drawerJson"));
 
 			if(drawerArray.length > 0) {
 
@@ -2264,7 +2307,7 @@ var tray = {
 			var trayName = element.getAttribute('data-tray-name');
 
 			var inputFields = {
-				"collectionName":dataObj.collectionName, 
+				"collectionName":appData.get("collectionName"), 
 				"trayId":trayId
 			};
 
@@ -2311,14 +2354,14 @@ var tray = {
 		var empty = true;
 
 		try {
-			var drawerArray = JSON.parse(dataObj.drawerJson);
+			var drawerArray = JSON.parse(appData.get("drawerJson"));
 
 			if(drawerArray.length > 0) {
 
 				for(var i=0; i<drawerArray.length; i++) {
 
 					var item = drawerArray[i];
-
+ 
 					if(trayId == item.trayId) {
 
 						empty = false;
@@ -2338,11 +2381,9 @@ var tray = {
 	renderCannotDeleteTray: function() {
 
 		try {
-			var data = {};
+			component.render("t-tray-delete-error", "template-content");
 
-			component.render("t-tray-delete-error", "template-content", data);
-
-			component.saveInitialState("template-content");
+			state.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderCannotDeleteTray(): " + err);
@@ -2353,11 +2394,9 @@ var tray = {
 	renderTrayError: function() {
 
 		try {
-			var data = {};
+			component.render("t-tray-error", "template-content");
 
-			component.render("t-tray-error", "template-content", data);
-
-			component.saveInitialState("template-content");
+			state.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderTrayError(): " + err);
