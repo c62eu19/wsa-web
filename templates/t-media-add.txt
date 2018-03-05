@@ -1,12 +1,12 @@
-<script id="t-media-entry" type="text/template">
+<script id="t-media-add" type="text/template">
 
 <h5 style="color: #0000ff;">Save a Picture or any File</h5>
 
 <div id="error" style="margin-bottom: 9px; color: #ff0000"></div>
 
-<form action="/uploads" enctype="multipart/form-data" method="post">
+<form>
 
-	<input type="file" name="inputFile" id="inputFile" onchange="postFetchMediaFile();"/>
+	<input type="file" name="inputFile" id="inputFile" onchange="{{func:getMediaFile}}">
 
 	<div class="row">
 		<div class="eight columns">
@@ -15,14 +15,22 @@
 		</div>
 		<div class="four columns">
 			<label for="name">Tray</label>
-			{{trayListSelectTag}}
+			{{data:trayListSelectTag}}
 		</div>
 	</div>
+
+	<br/>
 
 	<label for="name">Text</label>
 	<textarea class="u-full-width hide-textarea-resize" style="height:100px;" id="text" name="text" placeholder="Link Text" rows="10"></textarea>
 
-	<a class="button button-primary" href="#" onclick="postShareMediaFile();" style="font-size:14px;">Save</a>
+	<div id="preview" class="responsive-image">
+		Image goes here
+	</div>
+
+	<br/>
+
+	<a href="#" class="button button-primary" onclick="{{func:addMediaFile}}" style="font-size:14px;">Save</a>
 </form>
 
 </script>

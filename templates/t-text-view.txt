@@ -14,8 +14,6 @@
 	{{data:trayName}}
 </p>
 
-<br/>
-
 <pre>
 {{data:text}}
 </pre>

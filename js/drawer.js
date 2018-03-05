@@ -47,7 +47,7 @@ var entry = {
 
 				document.body.addEventListener("keydown", function(event) {
 					if(event.keyCode === 13) {
-						var element = document.getElementById("e-sign-in");
+						var element = document.getElementById("btn-sign-in");
 						if(element != null) {
 							entry.signIn();
 						}
@@ -187,7 +187,7 @@ var entry = {
 
 			document.body.addEventListener("keydown", function(event) {
 				if(event.keyCode === 13) {
-					var element = document.getElementById("e-sign-up");
+					var element = document.getElementById("btn-sign-up");
 					if(element != null) {
 						entry.signUp();
 					}
@@ -448,6 +448,15 @@ var general = {
 			component.render("t-contact-us", "template-content");
 
 			state.saveInitialState("template-content");
+
+			document.body.addEventListener("keydown", function(event) {
+				if(event.keyCode === 13) {
+					var element = document.getElementById("btn-contact-us");
+					if(element != null) {
+						general.addContactUs();
+					}
+				}
+			});
 		}
 		catch(err) {
 			console.log("renderContactUs(): " + err);
@@ -1091,12 +1100,65 @@ var drawer = {
 			component.initializeDataRegistry();
 			component.registerData("data:trayListSelectTag", trayListSelectTag);
 
-			component.render("t-media-entry", "template-content");
+			component.initializeEventRegistry();
+			component.registerEvent("func:getMediaFile", "drawer.getMediaFile(this.files[0]);");
+
+			component.render("t-media-add", "template-content");
 
 			state.saveInitialState("template-content");
 		}
 		catch(err) {
 			console.log("renderAddMediaItem(): " + err);
+		}
+		finally {}
+	},
+
+	getMediaFile: function(file) {
+
+		try {
+			/* Check if the browser supports this API */
+			if(!window.FileReader){
+				alert('The File APIs are not fully supported in this browser.');
+				return;
+			}
+
+			/* get selected file element */
+			var oFile = document.getElementById('inputFile').files[0];
+
+			/* filter for image files */
+	/*
+			var rFilter = /^(image\/bmp|image\/gif|image\/jpeg|image\/png|image\/tiff)$/i;
+
+			if (!rFilter.test(oFile.type)) {
+				document.getElementById('error').innerHTML = 'The file is not an image file type (jpeg, gif, png, tiff, bmp).';
+				return;
+			}
+	*/
+			/* Maximum file size is 10MB */
+			if (file.size > 10485760) {
+				component.setText("error", "The file is too big. You can only upload up to a 10MB file.");
+				return;
+			}
+
+			/* get preview element */
+			var oImage = document.getElementById("preview");
+
+			var oReader = new FileReader();
+
+			oReader.onload = function(event) {
+
+				/* event.target.result contains the DataURL which we will use as a source of the image */
+				var theUrl = event.target.result;
+
+				var imgHtml = "<img src='" + theUrl + "' align='left' width='300px' height='300px' class='img-responsive' style='margin-right: 5px'>";
+				document.getElementById("preview").innerHtml = imgHtml;
+			};
+			oReader.readAsDataURL(file);
+
+/*			document.getElementById("preview").style.display = ""; */
+		}
+		catch(err) {
+			console.log("getMediaFile(): " + err);
 		}
 		finally {}
 	},
@@ -1803,55 +1865,7 @@ var drawer = {
 
 };
 
-function postFetchMediaFile() {
-
-	try {
-		/* Check if the browser supports this API */
-		if(!window.FileReader){
-			alert('The File APIs are not fully supported in this browser.');
-			return;
-		}
-
-		/* get selected file element */
-		var oFile = document.getElementById('inputFile').files[0];
-
-		/* filter for image files */
-/*
-		var rFilter = /^(image\/bmp|image\/gif|image\/jpeg|image\/png|image\/tiff)$/i;
-
-		if (!rFilter.test(oFile.type)) {
-			document.getElementById('error').innerHTML = 'The file is not an image file type (jpeg, gif, png, tiff, bmp).';
-			return;
-		}
-*/
-		/* Maximum file size is 10MB */
-		if (oFile.size > 10485760) {
-			component.setText("error", "The file is too big. You can only upload up to a 10MB file.");
-			return;
-		}
-
-		/* get preview element */
-		var oImage = null;
-
-		/* prepare HTML5 FileReader */
-		var oReader = new FileReader();
-
-		oReader.onload = function(e) {
-
-			/* e.target.result contains the DataURL which we will use as a source of the image */
-			oImage.src = e.target.result;
-		};
-
-		/* read selected file as DataURL */
-		oReader.readAsDataURL(oFile);
-	}
-	catch(err) {
-		console.log("postFetchMediaFile(): " + err);
-	}
-	finally {}
-}
-
-function postUploadMediaFile(stringJSON) {
+function uploadMediaFile(stringJSON) {
 
 	try {
 		var url = "https://mydrawer-itsallhere.rhcloud.com/sharepicture/social";

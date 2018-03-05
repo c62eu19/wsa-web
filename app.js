@@ -49,7 +49,7 @@ fs.writeFile('./app.html', appHtml,  function(err) {
 console.log('MyDrawer (Init): Reading app resource app.json file');
 
 /* Read the app resource config file */
-var json = JSON.parse(fs.readFileSync('./app.json', 'utf8'));
+/*var json = JSON.parse(fs.readFileSync('./app.json', 'utf8')); */
 
 /* Request handler, routes all requests to the appropriate handler */
 const requestHandler = function(request, response) {
@@ -125,7 +125,7 @@ getConfigValue = function(key, attribute) {
 	var value = "";
 
 	try {
-		value = json[key][attribute];
+		value = resources[key][attribute];
 	}
 	catch(e) {
 		console.log("getConfigValue(): Cannot find resource: " + e);
@@ -161,3 +161,49 @@ writeContent = function(response, filePath, contentType) {
 		console.log("writeContent(): " + e);
 	}
 };
+
+var resources = {
+	"/mydrawer": {
+		"path": "./app.html", 
+		"method":"GET", 
+		"handler":"getResource"
+	},
+
+	"/normalize-css": {
+		"path": "./css/normalize.css", 
+		"method":"GET", 
+		"handler":"getResource"
+	},
+	"/skeleton-css": {
+		"path": "./css/skeleton.css", 
+		"method":"GET", 
+		"handler":"getResource"
+	},
+	"/style-css": {
+		"path": "./css/style.css", 
+		"method":"GET", 
+		"handler":"getResource"
+	},
+
+	"/drawer-js": {
+		"path": "./js/drawer.js", 
+		"method":"GET", 
+		"handler":"getResource"
+	},
+	"/library-js": {
+		"path": "./js/library.js", 
+		"method":"GET", 
+		"handler":"getResource"
+	},
+
+	"/favicon-image": {
+		"path": "./images/favicon.ico", 
+		"method":"GET", 
+		"handler":"getResource"
+	},
+	"/search-image": {
+		"path": "./images/search.png", 
+		"method":"GET", 
+		"handler":"getResource"
+	}
+}

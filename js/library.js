@@ -208,6 +208,20 @@ var component = {
 		finally {}
 	},
 
+	isVisible: function(elementId) {
+
+		try {
+			if(document.getElementById(elementId).style.display == 'none') {
+				return false;
+			} else {
+				return true;
+			}
+		}
+		catch(err) {
+			console.log("isVisible(): " + err.message);
+		}
+	},
+
 	addListener: function(event, elementId, callbackFunction, capture) {
 
 		try {
@@ -244,7 +258,7 @@ function cursorClear() {
 function togglePanel(elem) {
 
 	try {
-		if(isVisible(elem)) {
+		if(component.isVisible(elem)) {
 			document.getElementById(elem).style.display = 'none';
 		} else {
 			document.getElementById(elem).style.display = '';
@@ -274,20 +288,6 @@ function disableField(fieldName) {
 	}
 	catch(err) {
 		console.log("disableField: " + err.message);
-	}
-}
-
-function isVisible(elem) {
-
-	try {
-		if(document.getElementById(elem).style.display == 'none') {
-			return false;
-		} else {
-			return true;
-		}
-	}
-	catch(err) {
-		console.log("isVisible(): " + err.message);
 	}
 }
 

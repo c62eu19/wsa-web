@@ -28,15 +28,13 @@
 		</div>
 	</div>
 
-	<a href="#" onclick="{{func:signUp}}" class="button button-primary" style="font-size:16px;">Sign Up</a>
+	<a href="#" id="btn-sign-up" onclick="{{func:signUp}}" class="button button-primary" style="font-size:16px;">Sign Up</a>
 
 	<p style="font-size: 18px;">
 		Already have your own drawer? 
 	</p>
 
 	<a href="#" onclick="{{func:renderSignIn}}" style="font-size:18px;">Click here to Sign In</a>
-
-	<input id="e-sign-up" name="sign-up" type="hidden" value="">
 </form>
 
 </script>

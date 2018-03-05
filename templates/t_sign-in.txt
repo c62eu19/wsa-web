@@ -18,7 +18,7 @@
 		</div>
 	</div>
 
-	<a href="#" onclick="{{func:signIn}}" class="button button-primary" style="font-size:16px;">Sign In</a>
+	<a href="#" id="btn-sign-in" onclick="{{func:signIn}}" class="button button-primary" style="font-size:16px;">Sign In</a>
 
 	<p style="font-size: 18px;">
 		You don't have your own drawer? 
@@ -27,8 +27,6 @@
 	<a href="#" onclick="{{func:renderSignUp}}" style="font-size:18px;">
 		Click here to Sign Up now and create your own drawer!
 	</a>
-
-	<input id="e-sign-in" name="sign-in" type="hidden" value="">
 </form>
 
 </script>
