@@ -986,6 +986,7 @@ var drawer = {
 			component.registerData("data:trayListSelectTag", trayListSelectTag);
 
 			component.initializeEventRegistry();
+			component.registerEvent("func:pasteWebUrl", "drawer.pasteWebUrl(event);");
 			component.registerEvent("func:addWebItem", "drawer.addWebItem();");
 
 			component.render("t-web-add", "template-content");
@@ -1048,12 +1049,12 @@ var drawer = {
 			var editButton = drawer.createEditButton(drawerItem.drawerId);
 			var deleteButton = drawer.createDeleteButton(drawerItem.drawerId);
 
-			var buttonBarData = {
-				"{{editButton}}" : editButton,
-				"{{deleteButton}}" : deleteButton
-			};
-
-			var buttonBarComponent = component.create("t-view-button-bar", buttonBarData);
+			component.initializeDataRegistry();
+			component.registerData("data:editButton", editButton);
+			component.registerData("data:deleteButton", deleteButton);
+			component.registerData("data:title", drawerItem.title);
+			component.registerData("data:trayName", drawerItem.trayName);
+			component.registerData("data:text", drawerItem.text);
 
 			var id = "";
 			var embeddedLink = "";
@@ -1074,13 +1075,7 @@ var drawer = {
 
 			}
 
-			var data = {
-				"{{buttonBar}}" : buttonBarComponent,
-				"{{title}}" : drawerItem.title,
-				"{{traName}}" : drawerItem.traName
-			};
-
-			component.render("t-video-view", "template-content", data);
+			component.render("t-video-view", "template-content");
 
 			document.getElementById("embedded-video").src = embeddedlink;
 
@@ -1101,7 +1096,8 @@ var drawer = {
 			component.registerData("data:trayListSelectTag", trayListSelectTag);
 
 			component.initializeEventRegistry();
-			component.registerEvent("func:getMediaFile", "drawer.getMediaFile(this.files[0]);");
+			component.registerEvent("func:fetchMediaItem", "drawer.fetchMediaItem(this.files[0]);");
+			component.registerEvent("func:addMediaItem", "drawer.addMediaItem();");
 
 			component.render("t-media-add", "template-content");
 
@@ -1113,52 +1109,168 @@ var drawer = {
 		finally {}
 	},
 
-	getMediaFile: function(file) {
+	fetchMediaItem: function(file) {
 
 		try {
-			/* Check if the browser supports this API */
 			if(!window.FileReader){
 				alert('The File APIs are not fully supported in this browser.');
-				return;
+				return false;
 			}
 
 			/* get selected file element */
-			var oFile = document.getElementById('inputFile').files[0];
+			var oFile = document.getElementById("inputFile").files[0];
 
 			/* filter for image files */
-	/*
 			var rFilter = /^(image\/bmp|image\/gif|image\/jpeg|image\/png|image\/tiff)$/i;
 
-			if (!rFilter.test(oFile.type)) {
+			if(!rFilter.test(oFile.type)) {
 				document.getElementById('error').innerHTML = 'The file is not an image file type (jpeg, gif, png, tiff, bmp).';
-				return;
-			}
-	*/
-			/* Maximum file size is 10MB */
-			if (file.size > 10485760) {
-				component.setText("error", "The file is too big. You can only upload up to a 10MB file.");
-				return;
+				return false;
 			}
 
-			/* get preview element */
-			var oImage = document.getElementById("preview");
+			/* Maximum file size is 10MB */
+			if(file.size > 10485760) {
+				component.setText("error", "The file is too big. You can only upload up to a 10MB file.");
+				return false;
+			}
 
 			var oReader = new FileReader();
 
 			oReader.onload = function(event) {
 
 				/* event.target.result contains the DataURL which we will use as a source of the image */
-				var theUrl = event.target.result;
+				var theImage = event.target.result;
 
-				var imgHtml = "<img src='" + theUrl + "' align='left' width='300px' height='300px' class='img-responsive' style='margin-right: 5px'>";
-				document.getElementById("preview").innerHtml = imgHtml;
+				document.getElementById("preview").innerHTML = "<img src='" + theImage + "'/>";
 			};
 			oReader.readAsDataURL(file);
 
-/*			document.getElementById("preview").style.display = ""; */
+			document.getElementById("preview").style.display = '';
 		}
 		catch(err) {
-			console.log("getMediaFile(): " + err);
+			console.log("fetchMediaFile(): " + err);
+		}
+		finally {}
+	},
+
+	addMediaItem: function(){
+
+		try {
+			var trayId = document.forms[0].trayId.value;
+			var title = document.forms[0].title.value;
+			var text = document.forms[0].text.value;
+
+			if(isEmpty(trayId)) {
+				component.setText("error", "Please select a Tray.");
+				return false;
+			}
+
+			if(isEmpty(title)) {
+				component.setText("error", "Please enter a Title.");
+				return false;
+			}
+
+			if(isEmpty(text)) {
+				component.setText("error", "Please enter some Text to describe your entry.");
+				return false;
+			}
+
+			var cleanedTitle = replaceSpecialChars(title);
+			var cleanedText = replaceSpecialChars(text);
+
+			if(!window.FileReader){
+				alert('The File APIs are not fully supported in this browser.');
+				return false;
+			}
+
+			/* get selected file element */
+			var oFile = document.getElementById("inputFile").files[0];
+
+			/* filter for image files */
+			var rFilter = /^(image\/bmp|image\/gif|image\/jpeg|image\/png|image\/tiff)$/i;
+
+			if(!rFilter.test(oFile.type)) {
+				component.setText("error", "The file is not an image file type (jpeg, gif, png, tiff, bmp");
+				return false;
+			}
+
+			/* Maximum file size is 10MB */
+			if(oFile.size > 10485760) {
+				component.setText("error", "The file is too big. You can only upload up to a 10MB file.");
+				return false;
+			}
+
+			var fileType = oFile.type;
+
+			var oReader = new FileReader();
+
+			oReader.onload = function(event) {
+
+				var base64Code = event.target.result;
+
+				var base64 = encodeURIComponent(base64Code);
+
+				var inputFields = {
+					"collectionName":appData.get("collectionName"), 
+					"trayId":trayId, 
+					"title":cleanedTitle, 
+					"text":cleanedText,
+					"type":"2",
+					"fileType":fileType, 
+					"base64Code":base64};
+
+				var inputJSON = {};
+				inputJSON.inputArgs = inputFields;
+
+				var stringJSON = JSON.stringify(inputJSON);
+
+				drawer.uploadMediaItem(stringJSON);
+			};
+
+			oReader.readAsDataURL(oFile);
+		}
+		catch(err) {
+			component.setText("error", "addMediaItem(): We cannot post your file. Please try again in a little bit.");
+		}
+		finally {}
+	},
+
+	uploadMediaItem: function(stringJSON) {
+
+		try {
+			var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+
+			xhr.onreadystatechange = function () {
+
+				if (xhr.readyState !== 4) {
+					return;
+				}
+
+				if (xhr.status === 200) {
+					var drawerJson = xhr.responseText;
+
+					appData.set("drawerJson", drawerJson);
+
+					drawer.render();
+
+				} else {
+					console.log('Error: ' + xhr.status);
+				}
+			};
+
+			xhr.onerror = function () {
+				console.log("uploadMediaItem(): An error occurred during the transaction");
+			};
+
+			var url = "http://localhost:8080/mydrawer/MediaEntry/";
+
+			xhr.open("POST", url, true);
+			xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			xhr.send("inputJSON=" + stringJSON);
+		}
+		catch(err) {
+			component.setText("error", "uploadMediaItem(): We cannot post your file. Please try again in a little bit.");
 		}
 		finally {}
 	},
@@ -1644,78 +1756,6 @@ var drawer = {
 		finally {}
 	},
 
-	addMediaItem() {
-
-		try {
-			var title = document.getElementById("title").value;
-
-			if(isEmpty(title)) {
-				component.setText("error", "Please enter a valid Title for your post.");
-				return false;
-			}
-
-			var cleanedTitle = replaceSpecialChars(title);
-
-			/* get selected file element */
-			var oFile = document.getElementById("inputFile").files[0];
-
-			/* filter for image files */
-
-	/*		var rFilter = /^(image\/bmp|image\/gif|image\/jpeg|image\/png|image\/tiff)$/i;
-
-			if (!rFilter.test(oFile.type)) {
-				component.setText("error", "The file is not an image file type (jpeg, gif, png, tiff, bmp).");
-				return;
-			}
-	*/
-			/* No File was selected */
-			if (oFile.size <= 0) {
-				component.setText("error", "You have not selected a file to upload.");
-				return;
-			}
-
-			/* The file type will tell the server what to convert as */
-			var fileType = oFile.type;
-
-	alert("File Type: " + fileType);
-	alert("File Size: " + oFile.size);
-
-			/* prepare HTML5 FileReader */
-			var oReader = new FileReader();
-
-			oReader.onload = function(e){
-
-				/* Capture the base64 to send to the server. */
-				var base64Code = e.target.result;
-
-				/* encode the base64 so that it transfers properly to the server otherwise we'll not get the image */
-				var base64 = encodeURIComponent(base64Code);
-
-				var inputFields = {
-					"title":cleanedTitle, 
-					"fileType":fileType, 
-					"base64Code":base64};
-
-				var inputJSON = {};
-				inputJSON.inputArgs = inputFields;
-
-				var stringJSON = JSON.stringify(inputJSON);
-
-				/* Post the file and other fields to the server */
-	/*			postUploadMediaFile(stringJSON);  */
-			};
-
-			/* read selected file as DataURL */
-			oReader.readAsDataURL(oFile);
-		}
-		catch(err) {
-			component.setText("error", "We are sorry but we cannot post your file at this time.  Please try again in a little bit.");
-		}
-		finally {
-			document.getElementById("preview").style.display = '';
-		}
-	},
-
 	deleteItem: function(drawerId){
 
 		try {
@@ -1864,48 +1904,6 @@ var drawer = {
 	}
 
 };
-
-function uploadMediaFile(stringJSON) {
-
-	try {
-		var url = "https://mydrawer-itsallhere.rhcloud.com/sharepicture/social";
-
-		var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-
-		xhr.onreadystatechange = function () {
-
-			if (xhr.readyState !== 4) {
-				return;
-			}
-
-			if (xhr.status === 200) {
-				var data = JSON.parse(xhr.responseText);
-
-				var htmlContent = data.htmlContent;
-
-				document.getElementById('template-content').innerHTML = htmlContent;
-
-				menu.reset();
-
-			} else {
-				console.log('Error: ' + xhr.status);
-			}
-		};
-
-		xhr.onerror = function () {
-			console.log("postUploadMediaFile(): An error occurred during the transaction");
-		};
-
-		xhr.open("POST", url, true);
-		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		xhr.send("inputJSON=" + stringJSON);
-	}
-	catch(err) {
-		component.setText("error", "We are sorry but we cannot post your file at this time.  Please try again in a little bit.");
-	}
-	finally {}
-}
 
 var tray = {
 

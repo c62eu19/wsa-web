@@ -6,31 +6,37 @@
 
 <form>
 
-	<input type="file" name="inputFile" id="inputFile" onchange="{{func:getMediaFile}}">
+	<input type="file" id="inputFile" onchange="{{func:fetchMediaItem}}">
 
 	<div class="row">
 		<div class="eight columns">
-			<label for="name">Title</label>
+			<label for="title">Title</label>
 			<input class="u-full-width" type="text" id="title" name="title" placeholder="Enter a Title here">
 		</div>
 		<div class="four columns">
-			<label for="name">Tray</label>
+			<label for="trayId">Tray</label>
 			{{data:trayListSelectTag}}
 		</div>
 	</div>
 
 	<br/>
 
-	<label for="name">Text</label>
-	<textarea class="u-full-width hide-textarea-resize" style="height:100px;" id="text" name="text" placeholder="Link Text" rows="10"></textarea>
+	<label for="text">Text</label>
+	<textarea class="u-full-width hide-textarea-resize" style="height:100px;" id="text" name="text" placeholder="Add your thoughts here" rows="10"></textarea>
 
-	<div id="preview" class="responsive-image">
-		Image goes here
+	<br/>
+
+	<div class="row">
+		<div class="twelve columns">
+			<div id="preview">
+
+			</div>
+		</div>
 	</div>
 
 	<br/>
 
-	<a href="#" class="button button-primary" onclick="{{func:addMediaFile}}" style="font-size:14px;">Save</a>
+	<a href="#" class="button button-primary" onclick="{{func:addMediaItem}}" style="font-size:14px;">Save</a>
 </form>
 
 </script>
