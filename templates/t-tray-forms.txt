@@ -1,0 +1,102 @@
+<script id="t-tray-add" type="text/template">
+
+<h5 style="color: #0000ff;">Add a New Tray</h5>
+
+<div id="error" style="margin-bottom: 9px; color: #ff0000"></div>
+
+<p style="font-size:18px;">
+	<a href="#" onclick="{{func:getTrayList}}">Return to Tray List</a>
+</p>
+
+<form>
+	<div class="row">
+		<div class="two columns">
+			<label for="name">Tray</label>
+		</div>
+		<div class="ten columns">
+			<input class="u-full-width" type="text" id="name" name="name" placeholder="Enter a Tray Name here">
+		</div>
+	</div>
+	<div class="row">
+		<div class="two columns">
+			&nbsp;
+		</div>
+		<div class="ten columns">
+			<label class="u-full-width">
+				<a href="#" class="button button-primary" onclick="{{func:addItem}}" style="font-size:16px;">Save</a>
+			</label>
+		</div>
+	</div>
+</form>
+
+</script>
+
+<script id="t-tray-edit" type="text/template">
+
+<h5 style="color: #0000ff;">Change the Name of Your Tray</h5>
+
+<div id="error" style="margin-bottom: 9px; color: #ff0000"></div>
+
+<p style="font-size:18px;">
+	<a href="#" onclick="{{func:getTrayList}}">Return to Tray List</a>
+</p>
+
+<form>
+	<div class="row">
+		<div class="two columns">
+			<label for="name">Tray</label>
+		</div>
+		<div class="ten columns">
+			<input class="u-full-width" type="text" id="name" name="name" value="{{data:trayName}}" {{data:trayName}}" placeholder="Enter a Tray Name here">
+		</div>
+	</div>
+	<div class="row">
+		<div class="two columns">
+			&nbsp;
+		</div>
+		<div class="ten columns">
+			<label class="u-full-width">
+				<a href="#" class="button button-primary" onclick="{{func:editItem}} data-tray-id="{{data:trayId}}" style="font-size:16px;">Save</a>
+			</label>
+		</div>
+	</div>
+</form>
+
+</script>
+
+<script id="t-tray-error" type="text/template">
+
+<h5 style="color: #0000ff;">My Trays</h5>
+
+<p style="font-size: 18px;">
+	You cannot Edit your Favorites tray because this is a special tray that we have created for you to 
+	store your favorite items.
+</p>
+
+<p style="font-size: 18px;">
+	<a href="#" onclick="{{func:getTrayList}}">Return to My Trays</a>
+
+</p>
+
+</script>
+
+<script id="t-tray-delete-error" type="text/template">
+
+<h5 style="color: #0000ff;">My Trays</h5>
+
+<p style="font-size: 18px;">
+	You cannot Delete this Tray from your drawer because it still contains items.  Only empty trays can 
+	be deleted. You can either delete those items or move them to different trays.
+</p>
+
+<p style="font-size: 18px;">
+	Also, you cannot Delete your Favorites tray from your drawer as this is a special tray that we created for you to store your 
+	favorite items.
+</p>
+
+<p style="font-size: 18px;">
+	<a href="#" onclick="{{func:getTrayList}}">Return to My Trays</a>
+
+</p>
+
+</script>

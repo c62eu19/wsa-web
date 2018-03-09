@@ -46,11 +46,6 @@ fs.writeFile('./app.html', appHtml,  function(err) {
 	}
 });
 
-console.log('MyDrawer (Init): Reading app resource app.json file');
-
-/* Read the app resource config file */
-/*var json = JSON.parse(fs.readFileSync('./app.json', 'utf8')); */
-
 /* Request handler, routes all requests to the appropriate handler */
 const requestHandler = function(request, response) {
 

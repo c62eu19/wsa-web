@@ -17,12 +17,17 @@ function init() {
 		component.registerEvent("func:getDrawerList", "drawer.getList();");
 		component.registerEvent("func:toggle", "menu.toggle();");
 
-		component.render("t-header", "template-header");
+		component.render("t-menu-bar", "template-header");
+
+		/*
+		 * Register a listener for enter key pressed for selected templates
+		 */
+		listener.registerKeyDownEnter();
 
 		/*
 		 * Render the sign in template
 		 */
-		entry.renderSignIn();
+		access.renderSignIn();
 	}
 	catch(err) {
 		console.log("init(): " + err);
@@ -30,7 +35,7 @@ function init() {
 	finally {}
 }
 
-var entry = {
+var access = {
 
 	renderSignIn: function() {
 
@@ -38,21 +43,12 @@ var entry = {
 			if(isEmpty(appData.get("collectionName"))) {
 
 				component.initializeEventRegistry();
-				component.registerEvent("func:signIn", "entry.signIn();");
-				component.registerEvent("func:renderSignUp", "entry.renderSignUp();");
+				component.registerEvent("func:signIn", "access.signIn();");
+				component.registerEvent("func:renderSignUp", "access.renderSignUp();");
 
 				component.render("t-sign-in", "template-content");
 
 				state.saveInitialState("template-content");
-
-				document.body.addEventListener("keydown", function(event) {
-					if(event.keyCode === 13) {
-						var element = document.getElementById("btn-sign-in");
-						if(element != null) {
-							entry.signIn();
-						}
-					}
-				});
 			}
 
 			menu.reset();
@@ -115,10 +111,10 @@ var entry = {
 						drawer.render();
 
 					} else if(statusInd == "D") {
-						entry.renderAccountDisabled();
+						access.renderAccountDisabled();
 					}
 					else {
-						entry.renderSignInError();
+						access.renderSignInError();
 					}
 
 				} else {
@@ -147,7 +143,7 @@ var entry = {
 
 		try {
 			component.initializeEventRegistry();
-			component.registerEvent("func:renderSignIn", "entry.renderSignIn();");
+			component.registerEvent("func:renderSignIn", "access.renderSignIn();");
 
 			component.render("t-sign-in-error", "template-content");
 
@@ -178,21 +174,12 @@ var entry = {
 			appData.initialize();
 
 			component.initializeEventRegistry();
-			component.registerEvent("func:signUp", "entry.signUp();");
-			component.registerEvent("func:renderSignIn", "entry.renderSignIn();");
+			component.registerEvent("func:signUp", "access.signUp();");
+			component.registerEvent("func:renderSignIn", "access.renderSignIn();");
 
 			component.render("t-sign-up", "template-content");
 
 			state.saveInitialState("template-content");
-
-			document.body.addEventListener("keydown", function(event) {
-				if(event.keyCode === 13) {
-					var element = document.getElementById("btn-sign-up");
-					if(element != null) {
-						entry.signUp();
-					}
-				}
-			});
 
 			menu.reset();
 		}
@@ -282,7 +269,7 @@ var entry = {
 
 						menu.reset();
 					} else {
-						entry.renderSignUpError(statusMsg);
+						access.renderSignUpError(statusMsg);
 					}
 				} else {
 					console.log('Error: ' + xhr.status);
@@ -315,7 +302,7 @@ var entry = {
 			component.registerData("data:errorMsg", errorMsg);
 
 			component.initializeEventRegistry();
-			component.registerEvent("func:renderSignUp", "entry.renderSignUp();");
+			component.registerEvent("func:renderSignUp", "access.renderSignUp();");
 
 			component.render("t-signup-error", "template-content");
 
@@ -332,7 +319,7 @@ var entry = {
 		try {
 			appData.initialize();
 
-			entry.renderSignIn();
+			access.renderSignIn();
 		}
 		catch(err) {
 			console.log("signOut(): " + err);
@@ -409,7 +396,7 @@ var menu = {
 			component.registerEvent("func:getTrayList", "tray.getList();");
 			component.registerEvent("func:renderContactUs", "general.renderContactUs();");
 			component.registerEvent("func:renderAbout", "general.renderAbout();");
-			component.registerEvent("func:signOut", "entry.signOut();");
+			component.registerEvent("func:signOut", "access.signOut();");
 
 			component.render("t-menu-signed-in", "template-content");
 		}
@@ -448,15 +435,6 @@ var general = {
 			component.render("t-contact-us", "template-content");
 
 			state.saveInitialState("template-content");
-
-			document.body.addEventListener("keydown", function(event) {
-				if(event.keyCode === 13) {
-					var element = document.getElementById("btn-contact-us");
-					if(element != null) {
-						general.addContactUs();
-					}
-				}
-			});
 		}
 		catch(err) {
 			console.log("renderContactUs(): " + err);
@@ -554,7 +532,7 @@ var drawer = {
 
 		try {
 			if(isEmpty(appData.get("collectionName"))) {
-				entry.renderSignIn();
+				access.renderSignIn();
 
 			} else {
 
@@ -748,7 +726,6 @@ var drawer = {
 			var drawerArray = JSON.parse(drawerJson);
 
 			var rowHtml = "";
-			var columnData = {};
 
 			var rowCount = 0;
 			var columnCount = 0;
@@ -757,37 +734,35 @@ var drawer = {
 
 				var item = drawerArray[i];
 
-				var sanitizedText = item.text.replace(/\r/g, " ");
-				sanitizedText = item.text.replace(/\n/g, " ");
-
 				var itemTitle = drawer.createViewTitle(item.drawerId);
 
 				var viewButton = drawer.createViewButton(item.drawerId);
 				var editButton = drawer.createEditButton(item.drawerId);
 				var deleteButton = drawer.createDeleteButton(item.drawerId);
 
-				columnData = {
-					"{{data:viewButton}}" : viewButton,
-					"{{data:editButton}}" : editButton,
-					"{{data:deleteButton}}" : deleteButton
-				};
+				/*
+				 * Content can be text, web video or media
+				 */
+				var content = drawer.getItemTypeContent(item);
 
 				component.initializeDataRegistry();
 				component.registerData("data:itemTitle", itemTitle);
 				component.registerData("data:trayName", item.trayName);
 				component.registerData("data:itemTitle", itemTitle);
-				component.registerData("data:text", sanitizedText);
+				component.registerData("data:content", content);
 				component.registerData("data:url", item.url);
 				component.registerData("data:updatedDate", item.updatedDate);
 				component.registerData("data:viewButton", viewButton);
 				component.registerData("data:editButton", editButton);
 				component.registerData("data:deleteButton", deleteButton);
 
+				var columnData = component.create("t-drawer-columns");
+
 				rowCount++;
 				columnCount++;
 
 				if(columnCount == 1) {
-					var columnLeft = component.create("t-drawer-columns");
+					var columnLeft = columnData;
 
 					/*
 					 * If column count == 1 and rowCount == array count
@@ -802,7 +777,7 @@ var drawer = {
 				}
 
 				if(columnCount == 2) {
-					var columnRight = component.create("t-drawer-columns");
+					var columnRight = columnData;
 
 					component.initializeDataRegistry();
 					component.registerData("data:columnLeft", columnLeft);
@@ -838,6 +813,82 @@ var drawer = {
 		finally {}
 	},
 
+	getItemTypeContent: function(drawerItem) {
+
+		var content = "";
+
+		try {
+			var sanitizedText = drawerItem.text.replace(/\r/g, " ");
+			sanitizedText = drawerItem.text.replace(/\n/g, " ");
+
+			component.initializeDataRegistry();
+
+			if(drawerItem.type == "1") {
+
+				content = sanitizedText;
+
+			} else if(drawerItem.type == "2") {
+
+				if(drawer.isUrlWebVideo(drawerItem.url)) {
+
+					var embeddedVideoLink = drawer.getEmbeddedVideoLink(drawerItem.url);
+
+					component.registerData("data:videoUrl", embeddedVideoLink);
+
+					content = component.create("t-drawer-column-video");
+
+				} else {
+					content = sanitizedText;
+				}
+
+			} else if(drawerItem.type == "3") {
+
+				var decodeMediaBase64 = decodeURIComponent(drawerItem.mediaBase64);
+				component.registerData("data:imageUrl", decodeMediaBase64);
+
+				content = component.create("t-drawer-column-image");
+			}
+
+		}
+		catch(err) {
+			console.log("getItemTypeContent(): " + err);
+		}
+		finally {}
+
+		return content;
+	},
+
+	getEmbeddedVideoLink: function(url) {
+
+		var embeddedLink = "";
+
+		try {
+			var id = "";
+
+			var decodeUrl = decodeURIComponent(url);
+
+			if(decodeUrl.indexOf("www.youtube.com") > -1) {
+				id = decodeUrl.split("?v=")[1];
+				embeddedLink = "https://www.youtube.com/embed/" + id;
+
+			} else if(decodeUrl.indexOf("www.vimeo.com") > -1) {
+				id = decodeUrl.split("/")[2];
+				embeddedLink="https://player.vimeo.com/video/" + id;
+
+			} else if(decodeUrl.indexOf("www.ted.com") > -1) {
+
+			} else {
+
+			}
+		}
+		catch(err) {
+			console.log("getEmbeddedVideoLink(): " + err);
+		}
+		finally {}
+
+		return embeddedLink;
+	},
+
 	renderNoResultsFound: function() {
 
 		try {
@@ -870,6 +921,7 @@ var drawer = {
 					if(drawerId == item.drawerId) {
 
 						var decodeUrl = decodeURIComponent(item.url);
+						var decodeMediaBase64 = decodeURIComponent(item.mediaBase64);
 
 						drawerItem.drawerId = item.drawerId;
 						drawerItem.trayId = item.trayId;
@@ -878,6 +930,8 @@ var drawer = {
 						drawerItem.title = item.title;
 						drawerItem.text = item.text;
 						drawerItem.url = decodeUrl;
+						drawerItem.mediaType = item.mediaType;
+						drawerItem.mediaBase64 = decodeMediaBase64;
 						drawerItem.trayName = item.trayName;
 
 						break;
@@ -959,15 +1013,14 @@ var drawer = {
 			component.registerData("data:viewButton", viewButton);
 			component.registerData("data:deleteButton", deleteButton);
 			component.registerData("data:trayListSelectTag", trayListSelectTag);
+			component.registerData("data:title", drawerItem.title);
+			component.registerData("data:text", drawerItem.text);
 			component.registerData("data:drawerId", drawerId);
 
 			component.initializeEventRegistry();
 			component.registerEvent("func:editTextItem", "drawer.editTextItem(this);");
 
 			component.render("t-text-edit", "template-content");
-
-			document.getElementById("title").value = drawerItem.title;
-			document.getElementById("text").value = drawerItem.text;
 
 			state.saveInitialState("template-content");
 		}
@@ -1012,10 +1065,15 @@ var drawer = {
 
 			var trayListSelectTag = tray.createSelectTag(drawerItem.trayId, "N");
 
+			var decodeUrl = decodeURIComponent(drawerItem.url);
+
 			component.initializeDataRegistry();
 			component.registerData("data:viewButton", viewButton);
 			component.registerData("data:deleteButton", deleteButton);
 			component.registerData("data:trayListSelectTag", trayListSelectTag);
+			component.registerData("data:url", decodeUrl);
+			component.registerData("data:title", drawerItem.title);
+			component.registerData("data:text", drawerItem.text);
 			component.registerData("data:drawerId", drawerId);
 
 			component.initializeEventRegistry();
@@ -1023,12 +1081,6 @@ var drawer = {
 			component.registerEvent("func:editWebItem", "drawer.editWebItem(this);");
 
 			component.render("t-web-edit", "template-content");
-
-			var decodeUrl = decodeURIComponent(drawerItem.url);
-
-			document.getElementById("url").value = decodeUrl;
-			document.getElementById("title").value = drawerItem.title;
-			document.getElementById("text").value = drawerItem.text;
 
 			state.saveInitialState("template-content");
 		}
@@ -1049,35 +1101,17 @@ var drawer = {
 			var editButton = drawer.createEditButton(drawerItem.drawerId);
 			var deleteButton = drawer.createDeleteButton(drawerItem.drawerId);
 
+			var videoLink = drawer.getEmbeddedVideoLink(drawerItem.url);
+
 			component.initializeDataRegistry();
 			component.registerData("data:editButton", editButton);
 			component.registerData("data:deleteButton", deleteButton);
 			component.registerData("data:title", drawerItem.title);
 			component.registerData("data:trayName", drawerItem.trayName);
 			component.registerData("data:text", drawerItem.text);
+			component.registerData("data:videoUrl", videoLink);
 
-			var id = "";
-			var embeddedLink = "";
-
-			var decodeUrl = decodeURIComponent(drawerItem.url);
-
-			if(decodeUrl.indexOf("www.youtube.com") > -1) {
-				id = decodeUrl.split("?v=")[1];
-				embeddedlink = "https://www.youtube.com/embed/" + id;
-
-			} else if(decodeUrl.indexOf("www.vimeo.com") > -1) {
-				id = decodeUrl.split("/")[2];
-				embeddedlink="https://player.vimeo.com/video/" + id;
-
-			} else if(decodeUrl.indexOf("www.ted.com") > -1) {
-
-			} else {
-
-			}
-
-			component.render("t-video-view", "template-content");
-
-			document.getElementById("embedded-video").src = embeddedlink;
+			component.render("t-web-video-view", "template-content");
 
 			state.saveInitialState("template-content");
 		}
@@ -1105,6 +1139,75 @@ var drawer = {
 		}
 		catch(err) {
 			console.log("renderAddMediaItem(): " + err);
+		}
+		finally {}
+	},
+
+	renderViewMediaItem: function(element) {
+
+		try {
+			var drawerId = element.getAttribute("data-drawer-id");
+
+			drawerItem = {};
+			drawerItem = drawer.getItem(drawerId);
+
+			var editButton = drawer.createEditButton(drawerItem.drawerId);
+			var deleteButton = drawer.createDeleteButton(drawerItem.drawerId);
+
+			var decodeMediaBase64 = decodeURIComponent(drawerItem.mediaBase64);
+
+			component.initializeDataRegistry();
+			component.registerData("data:editButton", editButton);
+			component.registerData("data:deleteButton", deleteButton);
+			component.registerData("data:title", drawerItem.title);
+			component.registerData("data:trayName", drawerItem.trayName);
+			component.registerData("data:text", drawerItem.text);
+			component.registerData("data:imageUrl", decodeMediaBase64);
+
+			component.render("t-media-view", "template-content");
+
+			state.saveInitialState("template-content");
+		}
+		catch(err) {
+			console.log("renderViewMediaItem(): " + err);
+		}
+		finally {}
+	},
+
+	renderEditMediaItem: function(element) {
+
+		try {
+			var drawerId = element.getAttribute("data-drawer-id");
+
+			drawerItem = {};
+			drawerItem = drawer.getItem(drawerId);
+
+			var viewButton = drawer.createViewButton(drawerItem.drawerId);
+			var deleteButton = drawer.createDeleteButton(drawerItem.drawerId);
+
+			var trayListSelectTag = tray.createSelectTag(drawerItem.trayId, "N");
+
+			var decodeMediaBase64 = decodeURIComponent(drawerItem.mediaBase64);
+
+			component.initializeDataRegistry();
+			component.registerData("data:viewButton", viewButton);
+			component.registerData("data:deleteButton", deleteButton);
+			component.registerData("data:title", drawerItem.title);
+			component.registerData("data:trayListSelectTag", trayListSelectTag);
+			component.registerData("data:text", drawerItem.text);
+			component.registerData("data:imageUrl", decodeMediaBase64);
+			component.registerData("data:drawerId", drawerId);
+
+			component.initializeEventRegistry();
+			component.registerEvent("func:fetchMediaItem", "drawer.fetchMediaItem(this.files[0]);");
+			component.registerEvent("func:editMediaItem", "drawer.editMediaItem(this);");
+
+			component.render("t-media-edit", "template-content");
+
+			state.saveInitialState("template-content");
+		}
+		catch(err) {
+			console.log("renderEditMediaItem(): " + err);
 		}
 		finally {}
 	},
@@ -1178,46 +1281,26 @@ var drawer = {
 			var cleanedTitle = replaceSpecialChars(title);
 			var cleanedText = replaceSpecialChars(text);
 
-			if(!window.FileReader){
-				alert('The File APIs are not fully supported in this browser.');
+			var base64 = document.getElementById("preview").innerHTML;
+
+			if(isEmpty(base64)) {
+				component.setText("error", "Please choose an Image or Video file.");
 				return false;
 			}
 
-			/* get selected file element */
-			var oFile = document.getElementById("inputFile").files[0];
+			var sanitizedBase64 = base64.replace(/<img src="/gi, "");
+			sanitizedBase64 = sanitizedBase64.replace(/">/gi, "");
 
-			/* filter for image files */
-			var rFilter = /^(image\/bmp|image\/gif|image\/jpeg|image\/png|image\/tiff)$/i;
+			var mediaBase64 = encodeURIComponent(sanitizedBase64);
 
-			if(!rFilter.test(oFile.type)) {
-				component.setText("error", "The file is not an image file type (jpeg, gif, png, tiff, bmp");
-				return false;
-			}
-
-			/* Maximum file size is 10MB */
-			if(oFile.size > 10485760) {
-				component.setText("error", "The file is too big. You can only upload up to a 10MB file.");
-				return false;
-			}
-
-			var fileType = oFile.type;
-
-			var oReader = new FileReader();
-
-			oReader.onload = function(event) {
-
-				var base64Code = event.target.result;
-
-				var base64 = encodeURIComponent(base64Code);
-
-				var inputFields = {
-					"collectionName":appData.get("collectionName"), 
-					"trayId":trayId, 
-					"title":cleanedTitle, 
-					"text":cleanedText,
-					"type":"2",
-					"fileType":fileType, 
-					"base64Code":base64};
+			var inputFields = {
+				"collectionName":appData.get("collectionName"), 
+				"trayId":trayId, 
+				"title":cleanedTitle, 
+				"text":cleanedText,
+				"type":"3",
+				"mediaType":".", 
+				"mediaBase64":mediaBase64};
 
 				var inputJSON = {};
 				inputJSON.inputArgs = inputFields;
@@ -1225,10 +1308,7 @@ var drawer = {
 				var stringJSON = JSON.stringify(inputJSON);
 
 				drawer.uploadMediaItem(stringJSON);
-			};
-
-			oReader.readAsDataURL(oFile);
-		}
+ 		}
 		catch(err) {
 			component.setText("error", "addMediaItem(): We cannot post your file. Please try again in a little bit.");
 		}
@@ -1283,36 +1363,47 @@ var drawer = {
 			drawerItem = {};
 			drawerItem = drawer.getItem(drawerId);
 
+			component.initializeDataRegistry();
+			component.initializeEventRegistry();
+
 			if(drawerItem.type == "1") {
 
-				component.initializeDataRegistry();
 				component.registerData("data:drawerId", drawerId);
 				component.registerData("data:title", drawerItem.title);
 
-				component.initializeEventRegistry();
 				component.registerEvent("func:renderViewTextItem", "drawer.renderViewTextItem(this);");
 
 				componentHtml = component.create("t-drawer-title-text-view");
 
-			} else if(drawerItem.type == "4") {
+			} else if(drawerItem.type == "2") {
 
-				component.initializeDataRegistry();
+				/*
+				 * If the url contains youtube, vimeo or ted then video view
+				 */
+				if(drawer.isUrlWebVideo(drawerItem.url)) {
+
+					component.registerData("data:drawerId", drawerId);
+					component.registerData("data:title", drawerItem.title);
+
+					component.registerEvent("func:renderViewVideoItem", "drawer.renderViewVideoItem(this);");
+
+					componentHtml = component.create("t-drawer-title-video-view");
+
+				} else {
+					component.registerData("data:title", drawerItem.title);
+					component.registerData("data:url", drawerItem.url);
+
+					componentHtml = component.create("t-drawer-title-article-view");
+				}
+
+			} else if(drawerItem.type == "3") {
+
 				component.registerData("data:drawerId", drawerId);
 				component.registerData("data:title", drawerItem.title);
-				component.registerData("data:url", drawerItem.url);
 
-				componentHtml = component.create("t-drawer-title-article-view");
+				component.registerEvent("func:renderViewMediaItem", "drawer.renderViewMediaItem(this);");
 
-			} else if(drawerItem.type == "5") {
-
-				component.initializeDataRegistry();
-				component.registerData("data:drawerId", drawerId);
-				component.registerData("data:title", drawerItem.title);
-
-				component.initializeEventRegistry();
-				component.registerEvent("func:renderViewVideoItem", "drawer.renderViewVideoItem(this);");
-
-				componentHtml = component.create("t-drawer-title-video-view");
+				componentHtml = component.create("t-drawer-title-media-view");
 			}
 		}
 		catch(err) {
@@ -1331,32 +1422,41 @@ var drawer = {
 			drawerItem = {};
 			drawerItem = drawer.getItem(drawerId);
 
+			component.initializeDataRegistry();
+			component.initializeEventRegistry();
+
 			if(drawerItem.type == "1") {
 
-				component.initializeDataRegistry();
 				component.registerData("data:drawerId", drawerId);
 
-				component.initializeEventRegistry();
 				component.registerEvent("func:renderViewTextItem", "drawer.renderViewTextItem(this);");
 
 				componentHtml = component.create("t-drawer-button-text-view");
 
-			} else if(drawerItem.type == "4") {
+			} else if(drawerItem.type == "2") {
 
-				component.initializeDataRegistry();
-				component.registerData("data:url", drawerItem.url);
+				/*
+				 * If the url contains youtube, vimeo or ted then video view
+				 */
+				if(drawer.isUrlWebVideo(drawerItem.url)) {
+					component.registerData("data:drawerId", drawerId);
 
-				componentHtml = component.create("t-drawer-button-article-view");
+					component.registerEvent("func:renderViewVideoItem", "drawer.renderViewVideoItem(this);");
 
-			} else if(drawerItem.type == "5") {
+					componentHtml = component.create("t-drawer-button-video-view");
 
-				component.initializeDataRegistry();
+				} else {
+					component.registerData("data:url", drawerItem.url);
+					componentHtml = component.create("t-drawer-button-article-view");
+				}
+
+			} else if(drawerItem.type == "3") {
+
 				component.registerData("data:drawerId", drawerId);
 
-				component.initializeEventRegistry();
-				component.registerEvent("func:renderViewVideoItem", "drawer.renderViewVideoItem(this);");
+				component.registerEvent("func:renderViewMediaItem", "drawer.renderViewMediaItem(this);");
 
-				componentHtml = component.create("t-drawer-button-video-view");
+				componentHtml = component.create("t-drawer-button-media-view");
 			}
 		}
 		catch(err) {
@@ -1375,24 +1475,30 @@ var drawer = {
 			drawerItem = {};
 			drawerItem = drawer.getItem(drawerId);
 
+			component.initializeDataRegistry();
+			component.initializeEventRegistry();
+
 			if(drawerItem.type == "1") {
-				component.initializeDataRegistry();
 				component.registerData("data:drawerId", drawerId);
 
-				component.initializeEventRegistry();
 				component.registerEvent("func:renderEditTextItem", "drawer.renderEditTextItem(this);");
 
 				componentHtml = component.create("t-drawer-button-text-edit");
 
-			} else if(drawerItem.type == "4" || drawerItem.type == "5") {
+			} else if(drawerItem.type == "2") {
 
-				component.initializeDataRegistry();
 				component.registerData("data:drawerId", drawerId);
 
-				component.initializeEventRegistry();
 				component.registerEvent("func:renderEditWebItem", "drawer.renderEditWebItem(this);");
 
 				componentHtml = component.create("t-drawer-button-web-edit");
+
+			} else if(drawerItem.type == "3") {
+				component.registerData("data:drawerId", drawerId);
+
+				component.registerEvent("func:renderEditMediaItem", "drawer.renderEditMediaItem(this);");
+
+				componentHtml = component.create("t-drawer-button-media-edit");
 			}
 		}
 		catch(err) {
@@ -1609,22 +1715,10 @@ var drawer = {
 
 			var encodeUrl = encodeURIComponent(pastedUrl);
 
-			var type = "4";
-
-			if(pastedUrl.indexOf("www.youtube.com") > -1) {
-				type = "5";
-			} else if(pastedUrl.indexOf("www.vimeo.com") > -1) {
-				type = "5";
-			} else if(pastedUrl.indexOf("www.ted.com") > -1) {
-				type = "5";
-			} else {
-				type = "4";
-			}
-
 			var inputFields = {
 				"collectionName":appData.get("collectionName"), 
 				"trayId":trayId, 
-				"type":type, 
+				"type":"2", 
 				"url":encodeUrl, 
 				"title":cleanedTitle, 
 				"text":cleanedText};
@@ -1901,6 +1995,33 @@ var drawer = {
 			component.setText("error", "We are sorry but there is a problem with the Link that you are trying to fetch.");
 		}
 		finally {}
+	},
+
+	isUrlWebVideo: function(url) {
+
+		var result = false;
+
+		try {
+			if(url.indexOf("www.youtube.com") > -1) {
+				result = true;
+
+			} else if(url.indexOf("www.vimeo.com") > -1) {
+				result = true;
+
+			} else if(url.indexOf("www.ted.com") > -1) {
+				result = true;
+
+			} else {
+				result = false;
+			}
+		}
+		catch(err) {
+			console.log("isUrlWebVideo(): " + err);
+			result = false;
+		}
+		finally {}
+
+		return result;
 	}
 
 };
@@ -2172,6 +2293,11 @@ var tray = {
 			var trayId = element.getAttribute('data-tray-id');
 			var trayName = element.getAttribute('data-tray-name');
 
+			if(trayName.toLowerCase() == "favorites") {
+				tray.renderTrayError();
+				return false;
+			}
+
 			var name = document.getElementById("name").value;
 
 			if(isEmpty(name)) {
@@ -2318,6 +2444,11 @@ var tray = {
 			var trayId = element.getAttribute('data-tray-id');
 			var trayName = element.getAttribute('data-tray-name');
 
+			if(trayName.toLowerCase() == "favorites") {
+				tray.renderTrayError();
+				return false;
+			}
+
 			var inputFields = {
 				"collectionName":appData.get("collectionName"), 
 				"trayId":trayId
@@ -2420,7 +2551,7 @@ var tray = {
 
 var listener = {
 
-	create: function() {
+	registerKeyDownEnter: function() {
 
 		document.body.addEventListener("keydown", function(event) {
 
@@ -2428,21 +2559,26 @@ var listener = {
 
 				/*
 				 * Check which template is being displayed by checking for the 
-				 * presence of a hidden field that is specific for that template 
+				 * presence of a element id that is specific for that template 
 				 */
-				var element = document.getElementById("signin");
+				var element = document.getElementById("btn-sign-in");
 				if(element != null) {
-					entry.signIn();
+					access.signIn();
 				}
 
-				var element = document.getElementById("signup");
+				var element = document.getElementById("btn-sign-up");
 				if(element != null) {
-					entry.signUp();
+					access.signUp();
 				}
 
-				var element = document.getElementById("contactus");
+				var element = document.getElementById("btn-contact-us");
 				if(element != null) {
 					general.addContactUs();
+				}
+
+				var element = document.getElementById("button-holder");
+				if(element != null) {
+					drawer.searchDrawerByWildcard();
 				}
 
 			}

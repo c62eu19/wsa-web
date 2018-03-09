@@ -5,9 +5,17 @@
  * @author Stan Zajdel
 */
 
-var fs = require('fs');
+var deploy = require("./deploy");
 
 /* 
+ * Read Command line arguments and route from there
+ * 
+ * Delete all files in deployment directories
+ * 
+ * Read all js files and combine into one js deployment file. Copy to js directory
+ * Read all css files. Copy each to the css deployment directory
+ * Read all image files. Copy each to the images directory
+ * 
  * Read the container.txt file in the container folder
  * Read all template files in the templates folder
  * Add all templates to the container file and save as app.html
@@ -16,18 +24,31 @@ var fs = require('fs');
 */
 console.log('MyDrawer (Init): Reading Template files');
 
-var templates = "";
+ var srcJsFolder = "/App-Workspace/my-drawer-web/js";
+var srcCssFolder = "/App-Workspace/my-drawer-web/css";
+var srcImagesFolder = "/App-Workspace/my-drawer-web/images";
+var srcTemplatesFolder = "/App-Workspace/my-drawer-web/templates";
+var srcContainerFolder = "/App-Workspace/my-drawer-web/container";
 
-var dir = './templates';
+var targetJsFolder = "./js";
+var targetCssFolder = "./css";
+var targetImagesFolder = "./images";
 
-var files = fs.readdirSync(dir);
+var appHtml = "./app.html";
 
-for(var i in files) {
-	var name = dir + '/' + files[i];
+var cssBundle = deploy.bundle(srcCssFolder);
 
-	templates += fs.readFileSync(name, 'utf8');
-}
+var minifiedCssBundle = deploy.minify(cssBundle);
 
+console.log(minifiedCssBundle);
+
+var templateBundle = deploy.bundle(srcTemplatesFolder);
+
+var minifiedTemplateBundle = deploy.minify(templateBundle);
+
+console.log(minifiedTemplateBundle);
+
+/*
 console.log('MyDrawer (Init): Reading container.txt file');
 
 var containerFile = fs.readFileSync('./container/container.txt', 'utf8');
@@ -66,11 +87,4 @@ fs.readFile('./js/drawer.js', 'utf-8', (err, file) => {
 
 console.log('MyDrawer (Init): Reading router app.json file');
 
-/* Read the Router config file */
-var json = JSON.parse(fs.readFileSync('./app.json', 'utf8'));
-
-for(var i = 0; i < json.length; i++) {
-
-	console.log(json[i].path);
-}
-
+*/

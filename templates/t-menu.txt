@@ -1,3 +1,31 @@
+<script id="t-menu-bar" type="text/template">
+
+<nav class="menu-bar" style="background-color:#f6f6f6;">
+	<div class="container">&nbsp;
+
+		<a href="#" onclick="{{func:getDrawerList}}" class="logo"><h3>My Drawer</h3></a>
+
+		<button onclick="{{func:toggle}}" id="id-hamburger" class="hamburger">&#9776;</button>
+
+	</div>
+</nav>
+
+</script>
+
+<script id="t-menu-signed-out" type="text/template">
+
+<div id="command-menu" style="margin-bottom:9px;">
+
+	<h5 style="color: #0000ff;">Would You like To</h5>
+
+	<a href="#" onclick="{{func:renderContactUs}}" style="margin-top:5px;">Contact Us</a>
+	<a href="#" onclick="{{func:renderAbout}}" style="margin-top:5px;">Learn About My Drawer</a>
+
+	<hr style="margin-top:7px; margin-bottom:7px;">
+</div>
+
+</script>
+
 <script id="t-menu-signed-in" type="text/template">
 
 <div id="command-menu" style="margin-bottom:9px;">

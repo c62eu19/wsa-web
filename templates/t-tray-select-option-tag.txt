@@ -1,3 +1,0 @@
-<script id="t-tray-select-option-tag" type="text/template">
-	<option value="{{data:trayId}}" {{data:selected}} data-tray-id="{{data:trayId}}" data-tray-name="{{data:trayName}}">{{data:trayName}}</option>
-</script>

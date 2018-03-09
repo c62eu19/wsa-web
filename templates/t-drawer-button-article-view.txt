@@ -1,9 +1,0 @@
-<script id="t-drawer-button-article-view" type="text/template">
-
-<a href="{{data:url}}" target="_blank">
-	<span style="color: #000;">
-		<strong>V</strong>iew
-	</span>
-</a>
-
-</script>

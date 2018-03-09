@@ -1,0 +1,80 @@
+<script id="t-drawer-button-text-view" type="text/template">
+
+<a href="#" onclick="{{func:renderViewTextItem}}" data-drawer-id="{{data:drawerId}}">
+	<span style="color: #000;">
+		<strong>V</strong>iew
+	</span>
+</a>
+
+</script>
+
+<script id="t-drawer-button-text-edit" type="text/template">
+
+<a href="#" onclick="{{func:renderEditTextItem}}" data-drawer-id="{{data:drawerId}}">
+	<span style="color: #000;">
+		<strong>E</strong>dit
+	</span>
+</a>
+
+</script>
+
+<script id="t-drawer-button-web-edit" type="text/template">
+
+<a href="#" onclick="{{func:renderEditWebItem}}" data-drawer-id="{{data:drawerId}}">
+	<span style="color: #000;">
+		<strong>E</strong>dit
+	</span>
+</a>
+
+</script>
+
+<script id="t-drawer-button-article-view" type="text/template">
+
+<a href="{{data:url}}" target="_blank">
+	<span style="color: #000;">
+		<strong>V</strong>iew
+	</span>
+</a>
+
+</script>
+
+<script id="t-drawer-button-video-view" type="text/template">
+
+<a href="#" onclick="{{func:renderViewVideoItem}}" data-drawer-id="{{data:drawerId}}">
+	<span style="color: #000;">
+		<strong>V</strong>iew
+	</span>
+</a>
+
+</script>
+
+<script id="t-drawer-button-media-view" type="text/template">
+
+<a href="#" onclick="{{func:renderViewMediaItem}}" data-drawer-id="{{data:drawerId}}">
+	<span style="color: #000;">
+		<strong>V</strong>iew
+	</span>
+</a>
+
+</script>
+
+<script id="t-drawer-button-media-edit" type="text/template">
+
+<a href="#" onclick="{{func:renderEditMediaItem}}" data-drawer-id="{{data:drawerId}}">
+	<span style="color: #000;">
+		<strong>E</strong>dit
+	</span>
+</a>
+
+</script>
+
+<script id="t-drawer-button-delete" type="text/template">
+
+<a href="#" onclick="{{func:deleteItem}}" data-drawer-id="{{data:drawerId}}">
+	<span style="color: #000;">
+		<strong>D</strong>elete
+	</span>
+</a>
+
+</script>
+
