@@ -1,9 +1,10 @@
 /**
  * app.js
- * Contains Node Server-specific code.
+ * 
+ * Node Server code for the MyDrawer app
  * 
  * @author Stan Zajdel
-*/
+ */
 
 var http = require('http');
 var url = require("url");
@@ -12,41 +13,8 @@ var path = require('path');
 var qs = require('querystring');
 
 /* 
- * Read the container.txt file in the container folder
- * Read all template files in the templates folder
- * Add all templates to the container file and save as app.html
- * 
- * app.html is the main page of the app
-*/
-console.log('MyDrawer (Init): Reading Template files');
-
-var templates = "";
-
-var dir = './templates';
-
-var files = fs.readdirSync(dir);
-
-for(var i in files) {
-	var name = dir + '/' + files[i];
-
-	templates += fs.readFileSync(name, 'utf8');
-}
-
-console.log('MyDrawer (Init): Reading container.txt file');
-
-var containerFile = fs.readFileSync('./container/container.txt', 'utf8');
-
-var appHtml = containerFile.replace(/{{templates}}/g, templates);
-
-console.log('MyDrawer (Init): Creating app.html file');
-
-fs.writeFile('./app.html', appHtml,  function(err) {
-	if (err) {
-		return console.error(err);
-	}
-});
-
-/* Request handler, routes all requests to the appropriate handler */
+ * Request handler, routes all requests to the appropriate handler
+ */
 const requestHandler = function(request, response) {
 
 	try {
@@ -61,7 +29,9 @@ const requestHandler = function(request, response) {
 	}
 };
 
-/* Create the server and listen on port 8081 */
+/*
+ *  Create the server and listen on port 8081
+ */  
 const server = http.createServer(requestHandler)
 
 var port = 8081;
@@ -74,7 +44,9 @@ server.listen(port, function(err) {
 	console.log('MyDrawer (Init): Server is listening now on Port ' + port + '. Ready to serve YOU!');
 });
 
-/* Gets and serves all web resources */
+/*
+ *  Gets and serves all web resources
+ */
 getResource = function(request, response) {
 
 	try {
@@ -114,7 +86,9 @@ getResource = function(request, response) {
 	}
 };
 
-/* Utility Read app config file for all app content */
+/*
+ * Utility Read app config file for all app content
+ */
 getConfigValue = function(key, attribute) {
 
 	var value = "";
@@ -129,8 +103,11 @@ getConfigValue = function(key, attribute) {
 	return value;
 };
 
-/* Write content out to browser */
+/* 
+ * Write content out to browser
+ */
 writeContent = function(response, filePath, contentType) {
+
 	try {
 		fs.readFile(filePath, function(error, content) {
 			if(error) {
@@ -157,6 +134,9 @@ writeContent = function(response, filePath, contentType) {
 	}
 };
 
+/*
+ * All Resources for the app
+ */
 var resources = {
 	"/mydrawer": {
 		"path": "./app.html", 
