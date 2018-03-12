@@ -1,6 +1,11 @@
 <script id="t-menu-bar" type="text/template">
 
-<nav class="menu-bar" style="background-color:#f6f6f6;">
+<!--
+#f6f6f6
+#eafeea
+#f4fef4
+-->
+<nav class="menu-bar" style="background-color: #f6f6f6;">
 	<div class="container">&nbsp;
 
 		<a href="#" onclick="{{func:getDrawerList}}" class="logo"><h3>My Drawer</h3></a>

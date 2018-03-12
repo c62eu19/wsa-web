@@ -10,6 +10,9 @@ var fs = require("fs");
 
 console.log("Building the App...");
 
+/*
+ * Assets that need to be deployed
+ */
 var assets = {
 	"css": {
 		"src-dir": "/App-Workspace/my-drawer-web/css", 
@@ -21,14 +24,14 @@ var assets = {
 	"images": {
 		"src-dir": "/App-Workspace/my-drawer-web/images", 
 		"tgt-dir":"./images", 
-		"src-files":"*",
+		"src-files":"favicon.ico,search.png",
 		"tgt-file":""
 	},
 
 	"js": {
 		"src-dir": "/App-Workspace/my-drawer-web/js", 
 		"tgt-dir":"./js", 
-		"src-files":"*",
+		"src-files":"drawer.js,library.js",
 		"tgt-file":""
 	},
 
@@ -57,9 +60,24 @@ var assets = {
 /**
  * Build and Deployment functions
 */
-start = function() {
+
+start = function(processArgs) {
 
 	try {
+
+		/*
+		 * Process any command line arguments tha are passed in
+		 * 
+		 * Arguments (buildType):
+		 * 	--dev (build without minify)
+		 *	--prod (cleanse and minify code)
+		 */
+		if(typeof(processArgs[2]) === "undefined" || processArgs[2] == null || processArgs[2].trim().length <= 0) {
+			buildType = "dev";
+		} else {
+			buildType = "prod";
+		}
+
 		deployCssAssets();
 		deployImageAssets();
 		deployJsAssets();
@@ -111,7 +129,7 @@ deployImageAssets = function() {
 
 		var files = readFiles(srcDir, tgtDir, srcFiles);
 
-		copyFiles(srcDir, tgtDir, files);
+		copyBinaryFiles(srcDir, tgtDir, files);
 	}
 	catch(e) {
 		console.log("deployImageAssets(): " + e);
@@ -151,9 +169,9 @@ deployAppJsFile = function() {
 		var srcFiles = assets["app-js"]["src-files"];
 		var tgtFile = assets["app-js"]["tgt-file"];
 
-		var files = readFiles(srcDir, tgtDir, srcFiles);
+		var fileData = fs.readFileSync(srcDir + "/" + srcFiles, 'utf8');
 
-		copyFiles(srcDir, tgtDir, files);
+		fs.writeFileSync(tgtDir + "/" + tgtFile, fileData);
 	}
 	catch(e) {
 		console.log("deployAppJsFile(): " + e);
@@ -182,6 +200,10 @@ deployAppHtmlFile = function() {
 
 		console.log("....Adding templates to the container file");
 		var appHtml = containerFile.replace(/{{templates}}/g, templatesFile);
+
+		/*
+		 * Minify
+		 */
 
 		console.log("....creating the app.html file");
 		fs.writeFileSync(appHtmlTgtDir + "/" + appHtmlTgtFile, appHtml);
@@ -277,7 +299,16 @@ combineFiles = function(srcDir, srcFiles) {
 		for(var i in files) {
 			var filePath = srcDir + '/' + files[i];
 
-			combinedFiles += fs.readFileSync(filePath, 'utf8');
+			var fileData = fs.readFileSync(filePath, 'utf8');
+
+			/*
+			 * Cleanse and Minify if desired
+			 */
+			if(buildType.toLowerCase() == "prod") {
+
+			}
+
+			combinedFiles += fileData;
 		}
 	}
 	catch(e) {
@@ -302,6 +333,9 @@ copyFiles = function(srcDir, tgtDir, files) {
 			/*
 			 * Cleanse and Minify if desired
 			 */
+			if(buildType.toLowerCase() == "prod") {
+
+			}
 
 			var tgtFilePath = tgtDir + "/" + files[i];
 
@@ -315,14 +349,57 @@ copyFiles = function(srcDir, tgtDir, files) {
 	}
 };
 
+copyBinaryFiles = function(srcDir, tgtDir, files) {
+
+	try {
+		console.log("....Copying binary source files to target directory");
+
+		var srcFilePath = srcDir + '/' + files[i];
+
+		for(var i in files) {
+			var filePath = srcDir + '/' + files[i];
+
+			var inStr = fs.createReadStream(filePath);
+
+			var tgtFilePath = tgtDir + "/" + files[i];
+
+			var outStr = fs.createWriteStream(tgtFilePath);
+
+			console.log("......Copying: " + tgtFilePath);
+
+			inStr.pipe(outStr);
+		}
+	}
+	catch(e) {
+		console.log("copyBinaryFiles(): " + e);
+	}
+};
+
+cleanse = function(uncleansedData) {
+
+	var cleansedData = "";
+
+	try {
+		console.log("......Cleansing");
+
+		/*
+		 * remove all comments
+		 */
+		cleansedData = uncleansedData.replace(/\/\*[\s\S]*?\*V|([^\\:]|^}\/\/.*$/gm,"");
+	}
+	catch(e) {
+		console.log("cleanse(): " + e);
+	}
+
+	return cleansedData;
+};
+
 minify = function(unminifiedData) {
 
 	var minifiedData = "";
 
 	try {
-		/*
-		 * Need to remove comments also
-		 */
+		console.log("......Minifying");
 
 		const lines = unminifiedData.split('\n')
 
@@ -336,23 +413,6 @@ minify = function(unminifiedData) {
 	}
 
 	return minifiedData;
-};
-
-cleanse = function(uncleansedData) {
-
-	var cleansedData = "";
-
-	try {
-		/*
-		 * remove all comments
-		 */
-		cleansedData = uncleansedData.replace(/\/\*[\s\S]*?\*V|([^\\:]|^}\/\/.*$/gm,"");
-	}
-	catch(e) {
-		console.log("cleansed(): " + e);
-	}
-
-	return cleansedData;
 };
 
 splitFiles = function(fileTokens) {
@@ -391,5 +451,17 @@ exports.createDir = createDir;
 exports.readFiles = readFiles;
 exports.combineFiles = combineFiles;
 exports.copyFiles = copyFiles;
-exports.minify = minify;
+exports.copyBinaryFiles = copyBinaryFiles;
 exports.cleanse = cleanse;
+exports.minify = minify;
+
+/*
+ * Command line arg to indicate type of 
+ * build to perform (dev or prod)
+ */
+var buildType = "";
+
+/*
+ * Start the build process
+ */
+start(process.argv);
