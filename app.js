@@ -25,7 +25,7 @@ const requestHandler = function(request, response) {
 		global[handler](request, response);
 	}
 	catch(e) {
-		console.log("requestHandler(): " + e);
+		console.log("requestHandler(): " + request.url + ": " + e);
 	}
 };
 
@@ -87,6 +87,18 @@ getResource = function(request, response) {
 };
 
 /*
+ *  Default method for all non-resource calls
+ */
+getDefault = function(request, response) {
+
+	try {
+	}
+	catch(e) {
+		console.log("getDefault: " + e);
+	}
+};
+
+/*
  * Utility Read app config file for all app content
  */
 getConfigValue = function(key, attribute) {
@@ -95,9 +107,14 @@ getConfigValue = function(key, attribute) {
 
 	try {
 		value = resources[key][attribute];
+
+		if(value == "undefined" || value == null) {
+			value = "getDefault"
+		}
 	}
 	catch(e) {
-		console.log("getConfigValue(): Cannot find resource: " + e);
+		console.log("getConfigValue(): Value not found, call getDefault method");
+		value = "getDefault"
 	}
 
 	return value;
@@ -132,6 +149,20 @@ writeContent = function(response, filePath, contentType) {
 	catch(e) {
 		console.log("writeContent(): " + e);
 	}
+};
+
+readFile = function(filePath) {
+
+	var fileData;
+
+	try {
+		fileData = fs.readFileSync(filePath, 'utf8');
+	}
+	catch(e) {
+		console.log("readFiles(): " + e);
+	}
+
+	return fileData;
 };
 
 /*

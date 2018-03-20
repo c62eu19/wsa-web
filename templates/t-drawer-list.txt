@@ -27,12 +27,16 @@
 
 <hr style="margin-top:7px; margin-bottom:7px;">
 
-<ul class="icons" style="text-align:left; margin-bottom:2px; padding-bottom:2px;">
-	<li style="font-size:18px;">
-		<strong>{{data:totalItems}} items {{data:traySelected}}</strong>
-	</li>
-</ul>
-
+<div class="row">
+	<div class="twelve columns">
+		<ul class="icons" style="margin-bottom:2px; padding-bottom:2px;">
+			<li style="text-align:left; font-size:18px;">
+				<strong>{{data:totalItems}} items {{data:traySelected}}</strong>
+			</li>
+		</ul>
+	</div>
+</div>
+	
 {{data:drawerRows}}
 
 </script>
@@ -40,10 +44,13 @@
 <script id="t-drawer-rows" type="text/template">
 
 <div class="row">
-	<div class="six columns">
+	<div class="four columns">
 		{{data:columnLeft}}
 	</div>
-	<div class="six columns">
+	<div class="four columns">
+		{{data:columnMiddle}}
+	</div>
+	<div class="four columns">
 		{{data:columnRight}}
 	</div>
 </div>

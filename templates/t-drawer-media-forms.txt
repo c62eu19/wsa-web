@@ -21,20 +21,18 @@
 
 	<br/>
 
-	<label for="text">Text</label>
-	<textarea class="u-full-width hide-textarea-resize" style="height:100px;" id="text" name="text" placeholder="Add your thoughts here" rows="10"></textarea>
-
-	<br/>
-
 	<div class="row">
-		<div class="twelve columns">
+		<div class="six columns">
+			<label for="text">Text</label>
+			<textarea class="u-full-width hide-textarea-resize" style="height:100px;" id="text" name="text" placeholder="Add your thoughts here" rows="10"></textarea>
+		</div>
+		<div class="six columns">
+			<label for="text">&nbsp;</label>
 			<div id="preview">
 
 			</div>
 		</div>
 	</div>
-
-	<br/>
 
 	<a href="#" class="button button-primary" onclick="{{func:addMediaItem}}" style="font-size:14px;">Save</a>
 </form>
@@ -72,20 +70,20 @@
 
 	<br/>
 
-	<label for="text">Text</label>
-	<textarea class="u-full-width hide-textarea-resize" style="height:100px;" id="text" name="text" placeholder="Add your thoughts here" rows="10">{{data:text}}</textarea>
-
-	<br/>
-
 	<div class="row">
-		<div class="twelve columns">
-			<img src="{{data:imageUrl}}" align="left" width="300px" height="300px" class="responsive-image" style="margin-right: 5px"/>
+		<div class="six columns">
+			<label for="text">Text</label>
+			<textarea class="u-full-width hide-textarea-resize" style="height:200px;" id="text" name="text" placeholder="Add your thoughts here" rows="10">{{data:text}}</textarea>
+		</div>
+		<div class="six columns">
+			<label for="text">&nbsp;</label>
+			<div id="preview">
+				<img src="{{data:imageUrl}}" align="left" width="300px" height="300px" class="responsive-image" style="margin-right: 5px"/>
+			</div>
 		</div>
 	</div>
 
-	<br/>
-
-	<a href="#" class="button button-primary" onclick="{{func:addMediaItem}}" style="font-size:14px;">Save</a>
+	<a href="#" class="button button-primary" onclick="{{func:editMediaItem}}" data-drawer-id="{{data:drawerId}}" style="font-size:14px;">Save</a>
 </form>
 
 </script>
@@ -107,8 +105,15 @@
 </p>
 
 <div class="row">
-	<div class="twelve columns">
-		<img src="{{data:imageUrl}}" align="left" width="300px" height="300px" class="responsive-image" style="margin-right: 5px"/>
+	<div class="six columns">
+		<label for="text">Text</label>
+		<pre>{{data:text}}</pre>
+	</div>
+	<div class="six columns">
+		<label for="text">&nbsp;</label>
+		<div id="preview">
+			<img src="{{data:imageUrl}}" align="left" width="300px" height="300px" class="responsive-image" style="margin-right: 5px"/>
+		</div>
 	</div>
 </div>
 

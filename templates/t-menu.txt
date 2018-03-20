@@ -1,17 +1,24 @@
 <script id="t-menu-bar" type="text/template">
 
-<!--
-#f6f6f6
-#eafeea
-#f4fef4
--->
-<nav class="menu-bar" style="background-color: #f6f6f6;">
-	<div class="container">&nbsp;
-
-		<a href="#" onclick="{{func:getDrawerList}}" class="logo"><h3>My Drawer</h3></a>
-
-		<button onclick="{{func:toggle}}" id="id-hamburger" class="hamburger">&#9776;</button>
-
+<nav class="menu-bar">
+	<div class="container">
+			<ul class="menu-bar-list">
+				<li id="menu-logo" class="menu-bar-item-left">
+					<a href="#" class="menu-bar-left-link" onclick="{{func:getDrawerList}}">
+						My Drawer
+					</a>
+				</li>
+				<li id="menu-hamburger" class="menu-bar-item-right">
+					<a href="#" class="menu-bar-right-link" onclick="{{func:toggle}}">
+						<span style="font-size:1.5em;">&#9776;</span>
+					</a>
+				</li>
+				<li id="menu-sign-in" class="menu-bar-item-right">
+					<a href="#" class="menu-bar-right-link">
+						Sign In
+					</a>
+				</li>
+			</ul>
 	</div>
 </nav>
 
@@ -37,32 +44,29 @@
 
 	<h5 style="color: #0000ff;">Would You like To</h5>
 
+<div class="row">
+<div class="four columns">
+
 	<a href="#" onclick="{{func:renderAddTextItem}}" style="margin-top:9px;">Add a Text Item</a>
 	<a href="#" onclick="{{func:renderAddWebItem}}" style="margin-top:5px;">Add a Web Article or Video</a>
 	<a href="#" onclick="{{func:renderAddMediaItem}}" style="margin-top:5px;">Add Media (Picture, PDF, Doc)</a>
+</div>
 
-	<hr style="margin-top:7px; margin-bottom:7px;">
-
+<div class="four columns">
 	<a href="#" onclick="{{func:searchDrawerByTrayId}}" data-tray-id="{{data:trayId}}" data-tray-name="Favorites" style="margin-top:9px;">View Your Favorites</a>
-
-	<hr style="margin-top:7px; margin-bottom:7px;">
 
 	View Your Items in: {{data:trayListSelectTag}}
 
-	<hr style="margin-top:7px; margin-bottom:7px;">
-
 	<a href="#" onclick="{{func:getTrayList}}" style="margin-top:5px;">Manage Your Trays</a>
+</div>
 
-	<hr style="margin-top:7px; margin-bottom:7px;">
-
+<div class="four columns">
 	<a href="#" onclick="{{func:renderContactUs}}" style="margin-top:5px;">Contact Us</a>
 	<a href="#" onclick="{{func:renderAbout}}" style="margin-top:5px;">Learn About My Drawer</a>
 
-	<hr style="margin-top:7px; margin-bottom:7px;">
-
 	<a href="#" onclick="{{func:signOut}}" style="margin-top:5px;">Sign Out</a>
-
-	<hr style="margin-top:7px; margin-bottom:7px;">
+</div>
+</div>
 </div>
 
 </script>

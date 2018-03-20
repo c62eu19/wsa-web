@@ -18,6 +18,7 @@ function init() {
 		component.registerEvent("func:toggle", "menu.toggle();");
 
 		component.render("t-menu-bar", "template-header");
+/*		component.render("t-menu-signed-out", "template-menu"); */
 
 		/*
 		 * Register a listener for enter key pressed for selected templates
@@ -612,15 +613,16 @@ var drawer = {
 
 					var drawerArray = JSON.parse(drawerJson);
 
-					if(drawerArray.length <= 0) {
-						drawer.renderNoResultsFound();
+					if(drawerArray.length > 0) {
 
-					} else {
 						appData.set("traySelected", "resulting in your search");
 
-						menu.reset();
 						drawer.render();
+
+					} else {
+						drawer.renderNoResultsFound();
 					}
+
 				} else {
 					console.log('Error: ' + xhr.status);
 				}
@@ -693,7 +695,6 @@ var drawer = {
 					} else {
 						appData.set("traySelected", "in your " + trayName + " tray");
 
-						menu.reset();
 						drawer.render();
 					}
 				} else {
@@ -770,6 +771,7 @@ var drawer = {
 					if(rowCount == drawerArray.length) {
 						component.initializeDataRegistry();
 						component.registerData("data:columnLeft", columnLeft);
+						component.registerData("data:columnMiddle", "");
 						component.registerData("data:columnRight", "");
 
 						rowHtml += component.create("t-drawer-rows");
@@ -777,10 +779,27 @@ var drawer = {
 				}
 
 				if(columnCount == 2) {
+					var columnMiddle = columnData;
+
+					/*
+					 * If column count == 2 and rowCount == array count
+					 */
+					if(rowCount == drawerArray.length) {
+						component.initializeDataRegistry();
+						component.registerData("data:columnLeft", columnLeft);
+						component.registerData("data:columnMiddle", columnMiddle);
+						component.registerData("data:columnRight", "");
+
+						rowHtml += component.create("t-drawer-rows");
+					}
+				}
+
+				if(columnCount == 3) {
 					var columnRight = columnData;
 
 					component.initializeDataRegistry();
 					component.registerData("data:columnLeft", columnLeft);
+					component.registerData("data:columnMiddle", columnMiddle);
 					component.registerData("data:columnRight", columnRight);
 
 					rowHtml += component.create("t-drawer-rows");
@@ -821,11 +840,19 @@ var drawer = {
 			var sanitizedText = drawerItem.text.replace(/\r/g, " ");
 			sanitizedText = drawerItem.text.replace(/\n/g, " ");
 
+			var shortSanitizedText = "";
+
+			if(sanitizedText.length > 200) {
+				shortSanitizedText = sanitizedText.substring(0,199) + "...";
+			} else {
+				shortSanitizedText = sanitizedText;
+			}
+
 			component.initializeDataRegistry();
 
 			if(drawerItem.type == "1") {
 
-				content = sanitizedText;
+				content = shortSanitizedText;
 
 			} else if(drawerItem.type == "2") {
 
@@ -838,7 +865,7 @@ var drawer = {
 					content = component.create("t-drawer-column-video");
 
 				} else {
-					content = sanitizedText;
+					content = shortSanitizedText;
 				}
 
 			} else if(drawerItem.type == "3") {
@@ -1307,7 +1334,7 @@ var drawer = {
 
 				var stringJSON = JSON.stringify(inputJSON);
 
-				drawer.uploadMediaItem(stringJSON);
+				drawer.uploadMediaItem(stringJSON, "POST");
  		}
 		catch(err) {
 			component.setText("error", "addMediaItem(): We cannot post your file. Please try again in a little bit.");
@@ -1315,7 +1342,69 @@ var drawer = {
 		finally {}
 	},
 
-	uploadMediaItem: function(stringJSON) {
+	editMediaItem: function(element){
+
+		try {
+			var drawerId = element.getAttribute("data-drawer-id");
+
+			var trayId = document.forms[0].trayId.value;
+			var title = document.forms[0].title.value;
+			var text = document.forms[0].text.value;
+
+			if(isEmpty(trayId)) {
+				component.setText("error", "Please select a Tray.");
+				return false;
+			}
+
+			if(isEmpty(title)) {
+				component.setText("error", "Please enter a Title.");
+				return false;
+			}
+
+			if(isEmpty(text)) {
+				component.setText("error", "Please enter some Text to describe your entry.");
+				return false;
+			}
+
+			var cleanedTitle = replaceSpecialChars(title);
+			var cleanedText = replaceSpecialChars(text);
+
+			var base64 = document.getElementById("preview").innerHTML;
+
+			if(isEmpty(base64)) {
+				component.setText("error", "Please choose an Image or Video file.");
+				return false;
+			}
+
+			var sanitizedBase64 = base64.replace(/<img src="/gi, "");
+			sanitizedBase64 = sanitizedBase64.replace(/">/gi, "");
+
+			var mediaBase64 = encodeURIComponent(sanitizedBase64);
+
+			var inputFields = {
+				"collectionName":appData.get("collectionName"), 
+				"drawerId":drawerId, 
+				"trayId":trayId, 
+				"title":cleanedTitle, 
+				"text":cleanedText,
+				"type":"3",
+				"mediaType":".", 
+				"mediaBase64":mediaBase64};
+
+				var inputJSON = {};
+				inputJSON.inputArgs = inputFields;
+
+				var stringJSON = JSON.stringify(inputJSON);
+
+				drawer.uploadMediaItem(stringJSON, "PUT");
+ 		}
+		catch(err) {
+			component.setText("error", "editMediaItem(): We cannot post your file. Please try again in a little bit.");
+		}
+		finally {}
+	},
+
+	uploadMediaItem: function(stringJSON, httpMethod) {
 
 		try {
 			var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
@@ -1344,7 +1433,7 @@ var drawer = {
 
 			var url = "http://localhost:8080/mydrawer/MediaEntry/";
 
-			xhr.open("POST", url, true);
+			xhr.open(httpMethod, url, true);
 			xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 			xhr.send("inputJSON=" + stringJSON);

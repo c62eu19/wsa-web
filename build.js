@@ -51,7 +51,7 @@ var assets = {
 		},
 		"container": {
 			"src-dir": "/App-Workspace/my-drawer-web/container", 
-			"src-files":"container.txt"
+			"src-files":"container.html"
 		}
 	}
 
