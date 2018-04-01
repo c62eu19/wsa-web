@@ -247,6 +247,67 @@ var component = {
 
 };
 
+/*
+ * Format Bar options (Bold, Italic, Underline)
+ */
+var format = {
+
+	toggleBold: function(event,element) {
+
+		try {
+			document.execCommand('bold');
+
+			if(element.style.fontWeight == "900") {
+				element.style.fontWeight = "400";
+			} else {
+				element.style.fontWeight = "900";
+			}
+
+			event.preventDefault();
+		}
+		catch(err) {
+			console.log("toggleBold(): " + err);
+		}
+	},
+
+	toggleItalic: function(event, element) {
+
+		try {
+			document.execCommand('italic');
+
+			if(element.style.fontWeight == "900") {
+				element.style.fontWeight = "400";
+			} else {
+				element.style.fontWeight = "900";
+			}
+
+			event.preventDefault();
+		}
+		catch(err) {
+			console.log("toggleItalic(): " + err);
+		}
+	},
+
+	toggleUnderline: function(event, element) {
+
+		try {
+			document.execCommand('underline');
+
+			if(element.style.fontWeight == "900") {
+				element.style.fontWeight = "400";
+			} else {
+				element.style.fontWeight = "900";
+			}
+
+			event.preventDefault();
+		}
+		catch(err) {
+			console.log("toggleUnderline(): " + err);
+		}
+	}
+
+};
+
 function cursorWait() {
 	document.body.style.cursor = "wait";
 }

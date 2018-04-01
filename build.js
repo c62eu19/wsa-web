@@ -15,28 +15,28 @@ console.log("Building the App...");
  */
 var assets = {
 	"css": {
-		"src-dir": "/App-Workspace/my-drawer-web/css", 
+		"src-dir": "/App-Workspace/our-stories-web/css", 
 		"tgt-dir":"./css", 
 		"src-files":"*",
 		"tgt-file":""
 	},
 
 	"images": {
-		"src-dir": "/App-Workspace/my-drawer-web/images", 
+		"src-dir": "/App-Workspace/our-stories-web/images", 
 		"tgt-dir":"./images", 
-		"src-files":"favicon.ico,search.png",
+		"src-files":"favicon.ico,logo.jpg,search.png,comedy.jpg,mystery.jpg,romance.jpg,horror.jpg,adventure.jpg,scifi.jpg,fantasy.jpg,drama.jpg,children.jpg",
 		"tgt-file":""
 	},
 
 	"js": {
-		"src-dir": "/App-Workspace/my-drawer-web/js", 
+		"src-dir": "/App-Workspace/our-stories-web/js", 
 		"tgt-dir":"./js", 
-		"src-files":"drawer.js,library.js",
+		"src-files":"story.js,library.js",
 		"tgt-file":""
 	},
 
 	"app-js": {
-		"src-dir": "/App-Workspace/my-drawer-web/", 
+		"src-dir": "/App-Workspace/our-stories-web/", 
 		"tgt-dir":"./",
 		"src-files":"app.js",
 		"tgt-file":"app.js"
@@ -46,11 +46,11 @@ var assets = {
 		"tgt-dir":"./",
 		"tgt-file":"app.html",
 		"templates": {
-			"src-dir": "/App-Workspace/my-drawer-web/templates", 
+			"src-dir": "/App-Workspace/our-stories-web/templates", 
 			"src-files":"*"
 		},
 		"container": {
-			"src-dir": "/App-Workspace/my-drawer-web/container", 
+			"src-dir": "/App-Workspace/our-stories-web/container", 
 			"src-files":"container.html"
 		}
 	}

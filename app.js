@@ -1,7 +1,7 @@
 /**
  * app.js
  * 
- * Node Server code for the MyDrawer app
+ * Node Server code for the Our Health Stories app
  * 
  * @author Stan Zajdel
  */
@@ -38,10 +38,10 @@ var port = 8081;
 
 server.listen(port, function(err) {  
 	if(err) {
-		return console.log('MyDrawer (Init): Failure: Unable to start the MyDrawer server', err);
+		return console.log('(Init): Failure: Unable to start the server', err);
 	}
 
-	console.log('MyDrawer (Init): Server is listening now on Port ' + port + '. Ready to serve YOU!');
+	console.log('(Init): Server is listening now on Port ' + port + '. Ready to serve YOU!');
 });
 
 /*
@@ -52,7 +52,7 @@ getResource = function(request, response) {
 	try {
 		var filePath = getConfigValue(request.url,"path");
 
-		console.log('MyDrawer (Request): ', request.url + " -> " + filePath);
+		console.log('(Request): ', request.url + " -> " + filePath);
 
 		var extName = String(path.extname(filePath)).toLowerCase();
 
@@ -92,6 +92,7 @@ getResource = function(request, response) {
 getDefault = function(request, response) {
 
 	try {
+
 	}
 	catch(e) {
 		console.log("getDefault: " + e);
@@ -169,7 +170,12 @@ readFile = function(filePath) {
  * All Resources for the app
  */
 var resources = {
-	"/mydrawer": {
+	"/ourstories": {
+		"path": "./app.html", 
+		"method":"GET", 
+		"handler":"getResource"
+	},
+	"/ohs": {
 		"path": "./app.html", 
 		"method":"GET", 
 		"handler":"getResource"
@@ -191,8 +197,8 @@ var resources = {
 		"handler":"getResource"
 	},
 
-	"/drawer-js": {
-		"path": "./js/drawer.js", 
+	"/story-js": {
+		"path": "./js/story.js", 
 		"method":"GET", 
 		"handler":"getResource"
 	},
@@ -202,6 +208,11 @@ var resources = {
 		"handler":"getResource"
 	},
 
+	"/logo-image": {
+		"path": "./images/logo.jpg", 
+		"method":"GET", 
+		"handler":"getResource"
+	},
 	"/favicon-image": {
 		"path": "./images/favicon.ico", 
 		"method":"GET", 
@@ -211,5 +222,51 @@ var resources = {
 		"path": "./images/search.png", 
 		"method":"GET", 
 		"handler":"getResource"
+	},
+	"/comedy-image": {
+		"path": "./images/comedy.jpg", 
+		"method":"GET", 
+		"handler":"getResource"
+	},
+	"/mystery-image": {
+		"path": "./images/mystery.jpg", 
+		"method":"GET", 
+		"handler":"getResource"
+	},
+	"/romance-image": {
+		"path": "./images/romance.jpg", 
+		"method":"GET", 
+		"handler":"getResource"
+	},
+	"/horror-image": {
+		"path": "./images/horror.jpg", 
+		"method":"GET", 
+		"handler":"getResource"
+	},
+	"/adventure-image": {
+		"path": "./images/adventure.jpg", 
+		"method":"GET", 
+		"handler":"getResource"
+	},
+	"/scifi-image": {
+		"path": "./images/scifi.jpg", 
+		"method":"GET", 
+		"handler":"getResource"
+	},
+	"/fantasy-image": {
+		"path": "./images/fantasy.jpg", 
+		"method":"GET", 
+		"handler":"getResource"
+	},
+	"/drama-image": {
+		"path": "./images/drama.jpg", 
+		"method":"GET", 
+		"handler":"getResource"
+	},
+	"/children-image": {
+		"path": "./images/children.jpg", 
+		"method":"GET", 
+		"handler":"getResource"
 	}
+
 }

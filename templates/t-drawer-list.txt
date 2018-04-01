@@ -1,33 +1,6 @@
 <script id="t-drawer" type="text/template">
 
 <div class="row">
-	<div class="five columns" padding-top:9px;">
-		<form>
-			<input type="text" placeholder="Search..." style="float:left;" id="searchTerm" name="searchTerm"/>
-
-			<div id="button-holder">
-				<img src="/search-image" onclick="{{func:searchDrawerByWildcard}}"/>
-			</div>
-		</form>
-	</div>
-	<div class="seven columns" style="padding-top:9px;">
-		<ul class="icons" style="text-align:right; margin-bottom:9px;">
-			<li style="padding-left: 7px;">
-				<a href="#" onclick="{{func:searchDrawerByTrayId}}" data-tray-id="{{data:trayId}}" data-tray-name="Favorites">Favorites</a>
-			</li>
-			<li style="padding-left: 7px;">
-				<a href="#" onclick="{{func:getTrayList}}">Trays</a>
-			</li>
-			<li style="padding-left: 7px;">
-				<a href="#">Inbasket <sup>2</sup></a>
-			</li>
-		</ul>
-	</div>
-</div>
-
-<hr style="margin-top:7px; margin-bottom:7px;">
-
-<div class="row">
 	<div class="twelve columns">
 		<ul class="icons" style="margin-bottom:2px; padding-bottom:2px;">
 			<li style="text-align:left; font-size:18px;">
@@ -61,7 +34,7 @@
 
 <p style="text-align:left; margin-bottom:9px;">
 	{{data:itemTitle}}
-	{{data:trayName}}
+	{{data:topicName}}
 	<br/>
 	{{data:content}}
 	<br/>
@@ -78,25 +51,9 @@
 		{{data:deleteButton}}
 	</li>
 	<li>
-		<a href="#"><span style="color: #000;"><strong>S</strong>hare</span></a>
+		<a href="#"><span style="color: #000;"><strong>C</strong>omment</span></a>
 	</li>
 </ul>
-
-</script>
-
-<script id="t-drawer-column-image" type="text/template">
-
-<div style="margin-bottom:2px;">
-	<img src="{{data:imageUrl}}" align="left" width="300px" height="300px" class="responsive-image" style="margin-right: 5px"/>
-</div>
-
-</script>
-
-<script id="t-drawer-column-video" type="text/template">
-
-<div class="responsive-video" style="margin-bottom:2px;">
-	<iframe id="embedded-video" src="{{data:videoUrl}}" width="300" height="300" frameborder="0" allowfullscreen></iframe>
-</div>
 
 </script>
 
@@ -109,7 +66,7 @@
 </p>
 
 <p style="font-size: 18px;">
-	<strong><a href="#" onclick="{{func:getDrawerList}}">Click here to try again.</strong></a>
+	<strong><a href="#" onclick="{{func:getFeedList}}">Click here to try again.</strong></a>
 </p>
 
 </script>

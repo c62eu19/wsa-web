@@ -1,72 +1,97 @@
-<script id="t-menu-bar" type="text/template">
+<script id="t-navbar-signed-in" type="text/template">
 
-<nav class="menu-bar">
+<nav class="navbar">
 	<div class="container">
-			<ul class="menu-bar-list">
-				<li id="menu-logo" class="menu-bar-item-left">
-					<a href="#" class="menu-bar-left-link" onclick="{{func:getDrawerList}}">
-						My Drawer
-					</a>
-				</li>
-				<li id="menu-hamburger" class="menu-bar-item-right">
-					<a href="#" class="menu-bar-right-link" onclick="{{func:toggle}}">
+		<ul class="navbar-list">
+			<li id="menu-logo" class="navbar-item-left">
+				<a href="#" class="navbar-link-left" onclick="{{func:renderGenre}}">
+					<strong><i>Who's Story is it Anyway?</i></strong>
+				</a>
+			</li>
+			<li id="menu-hamburger" class="navbar-item-right">
+					<a href="#" class="navbar-link-right" onclick="{{func:toggle}}">
 						<span style="font-size:1.5em;">&#9776;</span>
 					</a>
-				</li>
-				<li id="menu-sign-in" class="menu-bar-item-right">
-					<a href="#" class="menu-bar-right-link">
-						Sign In
-					</a>
-				</li>
-			</ul>
+			</li>
+			<li id="menu-contact-us" class="navbar-item-right">
+				<a href="#" class="navbar-link-right" onclick="{{func:renderAbout}}">
+					About
+				</a>
+			</li>
+			<li id="menu-contact-us" class="navbar-item-right">
+				<a href="#" class="navbar-link-right" onclick="{{func:renderContactUs}}">
+					Contact Us
+				</a>
+			</li>
+			<li id="menu-signed-out" class="navbar-item-right">
+				<a href="#" class="navbar-link-right" onclick="{{func:signOut}}">
+					Sign Out
+				</a>
+			</li>
+		</ul>
 	</div>
 </nav>
 
 </script>
 
-<script id="t-menu-signed-out" type="text/template">
+<script id="t-navbar-signed-out" type="text/template">
 
-<div id="command-menu" style="margin-bottom:9px;">
+<nav class="navbar">
+	<div class="container">
+		<ul class="navbar-list">
+			<li id="menu-logo" class="navbar-item-left">
+				<a href="#" class="navbar-link-left" onclick="{{func:renderGenre}}">
+					<strong><i>Who's Story is it Anyway?</i></strong>
+				</a>
+			</li>
+			<li id="menu-hamburger" class="navbar-item-right">
+					<a href="#" class="navbar-link-right" onclick="{{func:toggle}}">
+						<span style="font-size:1.5em;">&#9776;</span>
+					</a>
+			</li>
+			<li id="menu-contact-us" class="navbar-item-right">
+				<a href="#" class="navbar-link-right" onclick="{{func:renderAbout}}">
+					About
+				</a>
+			</li>
+			<li id="menu-contact-us" class="navbar-item-right">
+				<a href="#" class="navbar-link-right" onclick="{{func:renderContactUs}}">
+					Contact Us
+				</a>
+			</li>
+		</ul>
+	</div>
+</nav>
 
-	<h5 style="color: #0000ff;">Would You like To</h5>
+</script>
 
-	<a href="#" onclick="{{func:renderContactUs}}" style="margin-top:5px;">Contact Us</a>
-	<a href="#" onclick="{{func:renderAbout}}" style="margin-top:5px;">Learn About My Drawer</a>
+<script id="t-navbar-dropdown-signed-out" type="text/template">
 
-	<hr style="margin-top:7px; margin-bottom:7px;">
+<div id="navbar-dropdown" class="navbar-dropdown">
+
+	<a href="#" onclick="{{func:renderContactUs}}">
+		Contact Us
+	</a>
+	<a href="#" onclick="{{func:renderAbout}}">
+		About
+	</a>
 </div>
 
 </script>
 
-<script id="t-menu-signed-in" type="text/template">
+<script id="t-navbar-dropdown-signed-in" type="text/template">
 
-<div id="command-menu" style="margin-bottom:9px;">
+<div id="navbar-dropdown" class="navbar-dropdown">
 
-	<h5 style="color: #0000ff;">Would You like To</h5>
-
-<div class="row">
-<div class="four columns">
-
-	<a href="#" onclick="{{func:renderAddTextItem}}" style="margin-top:9px;">Add a Text Item</a>
-	<a href="#" onclick="{{func:renderAddWebItem}}" style="margin-top:5px;">Add a Web Article or Video</a>
-	<a href="#" onclick="{{func:renderAddMediaItem}}" style="margin-top:5px;">Add Media (Picture, PDF, Doc)</a>
-</div>
-
-<div class="four columns">
-	<a href="#" onclick="{{func:searchDrawerByTrayId}}" data-tray-id="{{data:trayId}}" data-tray-name="Favorites" style="margin-top:9px;">View Your Favorites</a>
-
-	View Your Items in: {{data:trayListSelectTag}}
-
-	<a href="#" onclick="{{func:getTrayList}}" style="margin-top:5px;">Manage Your Trays</a>
-</div>
-
-<div class="four columns">
-	<a href="#" onclick="{{func:renderContactUs}}" style="margin-top:5px;">Contact Us</a>
-	<a href="#" onclick="{{func:renderAbout}}" style="margin-top:5px;">Learn About My Drawer</a>
-
-	<a href="#" onclick="{{func:signOut}}" style="margin-top:5px;">Sign Out</a>
-</div>
-</div>
+	<a href="#" onclick="{{func:renderContactUs}}">
+		Contact Us
+	</a>
+	<a href="#" onclick="{{func:renderAbout}}">
+		About
+	</a>
+	<a href="#" onclick="{{func:signOut}}">
+		Sign Out
+	</a>
 </div>
 
 </script>

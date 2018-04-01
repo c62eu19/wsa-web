@@ -1,7 +1,107 @@
+<script id="t-welcome" type="text/template">
+
+<section class="center">
+	<h5 class="bold">Create Your Own Story or Change an Existing Plot!</h5>
+	<p></p>
+	<a href="#" class="button button-primary" onclick="{{func:renderSignIn}}">Sign In</a>
+	<br/>
+	<div style="margin-top:9px; margin-bottom:9px; font-size:18px;">
+		<a href="#" onclick="{{func:renderSignUp}}">Not a member? <span class="title">Sign Up Now!</a></span>
+	</div>
+	<div class="row">
+		<div class="three columns welcome-image-col center">
+			<a href="#" onclick="{{func:getStories}}" data-genre="{{data:mystery}}">
+				<img class="welcome-image" height="100" width="100" src="/mystery-image">
+			</a>
+			<p><strong>Mystery and Suspense</strong></p>
+		</div>
+		<div class="three columns welcome-image-col center">
+			<img class="welcome-image" height="100" width="100" src="/comedy-image">
+			<p><strong>Comedy</strong></p>
+		</div>
+		<div class="three columns welcome-image-col center">
+			<img class="welcome-image" height="100" width="100" src="/scifi-image">
+			<p><strong>SciFi</strong></p>
+		</div>
+		<div class="three columns welcome-image-col center">
+			<img class="welcome-image" height="100" width="100" src="/fantasy-image">
+			<p><strong>Fantasy</strong></p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="three columns welcome-image-col center">
+			<img class="welcome-image" height="100" width="100" src="/romance-image">
+			<p><strong>Love and Romance</strong></p>
+		</div>
+		<div class="three columns welcome-image-col center">
+			<img class="welcome-image" height="100" width="100" src="/children-image">
+			<p><strong>Children</strong></p>
+		</div>
+		<div class="three columns welcome-image-col center">
+			<img class="welcome-image" height="100" width="100" src="/drama-image">
+			<p><strong>Drama</strong></p>
+		</div>
+		<div class="three columns welcome-image-col center">
+			<img class="welcome-image" height="100" width="100" src="/horror-image">
+			<p><strong>Horror</strong></p>
+		</div>
+	</div>
+
+</section>
+
+</script>
+
+<script id="t-genre" type="text/template">
+
+<section class="center">
+	<h5 class="bold">Create Your Own Story or Change an Existing Plot!</h5>
+	<p class="bold">Choose your Genre and Create your own Story or Add to Another</p>
+	<div class="row">
+		<div class="three columns welcome-image-col center">
+			<a href="#" onclick="{{func:getStories}}" data-genre="{{data:mystery}}">
+				<img class="welcome-image" height="90" width="90" src="/mystery-image">
+			</a>
+			<p><strong>Mystery and Suspense</strong><br/>1 Story</p>
+		</div>
+		<div class="three columns welcome-image-col center">
+			<img class="welcome-image" height="100" width="100" src="/comedy-image">
+			<p><strong>Comedy</strong></p>
+		</div>
+		<div class="three columns welcome-image-col center">
+			<img class="welcome-image" height="100" width="100" src="/scifi-image">
+			<p><strong>SciFi</strong></p>
+		</div>
+		<div class="three columns welcome-image-col center">
+			<img class="welcome-image" height="100" width="100" src="/fantasy-image">
+			<p><strong>Fantasy</strong></p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="three columns welcome-image-col center">
+			<img class="welcome-image" height="100" width="100" src="/romance-image">
+			<p><strong>Love and Romance</strong></p>
+		</div>
+		<div class="three columns welcome-image-col center">
+			<img class="welcome-image" height="100" width="100" src="/children-image">
+			<p><strong>Children</strong></p>
+		</div>
+		<div class="three columns welcome-image-col center">
+			<img class="welcome-image" height="100" width="100" src="/drama-image">
+			<p><strong>Drama</strong></p>
+		</div>
+		<div class="three columns welcome-image-col center">
+			<img class="welcome-image" height="100" width="100" src="/horror-image">
+			<p><strong>Horror</strong></p>
+		</div>
+	</div>
+</section>
+
+</script>
+
 <script id="t-sign-up" type="text/template">
 
 <div class="offset-by-three columns six columns offset-by-three columns">
-	<h5 style="color: #0000ff;">Sign Up Now for Your Own Drawer!</h5>
+	<h5 class="bold">Become a Member. Sign Up Now!</h5>
 
 	<div id="error" style="margin-bottom: 9px; color: #ff0000"></div>
 </div>
@@ -33,7 +133,7 @@
 	</div>
 
 	<div class="offset-by-three columns six columns offset-by-three columns">
-		<a href="#" id="btn-sign-up" onclick="{{func:signUp}}" class="button button-primary" style="font-size:16px;">Sign Up</a>
+		<a href="#" id="btn-sign-up" onclick="{{func:signUp}}" class="button button-primary">Sign Up</a>
 	</div>
 </form>
 
@@ -41,38 +141,34 @@
 
 <script id="t-sign-in" type="text/template">
 
-<div class="offset-by-three columns six columns offset-by-three columns">
-	<h5 style="color: #0000ff;">Sign In</h5>
+<div class="offset-by-four columns six columns offset-by-three columns">
+	<h5 class="bold">Sign In</h5>
 
 	<div id="error" style="margin-bottom: 9px; color: #ff0000"></div>
 </div>
 
 <form>
 	<div class="row">
-		<div class="offset-by-three columns three columns offset-by-three columns">
+		<div class="offset-by-four columns three columns offset-by-three columns">
 			<label for="email">Email</label>
 			<input class="u-full-width" type="email" id="email" name="email">
 		</div>
 	</div>
 	<div class="row">
-		<div class="offset-by-three columns three columns offset-by-three columns">
+		<div class="offset-by-four columns three columns offset-by-three columns">
 			<label for="password">Password</label>
 			<input class="u-full-width" type="password" id="password" name="password">
 		</div>
 	</div>
 
-	<div class="offset-by-three columns three columns offset-by-three columns">
-		<a href="#" id="btn-sign-in" onclick="{{func:signIn}}" class="button button-primary" style="font-size:16px;">Sign In</a>
+	<div class="offset-by-four columns three columns offset-by-three columns">
+		<a href="#" id="btn-sign-in" onclick="{{func:signIn}}" class="button button-primary">Sign In</a>
 	</div>
 
-	<div class="offset-by-three columns six columns offset-by-three columns">
-		<p style="font-size: 18px;">
-			You don't have your own drawer? 
-		<p>
-
-		<a href="#" onclick="{{func:renderSignUp}}" style="font-size:18px;">
-			Click here to Sign Up now and create your own drawer!
-		</a>
+	<div class="offset-by-four columns six columns offset-by-three columns">
+		<div style="margin-top:9px; margin-bottom:9px; font-size:18px;">
+			<a href="#" onclick="{{func:renderSignUp}}">Not a member? <span class="title">Sign Up Now!</a></span>
+		</div>
 	</div>
 </form>
 
@@ -81,7 +177,7 @@
 <script id="t-sign-in-error" type="text/template">
 
 <div class="offset-by-three columns six columns offset-by-three columns">
-	<h5 style="color: #0000ff;">Error</h5>
+	<h5>Error</h5>
 
 	<p style="font-size: 18px;">
 		We're sorry but there is a problem with your sign in.  Please ensure that your email and password are correct and try again. 
@@ -102,7 +198,7 @@
 <script id="t-signup-error" type="text/template">
 
 <div class="offset-by-three columns six columns offset-by-three columns">
-	<h5 style="color: #0000ff;">Error</h5>
+	<h5>Error</h5>
 
 	<p style="font-size: 18px;">
 		{{data:errorMsg}}
@@ -121,7 +217,7 @@
 
 <script id="t-account-disabled" type="text/template">
 
-<h5 style="color: #0000ff;">Account Disabled</h5>
+<h5 class="bold">Account Disabled</h5>
 
 <p style="font-size: 18px;">
 	We're sorry but it looks like your account has been disabled. To find out why your account 

@@ -1,14 +1,16 @@
 <script id="t-contact-us" type="text/template">
 
-<h5 style="color: #0000ff;">Contact Us</h5>
+<div class="offset-by-three columns six columns offset-by-three columns">
+	<h5 class="bold">Contact Us</h5>
+</div>
 
 <form>
 	<div class="row">
-		<div class="six columns">
+		<div class="offset-by-three columns three columns">
 			<label for="email">Email</label>
 			<input class="u-full-width" type="email" placeholder="test@mailbox.com" name="email" id="email">
 		</div>
-		<div class="six columns">
+		<div class="three columns">
 			<label for="subject">Subject</label>
 			<select class="u-full-width" name="subject" id="subject">
 				<option value=""></option>
@@ -19,17 +21,23 @@
 			</select>
 		</div>
 	</div>
-	<label for="message">Message</label>
-	<textarea class="u-full-width hide-textarea-resize" placeholder="Enter your message" rows="6" id="message" name="message"></textarea>
+	<div class="row">
+		<div class="offset-by-three columns six columns">
+			<label for="message">Message</label>
+			<textarea class="u-full-width hide-textarea-resize" placeholder="Enter your message" rows="10" id="message" name="message"></textarea>
+		</div>
+	</div>
 
-	<a href="#" id="btn-contact-us" onclick="{{func:addContactUs}}" class="button button-primary" style="font-size:16px;">Send</a>
+	<div class="offset-by-three columns six columns offset-by-three columns">
+		<a href="#" id="btn-contact-us" onclick="{{func:addContactUs}}" class="button button-primary">Send</a>
+	</div>
 </form>
 
 </script>
 
 <script id="t-about" type="text/template">
 
-<h5 style="color: #0000ff;">About</h5>
+<h5 class="bold">About</h5>
 
 <p style="font-size:18px;">
 	We all have that certain place at home where we keep all of our random stuff.  You know, that place you throw stuff in when you're not quite 
