@@ -19,9 +19,9 @@ function init() {
 		listener.registerKeyDownEnter();
 
 		/*
-		 * Render the welcome template
+		 * Render the genre template
 		 */
-		access.renderWelcome();
+		access.renderGenre();
 	}
 	catch(err) {
 		console.log("init(): " + err);
@@ -37,7 +37,7 @@ var access = {
 			if(isEmpty(appData.get("userToken"))) {
 
 				component.initializeEventRegistry();
-				component.registerEvent("func:renderSignIn", "access.renderSignIn();");
+				component.registerEvent("func:signIn", "access.signIn();");
 				component.registerEvent("func:renderSignUp", "access.renderSignUp();");
 
 				component.render("t-welcome", "template-content");
@@ -56,19 +56,17 @@ var access = {
 	renderGenre: function() {
 
 		try {
+			component.initializeEventRegistry();
+			component.registerEvent("func:getStories", "story.getStories(this);");
+
+			component.initializeDataRegistry();
+			component.registerData("data:mystery", "Mystery and Suspense");
+
+			component.render("t-genre", "template-content");
+
 			if(isEmpty(appData.get("userToken"))) {
-
-				access.renderWelcome();
-
+				menu.renderMenuSignedOut();
 			} else {
-				component.initializeEventRegistry();
-				component.registerEvent("func:getStories", "story.getStories(this);");
-
-				component.initializeDataRegistry();
-				component.registerData("data:mystery", "Mystery and Suspense");
-
-				component.render("t-genre", "template-content");
-
 				menu.renderMenuSignedIn();
 			}
 
@@ -430,6 +428,7 @@ var menu = {
 			component.registerEvent("func:renderGenre", "access.renderGenre();");
 			component.registerEvent("func:toggle", "menu.toggle();");
 
+			component.registerEvent("func:renderSignIn", "access.renderSignIn();");
 			component.registerEvent("func:renderContactUs", "general.renderContactUs();");
 			component.registerEvent("func:renderAbout", "general.renderAbout();");
 
@@ -551,16 +550,11 @@ var story = {
 	getStories: function(element) {
 
 		try {
-			if(isEmpty(appData.get("userToken"))) {
-				access.renderWelcome();
+			var genre = element.getAttribute("data-genre");
 
-			} else {
-				var genre = element.getAttribute("data-genre");
+			appData.set("genre", genre);
 
-				appData.set("genre", genre);
-
-				story.getList();
-			}
+			story.getList();
 		}
 		catch(err) {
 			console.log("getStories(): " + err);
@@ -882,6 +876,7 @@ var story = {
 			component.registerEvent("func:createNewStory", "story.createNewStory();");
 
 			component.render("t-new-story", "template-content");
+/*			component.render("t-story-list", "template-content"); */
 
 			state.saveInitialState("template-content");
 		}

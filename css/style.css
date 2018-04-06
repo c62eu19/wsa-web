@@ -9,15 +9,11 @@ body {
 }
 
 .header {
-	margin-top: 5rem;
+	margin-top: 7rem;
 }
 
 .title {
 	color: #0000ff;
-}
-
-.center {
-	text-align: center;
 }
 
 /* Menu Bar */
@@ -32,7 +28,11 @@ body {
 	background: #f5f5f5;
 	background: #232b2b;
 	background: #414a4c;
+	background: #00695c;
+	background: #0d47a1;
 	background: #313335;
+	background: #c9dbe2;
+	background: #f5f5f5;
 	z-index: 99;
 	border-top: 1px solid #eee;
 	border-bottom: 1px solid #eee;
@@ -67,7 +67,7 @@ body {
 	font-weight: 400;
 	letter-spacing: .1rem;
 	text-decoration: none;
-	color: #fff;
+	color: #000;
 }
 
 .navbar-link-left a {
@@ -81,7 +81,7 @@ body {
 	margin-left: 25px;
 	text-decoration: none;
 	line-height: 6.5rem;
-	color: #fff;
+	color: #000;
 }
 
 .navbar-dropdown {
@@ -93,7 +93,7 @@ body {
 	top: 5.5rem;
 	left: 0;
 	right: 0;
-	background: #313335;
+	background: #fafafa;
 	overflow-x: hidden;
 	overflow-y: auto;
 	transition: 0.5s;
@@ -115,11 +115,11 @@ body {
 	font-weight: 600;
 	letter-spacing: .2rem;
 	text-decoration: none;
-	color: #fff;
+	color: #000;
 }
 
 .navbar-dropdown a:hover {
-	color: #ffd700;
+	font-weight: 900;
 }
 
 .hide {
@@ -172,15 +172,46 @@ body {
 	
 }
 
-.welcome-image-col {
+.genre-image-col {
 /*	margin-top: 1rem; */
 /*	border: 1px solid #000; */
 }
 
-.welcome-image {
+.genre-image {
 	display: block;
 	text-align: center;
+	width: 300px;
+	height: 300px;
 	margin: 2.5rem auto 0;
+}
+
+.item-list {
+	list-style: none;
+	margin-bottom: 0;
+}
+
+.item-left {
+/*  position: relative; */
+	float: left;
+	margin-bottom: 0;
+}
+
+.item-right {
+/*  position: relative; */
+	float: right;
+	margin-bottom: 0;
+}
+
+.link-left {
+	font-size: 11px;
+/*  font-weight: 600; */
+	text-decoration: none;
+}
+
+.link-right {
+	font-size: 11px;
+/*  font-weight: 600; */
+	text-decoration: none;
 }
 
 .format-bar {
@@ -200,6 +231,7 @@ body {
 	border: 1px solid #000;
 	padding-left: 9px;
 	padding-right: 9px;
+	margin-right: 9px;
 }
 
 /***************************************************/
@@ -218,7 +250,7 @@ body {
 
 .add-items-menu a:hover, .dropdown-menu, a:hover {
 	text-decoration:none;
-	color:#ffd700;
+	font-weight: 900;
 }
 
 ul.icons {
@@ -305,6 +337,23 @@ ul.icons li .icon:before {
 
 .bold {
 	font-weight: 400;
+}
+
+.center {
+	text-align: center;
+}
+
+.left {
+	text-align: left;
+}
+
+.right {
+	text-align: right;
+}
+
+.bevel-1px {
+/*	box-shadow: inset 0 -1px 1px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,1); */
+	box-shadow: inset 0 0px 1px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,1);
 }
 
 pre {

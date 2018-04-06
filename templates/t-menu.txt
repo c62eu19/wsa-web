@@ -59,6 +59,11 @@
 					Contact Us
 				</a>
 			</li>
+			<li id="menu-sign-in" class="navbar-item-right">
+				<a href="#" class="navbar-link-right" onclick="{{func:renderSignIn}}">
+					Sign In
+				</a>
+			</li>
 		</ul>
 	</div>
 </nav>
@@ -74,6 +79,9 @@
 	</a>
 	<a href="#" onclick="{{func:renderAbout}}">
 		About
+	</a>
+	<a href="#" onclick="{{func:renderSignIn}}">
+		Sign In
 	</a>
 </div>
 

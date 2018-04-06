@@ -24,6 +24,7 @@
 	</div>
 </div>
 <div class="row">
+	<div class="twelve columns">
 	<ul class="icons" style="margin-bottom: 1px !important; padding-bottom: 1px !important;">
 		<li>
 			<a href="#" class="format-bar" onclick="{{func:toggleBold}}">
@@ -44,8 +45,12 @@
 			<a class="button button-primary" onclick="{{func:createNewStory}}">Save</a>
 		</li>
 	</ul>
-
-	<div contenteditable="true" id="content" class="editable-div"></div>
+	</div>
+</div>
+<div class="row">
+	<div class="twelve columns">
+		<div contenteditable="true" id="content" class="editable-div"></div>
+	</div>
 </div>
 </form>
 

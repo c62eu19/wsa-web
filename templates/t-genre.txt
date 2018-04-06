@@ -14,17 +14,29 @@
 
 </script>
 
-<script id="t-drawer-rows" type="text/template">
+<script id="t-genre-column" type="text/template">
+
+<a href="#" onclick="{{func:getStories}}" data-genre="{{data:genre}}">
+	<img class="genre-image" height="90" width="90" src="{{data:genreImage}}">
+</a>
+<p><strong>{{data:genre}}</strong><br/>{{data:storyTotal}}</p>
+
+</script>
+
+<script id="t-genre-rows" type="text/template">
 
 <div class="row">
-	<div class="four columns">
-		{{data:columnLeft}}
+	<div class="three columns welcome-image-col center">
+		{{data:columnOne}}
 	</div>
-	<div class="four columns">
-		{{data:columnMiddle}}
+	<div class="three columns welcome-image-col center">
+		{{data:columnTwo}}
 	</div>
-	<div class="four columns">
-		{{data:columnRight}}
+	<div class="three columns welcome-image-col center">
+		{{data:columnThree}}
+	</div>
+	<div class="three columns welcome-image-col center">
+		{{data:columnFour}}
 	</div>
 </div>
 

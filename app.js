@@ -170,12 +170,12 @@ readFile = function(filePath) {
  * All Resources for the app
  */
 var resources = {
-	"/ourstories": {
+	"/whostory": {
 		"path": "./app.html", 
 		"method":"GET", 
 		"handler":"getResource"
 	},
-	"/ohs": {
+	"/wsa": {
 		"path": "./app.html", 
 		"method":"GET", 
 		"handler":"getResource"
