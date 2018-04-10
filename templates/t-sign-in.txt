@@ -1,0 +1,34 @@
+<script id="t-sign-in" type="text/template">
+
+<div class="offset-by-four columns six columns offset-by-three columns">
+	<h5 class="bold">Sign In</h5>
+
+	<div id="error" style="margin-bottom: 9px; color: #ff0000"></div>
+</div>
+
+<form>
+	<div class="row">
+		<div class="offset-by-four columns three columns offset-by-three columns">
+			<label for="email">Email</label>
+			<input class="u-full-width" type="email" id="email" name="email">
+		</div>
+	</div>
+	<div class="row">
+		<div class="offset-by-four columns three columns offset-by-three columns">
+			<label for="password">Password</label>
+			<input class="u-full-width" type="password" id="password" name="password">
+		</div>
+	</div>
+
+	<div class="offset-by-four columns three columns offset-by-three columns">
+		<a href="#" id="btn-sign-in" onclick="{{func:signIn}}" class="button button-primary">Sign In</a>
+	</div>
+
+	<div class="offset-by-four columns six columns offset-by-three columns">
+		<div style="margin-top:9px; margin-bottom:9px; font-size:18px;">
+			<a href="#" onclick="{{func:renderSignUp}}">Not a member? <span class="title">Sign Up Now!</a></span>
+		</div>
+	</div>
+</form>
+
+</script>

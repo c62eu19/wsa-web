@@ -1,0 +1,40 @@
+<script id="t-sign-up" type="text/template">
+
+<div class="offset-by-three columns six columns offset-by-three columns">
+	<h5 class="bold">Become a Member. Sign Up Now!</h5>
+
+	<div id="error" style="margin-bottom: 9px; color: #ff0000"></div>
+</div>
+
+<form>
+
+	<div class="row">
+		<div class="offset-by-three columns three columns offset-by-three columns">
+			<label for="email">Email</label>
+			<input class="u-full-width" type="email" id="email" name="email">
+		</div>
+	</div>
+	<div class="row">
+		<div class="offset-by-three columns three columns">
+			<label for="password">Password</label>
+			<input class="u-full-width" type="password" id="password" name="password">
+		</div>
+		<div class="three columns">
+			<label for="passwordReenter">Re-enter Password</label>
+			<input class="u-full-width" type="password" id="passwordReentry" name="passwordReentry">
+		</div>
+	</div>
+	</div>
+	<div class="row">
+		<div class="offset-by-three columns three columns offset-by-three columns">
+			<label for="name">Name</label>
+			<input class="u-full-width" type="text" id="name" name="name">
+		</div>
+	</div>
+
+	<div class="offset-by-three columns six columns offset-by-three columns">
+		<a href="#" id="btn-sign-up" onclick="{{func:signUp}}" class="button button-primary">Sign Up</a>
+	</div>
+</form>
+
+</script>

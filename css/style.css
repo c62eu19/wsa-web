@@ -137,7 +137,7 @@ body {
 		font-size: 14px;
 	}
 
-	#menu-contact-us, #menu-about, #menu-signed-out, #navbar-dropdown {
+	#menu-contact-us, #menu-about, #menu-sign-in, #menu-sign-out, #navbar-dropdown {
 		display: none;
 	}
 
@@ -162,7 +162,7 @@ body {
 		font-size: 18px;
 	}
 
-	#menu-contact-us, #menu-about, #menu-sign-out {
+	#menu-contact-us, #menu-about, #menu-sign-in, #menu-sign-out {
 		display: block;
 	}
 
@@ -180,9 +180,9 @@ body {
 .genre-image {
 	display: block;
 	text-align: center;
-	width: 300px;
-	height: 300px;
-	margin: 2.5rem auto 0;
+	width: 325px;
+	height: 325px;
+	margin: 2.0rem auto 0;
 }
 
 .item-list {
@@ -224,10 +224,10 @@ body {
 }
 
 .editable-div {
-	display: inline-block;
+/*	display: inline-block; */
 	min-height: 200px;
 	height: auto;
-	width: 100%;
+	width: 98%;
 	border: 1px solid #000;
 	padding-left: 9px;
 	padding-right: 9px;

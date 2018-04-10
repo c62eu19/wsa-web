@@ -13,6 +13,10 @@
 <section class="header">
 	<h5 class="bold">Mystery and Suspense</h5>
 
+<section class="center">
+	<h5 class="bold">{{data:genre}}</h5>
+	<p class="bold">Create your own Story or Add to Another</p>
+
 	<div class="row">
 		<div class="six columns" style="margin-bottom:15px;">
 			<div class="row">

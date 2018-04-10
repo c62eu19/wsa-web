@@ -4,7 +4,7 @@
 	<div class="container">
 		<ul class="navbar-list">
 			<li id="menu-logo" class="navbar-item-left">
-				<a href="#" class="navbar-link-left" onclick="{{func:renderGenre}}">
+				<a href="#" class="navbar-link-left" onclick="{{func:getGenreList}}">
 					<strong><i>Who's Story is it Anyway?</i></strong>
 				</a>
 			</li>
@@ -40,7 +40,7 @@
 	<div class="container">
 		<ul class="navbar-list">
 			<li id="menu-logo" class="navbar-item-left">
-				<a href="#" class="navbar-link-left" onclick="{{func:renderGenre}}">
+				<a href="#" class="navbar-link-left" onclick="{{func:getGenreList}}">
 					<strong><i>Who's Story is it Anyway?</i></strong>
 				</a>
 			</li>

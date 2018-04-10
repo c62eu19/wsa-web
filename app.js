@@ -1,7 +1,7 @@
 /**
  * app.js
  * 
- * Node Server code for the Our Health Stories app
+ * Node Server code for the Who's Story is it Anyway app
  * 
  * @author Stan Zajdel
  */

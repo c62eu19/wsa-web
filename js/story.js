@@ -19,9 +19,9 @@ function init() {
 		listener.registerKeyDownEnter();
 
 		/*
-		 * Render the genre template
+		 * get and Render the genre list
 		 */
-		access.renderGenre();
+		story.getGenreList();
 	}
 	catch(err) {
 		console.log("init(): " + err);
@@ -30,53 +30,6 @@ function init() {
 }
 
 var access = {
-
-	renderWelcome: function() {
-
-		try {
-			if(isEmpty(appData.get("userToken"))) {
-
-				component.initializeEventRegistry();
-				component.registerEvent("func:signIn", "access.signIn();");
-				component.registerEvent("func:renderSignUp", "access.renderSignUp();");
-
-				component.render("t-welcome", "template-content");
-
-				state.saveInitialState("template-content");
-			}
-
-			menu.renderMenuSignedOut();
-		}
-		catch(err) {
-			console.log("renderWelcome(): " + err);
-		}
-		finally {}
-	},
-
-	renderGenre: function() {
-
-		try {
-			component.initializeEventRegistry();
-			component.registerEvent("func:getStories", "story.getStories(this);");
-
-			component.initializeDataRegistry();
-			component.registerData("data:mystery", "Mystery and Suspense");
-
-			component.render("t-genre", "template-content");
-
-			if(isEmpty(appData.get("userToken"))) {
-				menu.renderMenuSignedOut();
-			} else {
-				menu.renderMenuSignedIn();
-			}
-
-			state.saveInitialState("template-content");
-		}
-		catch(err) {
-			console.log("renderGenre(): " + err);
-		}
-		finally {}
-	},
 
 	renderSignIn: function() {
 
@@ -142,7 +95,7 @@ var access = {
 
 					if(statusInd == "A") {
 
-						access.renderGenre();
+						story.getGenreList();
 
 					} else if(statusInd == "D") {
 						access.renderAccountDisabled();
@@ -160,7 +113,7 @@ var access = {
 				console.log("signIn(): An error occurred during the transaction");
 			};
 
-			var url = "http://localhost:8080/ourstories/Signin/";
+			var url = "http://localhost:8080/wsa/Signin/";
 
 			xhr.open("POST", url, true);
 			xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -292,7 +245,7 @@ var access = {
 
 					if(statusInd == "A") {
 
-						access.renderGenre();
+						story.getGenreList();
 					} else {
 						access.renderSignUpError(statusMsg);
 					}
@@ -305,7 +258,7 @@ var access = {
 				console.log("signUp(): An error occurred during the transaction" + err);
 			};
 
-			var url = "http://localhost:8080/ourstories/Signup/";
+			var url = "http://localhost:8080/wsa/Signup/";
 
 			xhr.open("POST", url, true);
 			xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -342,9 +295,7 @@ var access = {
 	signOut: function() {
 
 		try {
-			appData.initialize();
-
-			access.renderWelcome();
+			init();
 		}
 		catch(err) {
 			console.log("signOut(): " + err);
@@ -405,7 +356,7 @@ var menu = {
 			component.initializeDataRegistry();
 
 			component.initializeEventRegistry();
-			component.registerEvent("func:renderGenre", "access.renderGenre();");
+			component.registerEvent("func:getGenreList", "story.getGenreList();");
 			component.registerEvent("func:toggle", "menu.toggle();");
 
 			component.registerEvent("func:renderContactUs", "general.renderContactUs();");
@@ -425,7 +376,7 @@ var menu = {
 
 		try {
 			component.initializeEventRegistry();
-			component.registerEvent("func:renderGenre", "access.renderGenre();");
+			component.registerEvent("func:getGenreList", "story.getGenreList();");
 			component.registerEvent("func:toggle", "menu.toggle();");
 
 			component.registerEvent("func:renderSignIn", "access.renderSignIn();");
@@ -547,24 +498,157 @@ var general = {
 
 var story = {
 
-	getStories: function(element) {
+	getGenreList: function() {
 
 		try {
-			var genre = element.getAttribute("data-genre");
+			var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
 
-			appData.set("genre", genre);
+			xhr.onreadystatechange = function () {
 
-			story.getList();
+				if (xhr.readyState !== 4) {
+					return;
+				}
+
+				if (xhr.status === 200) {
+					var genreJson = xhr.responseText;
+
+					var genreArray = JSON.parse(genreJson);
+
+					/*
+					 * Render the appropriate menu based on if user signed in or not
+					 */
+					if(isEmpty(appData.get("userToken"))) {
+						menu.renderMenuSignedOut();
+					} else {
+						menu.renderMenuSignedIn();
+					}
+
+					story.renderGenreList(genreArray);
+
+				} else {
+					console.log('Error: ' + xhr.status);
+				}
+			};
+
+			xhr.onerror = function () {
+				console.log("getGenreList(): An error occurred during the transaction");
+			};
+
+			var url = "http://localhost:8080/wsa/GenreList/";
+
+			xhr.open("GET", url, true);
+			xhr.send();
 		}
 		catch(err) {
-			console.log("getStories(): " + err);
+			console.log("getGenreList(): " + err);
 		}
 		finally {}
 	},
 
-	getList: function() {
+	renderGenreList: function(genreArray) {
 
 		try {
+			var rowHtml = "";
+
+			var rowCount = 0;
+			var columnCount = 0;
+
+			for(var i=0; i<genreArray.length; i++) {
+
+				var item = genreArray[i];
+
+				component.initializeDataRegistry();
+				component.registerData("data:genreMnem", item.genreMnem);
+				component.registerData("data:genre", item.genre);
+				component.registerData("data:genreImage", item.image);
+				component.registerData("data:totalStories", item.totalStories);
+
+				component.initializeEventRegistry();
+				component.registerEvent("func:getStoryList", "story.getStoryList(this);");
+
+				var columnData = component.create("t-genre-column");
+
+				rowCount++;
+				columnCount++;
+
+				if(columnCount == 1) {
+					var columnOne = columnData;
+
+					/*
+					 * If column count == 1 and rowCount == array count
+					 */
+					if(rowCount == genreArray.length) {
+						component.initializeDataRegistry();
+						component.registerData("data:columnOne", columnOne);
+						component.registerData("data:columnTwo", "");
+						component.registerData("data:columnThree", "");
+
+						rowHtml += component.create("t-genre-row");
+					}
+				}
+
+				if(columnCount == 2) {
+					var columnTwo = columnData;
+
+					/*
+					 * If column count == 2 and rowCount == array count
+					 */
+					if(rowCount == genreArray.length) {
+						component.initializeDataRegistry();
+						component.registerData("data:columnOne", columnOne);
+						component.registerData("data:columnTwo", columnTwo);
+						component.registerData("data:columnThree", "");
+
+						rowHtml += component.create("t-genre-row");
+					}
+				}
+
+				if(columnCount == 3) {
+					var columnThree = columnData;
+
+					component.initializeDataRegistry();
+					component.registerData("data:columnOne", columnOne);
+					component.registerData("data:columnTwo", columnTwo);
+					component.registerData("data:columnThree", columnThree);
+
+					rowHtml += component.create("t-genre-row");
+					columnCount = 0;
+				}
+			}
+
+			if(genreArray.length <= 0) {
+				rowHtml = "";
+			}
+
+			component.initializeDataRegistry();
+			component.registerData("data:rows", rowHtml);
+
+			component.render("t-genre", "template-content");
+
+			state.saveInitialState("template-content");
+		}
+		catch(err) {
+			console.log("renderGenreList(): " + err);
+		}
+		finally {}
+	},
+
+	getStoryList: function(element) {
+
+		try {
+			var genreMnem = element.getAttribute("data-genre-mnem");
+			var genre = element.getAttribute("data-genre");
+
+			appData.set("genreMnem", genreMnem);
+			appData.set("genre", genre);
+
+			var inputFields = {"genreMnem":genreMnem};
+
+			var inputJSON = {};
+			inputJSON.inputArgs = inputFields;
+			
+			var stringJSON = JSON.stringify(inputJSON);
+
 			var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
 
 			xhr.onreadystatechange = function () {
@@ -581,7 +665,7 @@ var story = {
 					appData.set("storyArray", storyArray);
 
 					if(storyArray.length > 0) {
-						story.render();
+						story.renderStoryList();
 					} else {
 						story.renderCreateNewStory();
 					}
@@ -592,186 +676,19 @@ var story = {
 			};
 
 			xhr.onerror = function () {
-				console.log("getList(): An error occurred during the transaction");
+				console.log("getstoryList(): An error occurred during the transaction");
 			};
 
-			var url = "http://localhost:8080/ourstories/StoryList/" + appData.get("genre");
-
-			xhr.open("GET", url, true);
-			xhr.send();
-		}
-		catch(err) {
-			console.log("getList(): " + err);
-		}
-		finally {}
-	},
-
-	searchFeedByWildcard: function() {
-
-		try {
-			var searchTerm = document.getElementById("searchTerm").value;
-
-			if(isEmpty(searchTerm)) {
-				return false;
-			}
-
-			var inputFields = {
-				"searchType":"WILDCARD", 
-				"collectionName":appData.get("collectionName"), 
-				"searchTerm":searchTerm, 
-				"trayId":""
-			};
-
-			var inputJSON = {};
-			inputJSON.inputArgs = inputFields;
-		
-			var stringJSON = JSON.stringify(inputJSON);
-
-			var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-
-			xhr.onreadystatechange = function () {
-
-				if (xhr.readyState !== 4) {
-					return;
-				}
-
-				if (xhr.status === 200) {
-					var feedJson = xhr.responseText;
-
-					appData.set("feedJson", feedJson);
-
-					var feedArray = JSON.parse(feedJson);
-
-					if(feedArray.length > 0) {
-
-						story.render();
-
-					} else {
-						story.renderNoResultsFound();
-					}
-
-				} else {
-					console.log('Error: ' + xhr.status);
-				}
-			};
-
-			xhr.onerror = function () {
-				console.log("postSearchFeedByWildcard(): An error occurred during the transaction");
-			};
-
-			var url = "http://localhost:8080/ourhealthstories/FeedList/";
+			var url = "http://localhost:8080/wsa/StoryList/";
 
 			xhr.open("POST", url, true);
 			xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
 			xhr.send("inputJSON=" + stringJSON);
 		}
 		catch(err) {
-			console.log("searchFeedByWildcard(): " + err);
-		}
-		finally {}
-	},
-
-	render: function() {
-
-		try {
-			var rowHtml = "";
-
-			var rowCount = 0;
-			var columnCount = 0;
-
-			var storyArray = appData.get("storyArray");
-
-			for(var i=0; i<storyArray.length; i++) {
-
-				var item = storyArray[i];
-
-				var itemTitle = story.createViewTitle(item.storyId);
-
-				var viewButton = "";
-
-				/*
-				 * Content can be text, web video or media
-				 */
-				var content = story.getItemTypeContent(item);
-
-				component.initializeDataRegistry();
-				component.registerData("data:itemTitle", itemTitle);
-				component.registerData("data:topicName", item.topicName);
-				component.registerData("data:itemTitle", itemTitle);
-				component.registerData("data:content", content);
-				component.registerData("data:url", item.url);
-				component.registerData("data:updatedDate", item.updatedDate);
-				component.registerData("data:viewButton", viewButton);
-
-				var columnData = component.create("t-drawer-columns");
-
-				rowCount++;
-				columnCount++;
-
-				if(columnCount == 1) {
-					var columnLeft = columnData;
-
-					/*
-					 * If column count == 1 and rowCount == array count
-					 */
-					if(rowCount == storyArray.length) {
-						component.initializeDataRegistry();
-						component.registerData("data:columnLeft", columnLeft);
-						component.registerData("data:columnMiddle", "");
-						component.registerData("data:columnRight", "");
-
-						rowHtml += component.create("t-drawer-rows");
-					}
-				}
-
-				if(columnCount == 2) {
-					var columnMiddle = columnData;
-
-					/*
-					 * If column count == 2 and rowCount == array count
-					 */
-					if(rowCount == storyArray.length) {
-						component.initializeDataRegistry();
-						component.registerData("data:columnLeft", columnLeft);
-						component.registerData("data:columnMiddle", columnMiddle);
-						component.registerData("data:columnRight", "");
-
-						rowHtml += component.create("t-drawer-rows");
-					}
-				}
-
-				if(columnCount == 3) {
-					var columnRight = columnData;
-
-					component.initializeDataRegistry();
-					component.registerData("data:columnLeft", columnLeft);
-					component.registerData("data:columnMiddle", columnMiddle);
-					component.registerData("data:columnRight", columnRight);
-
-					rowHtml += component.create("t-drawer-rows");
-					columnCount = 0;
-				}
-			}
-
-			if(storyArray.length <= 0) {
-				rowHtml = "";
-			}
-
-			component.initializeDataRegistry();
-			component.registerData("data:topicId", appData.get("favoriteTrayId"));
-			component.registerData("data:totalItems", storyArray.length);
-			component.registerData("data:drawerRows", rowHtml);
-
-			component.initializeEventRegistry();
-			component.registerEvent("func:searchFeedByWildcard", "story.searchFeedByWildcard(this);");
-
-			component.render("t-drawer", "template-content");
-
-			state.saveInitialState("template-content");
-		}
-		catch(err) {
-			console.log("render(): " + err);
+			console.log("getStoryList(): " + err);
 		}
 		finally {}
 	},
@@ -833,34 +750,6 @@ var story = {
 		finally {}
 
 		return storyItem;
-	},
-
-	renderViewTextItem: function(element) {
-
-		try {
-			var drawerId = element.getAttribute("data-drawer-id");
-
-			drawerItem = {};
-			drawerItem = story.getItem(drawerId);
-
-			var editButton = story.createEditButton(drawerItem.drawerId);
-			var deleteButton = story.createDeleteButton(drawerItem.drawerId);
-
-			component.initializeDataRegistry();
-			component.registerData("data:editButton", editButton);
-			component.registerData("data:deleteButton", deleteButton);
-			component.registerData("data:title", drawerItem.title);
-			component.registerData("data:trayName", drawerItem.trayName);
-			component.registerData("data:text", drawerItem.text);
-
-			component.render("t-text-view", "template-content");
-
-			state.saveInitialState("template-content");
-		}
-		catch(err) {
-			console.log("renderViewTextItem(): " + err);
-		}
-		finally {}
 	},
 
 	renderCreateNewStory: function() {
@@ -1149,7 +1038,7 @@ var story = {
 				console.log("createNewStory(): An error occurred during the transaction");
 			};
 
-			var url = "http://localhost:8080/ourstories/StoryEntry/";
+			var url = "http://localhost:8080/wsa/StoryEntry/";
  
 			xhr.open("POST", url, true);
 			xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -1232,7 +1121,7 @@ var story = {
 				console.log("createNewStoryBranch(): An error occurred during the transaction");
 			};
 
-			var url = "http://localhost:8080/ourstories/StoryEntry/";
+			var url = "http://localhost:8080/wsa/StoryEntry/";
  
 			xhr.open("POST", url, true);
 			xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');

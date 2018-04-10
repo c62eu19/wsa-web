@@ -1,0 +1,37 @@
+<script id="t-genre" type="text/template">
+
+<section class="center">
+	<h5 class="bold">Create Your Own Story or Change an Existing Plot!</h5>
+	<p class="bold">Choose your Genre and Create your own Story or Add to Another</p>
+
+	{{data:rows}}
+
+</section>
+
+</script>
+
+<script id="t-genre-row" type="text/template">
+
+<div class="row">
+	<div class="four columns genre-image-col center">
+		{{data:columnOne}}
+	</div>
+	<div class="four columns genre-image-col center">
+		{{data:columnTwo}}
+	</div>
+	<div class="four columns genre-image-col center">
+		{{data:columnThree}}
+	</div>
+</div>
+
+</script>
+
+<script id="t-genre-column" type="text/template">
+
+<a href="#" onclick="{{func:getStoryList}}" data-genre-mnem="{{data:genreMnem}}" data-genre="{{data:genre}}">
+	<img class="genre-image" src="/{{data:genreImage}}">
+</a>
+<p style="font-size: 18px;"><strong>{{data:genre}}</strong><br/>{{data:totalStories}} Stories</p>
+
+
+</script>
