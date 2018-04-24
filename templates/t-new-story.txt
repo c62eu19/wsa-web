@@ -42,7 +42,7 @@
 			</a>
 		</li>
 		<li class="u-pull-right">
-			<a class="button button-primary" onclick="{{func:createNewStory}}">Save</a>
+			<a class="button button-special" onclick="{{func:createNewStory}}" data-genre-mnem="{{data:genreMnem}}">Save</a>
 		</li>
 	</ul>
 	</div>
@@ -53,52 +53,5 @@
 	</div>
 </div>
 </form>
-
-</script>
-
-<script id="t-new-story-branch" type="text/template">
-
-<h5>Add your version of the Story</h5>
-
-<div id="error" style="margin-bottom: 9px; color: #ff0000"></div>
-
-<form>
-	<div class="row">
-		<div class="eight columns">
-			<label for="name">Title</label>
-			{{data:title}}
-		</div>
-		<div class="four columns">
-			<label for="name">Genre</label>
-			{{data:genre}}
-		</div>
-	</div>
-
-	<div contenteditable="true" id="content" style="display:inline-block; height:500px; width:100%; border: 1px solid #000;"></div>
-
-	<a class="button button-primary" onclick="{{func:editTextItem}}" data-drawer-id="{{data:drawerId}}" style="font-size:14px;">Save</a>
-</form>
-
-</script>
-
-<script id="t-view-story" type="text/template">
-
-<ul class="icons" style="text-align:right; margin-bottom:2px;">
-	<li>{{data:editButton}}</li>
-	<li>{{data:deleteButton}}</li>
-	<li>
-		<a href="#"><span style="color: #000;"><strong>S</strong>hare</span></a>
-	</li>
-</ul>
-
-<h5>{{data:title}}</h5>
-
-<p style="text-align:left; font-size: 18px;">
-	{{data:trayName}}
-</p>
-
-<pre>
-{{data:text}}
-</pre>
 
 </script>

@@ -2,33 +2,31 @@
 
 <h5 class="bold">About</h5>
 
-<p style="font-size:18px;">
-	We all have that certain place at home where we keep all of our random stuff.  You know, that place you throw stuff in when you're not quite 
-	sure where to put it but you know that you want to save it for when you might need it.  The problem is though that when you finally do need it 
-	you just can't seem to find it.
+<p>
+	Did you ever try to write a story but got stuck at a certain point? Have you ever started reading a book that 
+	you're really enjoying until the author suddenly throws a plot twist in there that sours it for you?  Well, now 
+	the power is yours - kind of... 
 </p>
 
-<p style="font-size:18px;">
-	Did you ever want to show someone a picture and it took forever to find it because you had to look through 
-	the thousands of photos on your phone?  Did you ever want to remake a recipe you tried but forgot where you put it or which site you found it 
-	on?  All these problems and much more can be solved with My Drawer.  Now there's one place to store all your loose random things and you'll 
-	be able to search and find them in the blink of an eye. 
+<p>
+	<i>Who's Story is it Anyway</i> gives you the chance to choose an existing story and change it's plot to the way 
+	you see it or you can create your very own story and have other people add their own plot twists to it.
 </p>
 
-<p style="font-size: 18px;">
-	My Drawer is the perfect place to keep all those things you want to save but aren’t quite sure where to save them.  It'll be extremely easy 
-	to find your stuff in this drawer because you'll be able to put your things in trays that you create within your drawer in order to keep it more 
-	organized.  With this organized drawer you'll no longer waste time searching for things because they'll all be stored neatly and organized in 
-	your very own drawer. 
+<p>
+	You can create a beginning or change an outcome.  You can add a plot twist or kill off a despised foe.  You can 
+	create your own characters if you want.  You can even create different versions of your own story, the options are 
+	endless! 
 </p>
 
-<p style="font-size:18px;">
-	With My Drawer you can basically store anything that you want including but not limited to pictures, articles and videos from the web and 
-	be able to search for any of it and find it instantly.  Use your imagination!
+<p>
+	Not into writing?  No problem, you can simply read and enjoy all of the many stories that are out here and vote 
+	which ones that you like.
 </p>
 
-<p style="font-size: 18px;">
-	If your parents, kids or friends ask for something, you can allow them to look in your drawer.  They can also share their things with you as well.
+<p>
+	There's definitely lots to enjoy with the many unique story lines and intricate plot twists.  Definitely entertaining 
+	to say the least so let your story begin!
 </p>
 
 </script>

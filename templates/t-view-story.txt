@@ -1,0 +1,19 @@
+<script id="t-view-story" type="text/template">
+
+<h5>{{data:title}}</h5>
+
+<div class="row">
+	<div class="eight columns">
+		<label for="name">Genre</label>
+		{{data:genre}} <span>&#8617;</span>
+	</div>
+	<div class="four columns">
+		<label for="name">likes</label>
+	</div>
+</div>
+
+<p style="text-align:left; margin-top:9px;">
+	{{data:content}}
+</p>
+
+</script>

@@ -1,0 +1,106 @@
+<script id="t-story-list" type="text/template">
+
+<div class="row">
+	<div class="twelve columns">
+		<ul class="item-list">
+			<li class="item-left">
+				<span class="link-left" style="font-size: 16px;">
+					<h5 class="bold">{{data:genre}}</h5>
+				</span>
+			</li>
+			<li class="item-right">
+				<a href="#" class="button button-special" onclick="{{func:renderCreateNewStory}}" data-genre-mnem="{{data:genreMnem}}">
+					Create a New Story
+				</a>
+			</li>
+		</ul>
+	</div>
+</div>
+
+<div class="row">
+	<div class="twelve columns">
+		<p style="font-size: 18px; font-weight:600;">
+			Choose a story below and add your own plot twist to it or Create a New Story
+		</p>
+	</div>
+</div>
+
+{{data:storyRows}}
+
+</script>
+
+<script id="t-story-list-row" type="text/template">
+
+<div class="row">
+	<div class="six columns" style="margin-bottom:15px;">
+		<div class="row">
+			{{data:listColumnOne}}
+		</div>
+		<div class="row">
+			{{data:listColumnTwo}}
+		</div>
+	</div>
+</div>
+
+</script>
+
+<script id="t-story-list-column" type="text/template">
+
+<div class="twelve columns" style="margin-bottom:9px; padding-left:9px; background:#DCDCDC;">
+	<div style="text-align:left;">
+		<a href="#" onclick="{{func:renderViewStory}}" data-genre-mnem="{{data:genreMnem}}" data-story-id="{{data:storyId}}">
+			<span class="title" style="font-size:18px;">{{data:title}}</span>
+		</a>
+		<ul class="item-list">
+			<li class="item-left" style="padding-right:12px;">
+				<span class="link-left" style="font-size: 14px;">by {{data:createdBy}} on {{data:createdDate}}</span>
+			</li>
+			<li class="item-right" style="padding-right:12px;">
+				<span class="link-right" style="font-size: 14px;">10 likes</span>
+			</li>
+		</ul>
+	</div>
+</div>
+
+<a href="#" class="u-pull-left" style="text-decoration:none; padding-left:9px;" onclick="{{func:toggleStoryVersions}}" data-story-id="{{data:storyId}}">
+	Press to see the different Versions of this Story
+</a>
+
+<div id="{{data:storyId}}" style="display:none; padding-left:9px;">
+	{{data:storyDropdownRows}}
+</div>
+
+</script>
+
+<script id="t-story-dropdown-row" type="text/template">
+
+<div class="row">
+	<div class="twelve columns">
+		<div style="text-align:left; margin-left:30px;">
+			<span style="font-size:16px; font-weight:550;">{{data:createdBy}}'s version</span>
+			<ul class="item-list">
+				<li class="item-left" style="padding-right:12px;">
+					<span class="link-left" style="font-size: 14px;">on {{data:createdDate}}</span>
+				</li>
+				<li class="item-right" style="padding-right:12px;">
+					<span class="link-right" style="font-size: 14px;">10 likes</span>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+</script>
+
+<script id="t-story-dropdown-no-versions" type="text/template">
+
+<div class="row">
+	<div class="twelve columns" style="margin-left:30px;">
+		There are no versions to this story. 
+		<a href="#" onclick="{{func:renderCreateNewStory}}" data-genre-mnem="{{data:genreMnem}}">
+			Press here to be the first to add your own twist to this story!
+		</a>
+	</div>
+</div>
+
+</script>

@@ -514,6 +514,8 @@ var story = {
 
 					var genreArray = JSON.parse(genreJson);
 
+					appData.set("genreArray", genreArray);
+
 					/*
 					 * Render the appropriate menu based on if user signed in or not
 					 */
@@ -543,6 +545,36 @@ var story = {
 			console.log("getGenreList(): " + err);
 		}
 		finally {}
+	},
+
+	getGenreItem: function(genreMnem) {
+
+		var genreItem = {};
+
+		try {
+			var genreArray = appData.get("genreArray");
+
+			if(genreArray.length > 0) {
+
+				for(var i=0; i<genreArray.length; i++) {
+
+					var item = genreArray[i];
+
+					if(genreMnem == item.genreMnem) {
+
+						genreItem.genre = item.genre;
+						genreItem.genreMnem = item.genreMnem;
+						break;
+					}
+				}
+			}
+		}
+		catch(err) {
+			console.log("getGenreItem(): " + err);
+		}
+		finally {}
+
+		return genreItem;
 	},
 
 	renderGenreList: function(genreArray) {
@@ -637,12 +669,10 @@ var story = {
 
 		try {
 			var genreMnem = element.getAttribute("data-genre-mnem");
-			var genre = element.getAttribute("data-genre");
 
-			appData.set("genreMnem", genreMnem);
-			appData.set("genre", genre);
+			var genreItem = story.getGenreItem(genreMnem);
 
-			var inputFields = {"genreMnem":genreMnem};
+			var inputFields = {"genreMnem":genreItem.genreMnem};
 
 			var inputJSON = {};
 			inputJSON.inputArgs = inputFields;
@@ -665,9 +695,9 @@ var story = {
 					appData.set("storyArray", storyArray);
 
 					if(storyArray.length > 0) {
-						story.renderStoryList();
+						story.renderStoryList(genreItem, storyArray);
 					} else {
-						story.renderCreateNewStory();
+						story.renderCreateNewStory(genreItem);
 					}
 
 				} else {
@@ -693,28 +723,139 @@ var story = {
 		finally {}
 	},
 
-	renderNoResultsFound: function() {
+	renderStoryList: function(genreItem, storyArray) {
 
 		try {
-			component.initializeEventRegistry();
-			component.registerEvent("func:getStoryList", "story.getList();");
+			var rowHtml = "";
 
-			component.render("t-no-results-found", "template-content");
+			var rowCount = 0;
+			var columnCount = 0;
+
+			for(var i=0; i<storyArray.length; i++) {
+
+				var item = storyArray[i];
+
+				var storyVersionRows = story.renderStoryVersionList(storyArray, item.storyId);
+
+				component.initializeDataRegistry();
+				component.registerData("data:storyId", item.storyId);
+				component.registerData("data:genreMnem", genreItem.genreMnem);
+				component.registerData("data:genre", genreItem.genre);
+				component.registerData("data:title", item.title);
+				component.registerData("data:createdBy", item.createdBy);
+				component.registerData("data:createdDate", item.createdDate);
+				component.registerData("data:storyDropdownRows", storyVersionRows);
+
+				component.initializeEventRegistry();
+				component.registerEvent("func:renderViewStory", "story.renderViewStory(this);");
+				component.registerEvent("func:toggleStoryVersions", "story.toggleStoryVersions(this);");
+
+				var columnData = component.create("t-story-list-column");
+
+				rowCount++;
+				columnCount++;
+
+				if(columnCount == 1) {
+					var columnOne = columnData;
+
+					/*
+					 * If column count == 1 and rowCount == array count
+					 */
+					if(rowCount == storyArray.length) {
+						component.initializeDataRegistry();
+						component.registerData("data:listColumnOne", columnOne);
+						component.registerData("data:listColumnTwo", "");
+
+						rowHtml += component.create("t-story-list-row");
+					}
+				}
+
+				if(columnCount == 2) {
+					var columnTwo = columnData;
+
+					/*
+					 * If column count == 2 and rowCount == array count
+					 */
+					if(rowCount == storyArray.length) {
+						component.initializeDataRegistry();
+						component.registerData("data:listColumnOne", columnOne);
+						component.registerData("data:listColumnTwo", columnTwo);
+
+						rowHtml += component.create("t-story-list-row");
+					}
+				}
+
+			}
+
+			if(storyArray.length <= 0) {
+				rowHtml = "";
+			}
+
+			component.initializeDataRegistry();
+			component.registerData("data:genreMnem", genreItem.genreMnem);
+			component.registerData("data:genre", genreItem.genre);
+			component.registerData("data:storyRows", rowHtml);
+
+			component.initializeEventRegistry();
+			component.registerEvent("func:renderCreateNewStory", "story.renderCreateNewStory(this);");
+
+			component.render("t-story-list", "template-content");
 
 			state.saveInitialState("template-content");
 		}
 		catch(err) {
-			console.log("renderNoResultsFound(): " + err);
+			console.log("renderStoryList(): " + err);
 		}
 		finally {}
 	},
 
-	getItem: function(storyId) {
+	renderStoryVersionList: function(storyArray, storyId) {
+
+		var rowHtml = "";
+
+		try {
+
+			var rowCount = 0;
+
+			for(var i=0; i<storyArray.length; i++) {
+
+				var item = storyArray[i];
+
+				if(item.originalStoryId == storyId) {
+
+					rowCount++;
+
+					component.initializeDataRegistry();
+					component.registerData("data:createdBy", item.createdBy);
+					component.registerData("data:createdDate", item.createdDate);
+
+					component.initializeEventRegistry();
+					component.registerEvent("func:renderViewStory", "story.renderViewStory(this);");
+
+					rowHtml += component.create("t-story-dropdown-row");
+				}
+
+				/* if no versions created then show a message with link to create new version */
+				if(rowCount == 0) {
+					rowHtml = component.create("t-story-dropdown-no-versions");
+				}
+
+			}
+		}
+		catch(err) {
+			console.log("renderStoryVersionList(): " + err);
+		}
+		finally {}
+
+		return rowHtml;
+	},
+
+	getStoryItem: function(storyId) {
 
 		var storyItem = {};
 
 		try {
-			var storyArray = JSON.parse(appData.get("storyJson"));
+			var storyArray = appData.get("storyArray");
 
 			if(storyArray.length > 0) {
 
@@ -724,20 +865,17 @@ var story = {
 
 					if(storyId == item.storyId) {
 
-						var decodeUrl = decodeURIComponent(item.url);
-						var decodeMediaBase64 = decodeURIComponent(item.mediaBase64);
+						var decodeImageBase64 = decodeURIComponent(item.imageBase64);
 
 						storyItem.storyId = item.storyId;
 						storyItem.title = item.title;
 						storyItem.content = item.content;
-						storyItem.genre = item.genre;
 						storyItem.createdBy = item.createdBy;
 						storyItem.createdDate = item.createdDate;
 						storyItem.updatedDate = item.updatedDate;
-						storyItem.url = decodeUrl;
-						storyItem.mediaType = item.mediaType;
-						storyItem.mediaBase64 = decodeMediaBase64;
-						storyItem.topicName = item.topicName;
+						storyItem.originalStoryId = item.originalStoryId;
+						storyItem.ancestorStoryIdList = item.ancestorStoryIdList;
+						storyItem.imageBase64 = decodeImageBase64;
 
 						break;
 					}
@@ -745,27 +883,66 @@ var story = {
 			}
 		}
 		catch(err) {
-			console.log("getItem(): " + err);
+			console.log("getStoryItem(): " + err);
 		}
 		finally {}
 
 		return storyItem;
 	},
 
-	renderCreateNewStory: function() {
+	getStoryItemContent: function(ancestorStoryIdList, content) {
+
+		var ancestorContent = "";
 
 		try {
+			if(ancestorStoryIdList == "") {
+				ancestorContent = content;
+
+			} else {
+				var ancestorStoryIdArray = string.split(',');
+
+				for(var i=0; i<ancestorStoryIdArray.length; i++) {
+
+					var ancestorStoryId = ancestorStoryIdArray[i];
+
+					storyItem = story.getStoryItem(anscestorStoryId);
+
+					// Get the content row template
+					storyItem.content = item.content;
+					storyItem.createdBy = item.createdBy;
+					storyItem.createdDate = item.createdDate;
+
+					// Substitute all variables
+
+					// Concatenate to contentHtml
+				}
+			}
+		}
+		catch(err) {
+			console.log("getStoryItemContent(): " + err);
+		}
+		finally {}
+
+		return content;
+	},
+
+	renderCreateNewStory: function(element) {
+
+		try {
+			var genreMnem = element.getAttribute("data-genre-mnem");
+
+			var genreItem = story.getGenreItem(genreMnem);
+
 			component.initializeDataRegistry();
-			component.registerData("data:genre", appData.get("genre"));
+			component.registerData("data:genre", genreItem.genre);
 
 			component.initializeEventRegistry();
 			component.registerEvent("func:toggleBold", "format.toggleBold(event,this);");
 			component.registerEvent("func:toggleItalic", "format.toggleItalic(event,this);");
 			component.registerEvent("func:toggleUnderline", "format.toggleUnderline(event,this);");
-			component.registerEvent("func:createNewStory", "story.createNewStory();");
+			component.registerEvent("func:createNewStory", "story.createNewStory(this);");
 
 			component.render("t-new-story", "template-content");
-/*			component.render("t-story-list", "template-content"); */
 
 			state.saveInitialState("template-content");
 		}
@@ -775,7 +952,7 @@ var story = {
 		finally {}
 	},
 
-	renderCreateNewStoryBranch: function() {
+	renderCreateNewStoryVersion: function(element) {
 
 		try {
 			component.initializeDataRegistry();
@@ -786,27 +963,41 @@ var story = {
 			component.registerEvent("func:toggleBold", "format.toggleBold(this);");
 			component.registerEvent("func:toggleItalic", "format.toggleItalic(this);");
 			component.registerEvent("func:toggleUnderline", "format.toggleUnderline(this)();");
-			component.registerEvent("func:createNewStoryBranch", "story.createNewStoryBranch();");
+			component.registerEvent("func:createNewStoryVersion", "story.createNewStoryVersion();");
 
-			component.render("t-new-story-branch", "template-content");
+			component.render("t-new-story-version", "template-content");
 
 			state.saveInitialState("template-content");
 		}
 		catch(err) {
-			console.log("renderCreateNewStoryBranch(): " + err);
+			console.log("renderCreateNewStoryVersion(): " + err);
 		}
 		finally {}
 	},
 
-	renderViewStory: function() {
+	renderViewStory: function(element) {
 
 		try {
+			var genreMnem = element.getAttribute("data-genre-mnem");
+			var storyId = element.getAttribute("data-story-id");
+
+			var genreItem = story.getGenreItem(genreMnem);
+
+			var storyItem = story.getStoryItem(storyId);
+
 			component.initializeDataRegistry();
-			component.registerData("data:title", appData.get("title"));
-			component.registerData("data:genre", appData.get("genre"));
+			component.registerData("data:storyId", storyItem.storyId);
+			component.registerData("data:title", storyItem.title);
+			component.registerData("data:genre", genreItem.genre);
+
+			// ToDo:  Get all ancestor content
+			var ancestorStoryId = storyItem.originalStoryId;
+			var ancestorStoryIdList = storyItem.ancestorStoryIdList;
+
+			component.registerData("data:content", storyItem.content);
 
 			component.initializeEventRegistry();
-			component.registerEvent("func:renderCreateNewStoryBranch", "story.renderCreateNewStoryBranch();");
+			component.registerEvent("func:renderCreateNewStoryVersion", "story.renderCreateNewStoryVersion(this);");
 
 			component.render("t-view-story", "template-content");
 
@@ -818,148 +1009,11 @@ var story = {
 		finally {}
 	},
 
-	renderEditTextItem: function(element) {
+	createNewStory: function(element){
 
 		try {
-			var drawerId = element.getAttribute("data-drawer-id");
+			var genreMnem = element.getAttribute("data-genre-mnem");
 
-			drawerItem = {};
-			drawerItem = story.getItem(drawerId);
-
-			var viewButton = story.createViewButton(drawerItem.drawerId);
-			var deleteButton = story.createDeleteButton(drawerItem.drawerId);
-
-			var trayListSelectTag = tray.createSelectTag(drawerItem.trayId, "N");
-
-			component.initializeDataRegistry();
-			component.registerData("data:viewButton", viewButton);
-			component.registerData("data:deleteButton", deleteButton);
-			component.registerData("data:trayListSelectTag", trayListSelectTag);
-			component.registerData("data:title", drawerItem.title);
-			component.registerData("data:text", drawerItem.text);
-			component.registerData("data:drawerId", drawerId);
-
-			component.initializeEventRegistry();
-			component.registerEvent("func:editTextItem", "story.editTextItem(this);");
-
-			component.render("t-text-edit", "template-content");
-
-			state.saveInitialState("template-content");
-		}
-		catch(err) {
-			console.log("renderEditTextItem(): " + err);
-		}
-		finally {}
-	},
-
-	createViewTitle: function(storyId) {
-
-		var componentHtml = "";
-
-		try {
-			storyItem = {};
-			storyItem = story.getItem(storyId);
-
-			component.initializeDataRegistry();
-			component.initializeEventRegistry();
-
-			if(storyItem.type == "1") {
-
-				component.registerData("data:storyId", storyId);
-				component.registerData("data:title", storyItem.title);
-
-				component.registerEvent("func:renderViewTextItem", "story.renderViewTextItem(this);");
-
-				componentHtml = component.create("t-drawer-title-text-view");
-			}
-		}
-		catch(err) {
-			console.log("createViewTitle(): " + err);
-		}
-		finally {}
-
-		return componentHtml;
-	},
-
-	createViewButton: function(storyId) {
-
-		var componentHtml = "";
-
-		try {
-			storyItem = {};
-			storyItem = story.getItem(storyId);
-
-			component.initializeDataRegistry();
-			component.initializeEventRegistry();
-
-			if(storyItem.type == "1") {
-
-				component.registerData("data:storyId", storyId);
-
-				component.registerEvent("func:renderViewTextItem", "story.renderViewTextItem(this);");
-
-				componentHtml = component.create("t-drawer-button-text-view");
-			}
-		}
-		catch(err) {
-			console.log("createViewButton(): " + err);
-		}
-		finally {}
-
-		return componentHtml;
-	},
-
-	createEditButton: function(storyId) {
-
-		var componentHtml = "";
-
-		try {
-			storyItem = {};
-			storyItem = story.getItem(storyId);
-
-			component.initializeDataRegistry();
-			component.initializeEventRegistry();
-
-			if(storyItem.type == "1") {
-				component.registerData("data:storyId", storyId);
-
-				component.registerEvent("func:renderEditTextItem", "story.renderEditTextItem(this);");
-
-				componentHtml = component.create("t-drawer-button-text-edit");
-			}
-		}
-		catch(err) {
-			console.log("createEditTitle(): " + err);
-		}
-		finally {}
-
-		return componentHtml;
-	},
-
-	createDeleteButton: function(storyId) {
-
-		var componentHtml = "";
-
-		try {
-			component.initializeDataRegistry();
-			component.registerData("data:storyId", storyId);
-
-			component.initializeEventRegistry();
-			component.registerEvent("func:deleteItem", "story.deleteItem(this);");
-
-			componentHtml = component.create("t-drawer-button-delete");
-		}
-		catch(err) {
-			console.log("createDeleteTitle(): " + err);
-		}
-		finally {}
-
-		return componentHtml;
-	},
-
-	createNewStory: function(){
-
-		try {
 			var title = document.forms[0].title.value;
 			var comments = document.forms[0].comments.value;
 
@@ -996,17 +1050,14 @@ var story = {
 			/* New Story so no ancestor document IDs */
 			var ancestorIdList = "";
 
-			/* New Story so it's the first level */
-			var level = "1";
-
 			var inputFields = {
 				"genre":appData.get("genre"), 
+				"genreMnem":appData.get("genreMnem"), 
 				"createdBy":appData.get("userName"), 
 				"title":cleanedTitle, 
 				"content":cleanedContent,
-				"originalAncestorId":originalAncestorId, 
-				"ancestorIdList":ancestorIdList, 
-				"level":level,
+				"originalStoryId":originalStoryId, 
+				"ancestorStoryIdList":ancestorStoryIdList, 
 				"comments":comments};
 
 			var inputJSON = {};
@@ -1027,7 +1078,7 @@ var story = {
 
 					appData.set("storyJson", storyJson);
 
-					story.render();
+					story.renderStoryList();
 
 				} else {
 					console.log('Error: ' + xhr.status);
@@ -1051,9 +1102,11 @@ var story = {
 		finally {}
 	},
 
-	createNewStoryBranch: function(){
+	createNewStoryVersion: function(element){
 
 		try {
+			var genreMnem = element.getAttribute("data-genre-mnem");
+
 			var title = "";
 			var comments = document.forms[0].comments.value;
 
@@ -1065,7 +1118,7 @@ var story = {
 			}
 
 			if(isEmpty(content)) {
-				component.setText("error", "Please enter your Branch of the Story.");
+				component.setText("error", "Please enter your Version of the Story.");
 				return false;
 			}
 
@@ -1073,23 +1126,20 @@ var story = {
 			var cleanedComments = replaceSpecialChars(comments);
 			var cleanedContent = replaceSpecialChars(content);
 
-			/* New Branch of existing Story so get the original ancestor ID */
-			var originalAncestorId = "0";
+			/* New Version of existing Story so get the original ancestor ID */
+			var originalStoryId = "0";
 
-			/* New Branch of existing Story so append direct ancestor ID to the existing list */
-			var ancestorIdList = "";
-
-			/* New Branch of existing Story so increment the level by 1 */
-			var level = "1";
+			/* New Version of existing Story so append direct ancestor ID to the existing list */
+			var ancestorStoryIdList = "";
 
 			var inputFields = {
 				"genre":appData.get("genre"), 
+				"genreMnem":appData.get("genreMnem"), 
 				"createdBy":appData.get("userName"), 
 				"title":cleanedTitle, 
 				"content":cleanedContent,
-				"originalAncestorId":originalAncestorId, 
-				"ancestorIdList":ancestorIdList, 
-				"level":level,
+				"originalStoryId":originalStoryId, 
+				"ancestorStoryIdList":ancestorStoryIdList, 
 				"comments":comments};
 
 			var inputJSON = {};
@@ -1118,7 +1168,7 @@ var story = {
 			};
 
 			xhr.onerror = function () {
-				console.log("createNewStoryBranch(): An error occurred during the transaction");
+				console.log("createNewStoryVersion(): An error occurred during the transaction");
 			};
 
 			var url = "http://localhost:8080/wsa/StoryEntry/";
@@ -1129,140 +1179,27 @@ var story = {
 			xhr.send("inputJSON=" + stringJSON);
 		}
 		catch(err) {
-			console.log("createNewStoryBranch(): " + err);
+			console.log("createNewStoryVersion(): " + err);
 		}
 		finally {}
 	},
 
-	editTextItem: function(element){
+	toggleStoryVersions: function(element) {
 
-		try {
-			var drawerId = element.getAttribute("data-drawer-id");
+		var storyId = element.getAttribute("data-story-id");
 
-			var trayId = document.forms[0].trayId.value;
-			var title = document.forms[0].title.value;
-			var text = document.forms[0].text.value;
+		var panelEl = document.getElementById(storyId);
 
-			if(isEmpty(trayId)) {
-				component.setText("error", "Please select a Tray.");
-				return false;
-			}
-
-			if(isEmpty(title)) {
-				component.setText("error", "Please enter a Title.");
-				return false;
-			}
-
-			if(isEmpty(text)) {
-				component.setText("error", "Please enter some Text to describe your entry.");
-				return false;
-			}
-
-			var cleanedTitle = replaceSpecialChars(title);
-			var cleanedText = replaceSpecialChars(text);
-
-			var inputFields = {
-				"collectionName":appData.get("collectionName"), 
-				"drawerId":drawerId, 
-				"trayId":trayId, 
-				"url":".", 
-				"title":cleanedTitle, 
-				"text":cleanedText};
-
-			var inputJSON = {};
-			inputJSON.inputArgs = inputFields;
-
-			var stringJSON = JSON.stringify(inputJSON);
-
-			var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-
-			xhr.onreadystatechange = function () {
-
-				if (xhr.readyState !== 4) {
-					return;
-				}
-
-				if (xhr.status === 200) {
-					var drawerJson = xhr.responseText;
-
-					appData.set("drawerJson", drawerJson);
-
-					story.render();
-
-				} else {
-					console.log('Error: ' + xhr.status);
-				}
-			};
-
-			xhr.onerror = function () {
-				console.log("editTextItem(): An error occurred during the transaction");
-			};
-
-			var url = "http://localhost:8080/mydrawer/StoryEntry/";
-
-			xhr.open("PUT", url, true);
-			xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			xhr.send(stringJSON);
+		if(panelEl.style.display == "none" || panelEl.style.display == "") {
+			panelEl.style.display = "block";
+			panelEl.style.height = "auto";
+		} else {
+			panelEl.style.height = "0%";
+			panelEl.style.display = "none";
 		}
-		catch(err) {
-			console.log("editTextItem: " + err);
-		}
-		finally {}
-	},
-
-	deleteItem: function(storyId){
-
-		try {
-
-			var inputFields = {
-				"genre":appData.get("genre"), 
-				"storyId":storyId
-			};
-
-			var inputJSON = {};
-			inputJSON.inputArgs = inputFields;
-
-			var stringJSON = JSON.stringify(inputJSON);
-
-			var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-
-			xhr.onreadystatechange = function () {
-
-				if (xhr.readyState !== 4) {
-					return;
-				}
-
-				if (xhr.status === 200) {
-					var storyJson = xhr.responseText;
-
-					appData.set("storyJson", storyJson);
-
-					story.render();
-
-				} else {
-					console.log('Error: ' + xhr.status);
-				}
-			};
-
-			xhr.onerror = function () {
-				console.log("deleteItem(): An error occurred during the transaction");
-			};
-
-			var url = "http://localhost:8080/mydrawer/FeedEntry/";
-
-			xhr.open("DELETE", url, true);
-			xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			xhr.send(stringJSON);
-		}
-		catch(err) {
-			console.log("deleteItem(): " + err);
-		}
-		finally {}
 	}
 
-};
+}
 
 var listener = {
 

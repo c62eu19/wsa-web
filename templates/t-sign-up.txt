@@ -33,7 +33,7 @@
 	</div>
 
 	<div class="offset-by-three columns six columns offset-by-three columns">
-		<a href="#" id="btn-sign-up" onclick="{{func:signUp}}" class="button button-primary">Sign Up</a>
+		<a href="#" id="btn-sign-up" onclick="{{func:signUp}}" class="button button-special">Sign Up</a>
 	</div>
 </form>
 

@@ -1,0 +1,24 @@
+<script id="t-new-story-version" type="text/template">
+
+<h5>Add your version of the Story</h5>
+
+<div id="error" style="margin-bottom: 9px; color: #ff0000"></div>
+
+<form>
+	<div class="row">
+		<div class="eight columns">
+			<label for="name">Title</label>
+			{{data:title}}
+		</div>
+		<div class="four columns">
+			<label for="name">Genre</label>
+			{{data:genre}}
+		</div>
+	</div>
+
+	<div contenteditable="true" id="content" style="display:inline-block; height:500px; width:100%; border: 1px solid #000;"></div>
+
+	<a class="button button-primary" onclick="{{func:createNewStoryVersion}}" data-genre-mnem="{{data:genreMnem}}" data-story-id="{{data:storyId}}">Save</a>
+</form>
+
+</script>

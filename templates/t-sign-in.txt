@@ -21,7 +21,7 @@
 	</div>
 
 	<div class="offset-by-four columns three columns offset-by-three columns">
-		<a href="#" id="btn-sign-in" onclick="{{func:signIn}}" class="button button-primary">Sign In</a>
+		<a href="#" id="btn-sign-in" onclick="{{func:signIn}}" class="button button-special">Sign In</a>
 	</div>
 
 	<div class="offset-by-four columns six columns offset-by-three columns">

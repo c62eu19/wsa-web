@@ -29,7 +29,7 @@
 	</div>
 
 	<div class="offset-by-three columns six columns offset-by-three columns">
-		<a href="#" id="btn-contact-us" onclick="{{func:addContactUs}}" class="button button-primary">Send</a>
+		<a href="#" id="btn-contact-us" onclick="{{func:addContactUs}}" class="button button-special">Send</a>
 	</div>
 </form>
 
