@@ -64,7 +64,7 @@ body {
 .navbar-link-left {
 	text-transform: uppercase;
 	line-height: 6rem;
-	font-size: 15px;
+	font-size: 12px;
 	font-style: italic;
 	font-weight: 700;
 	letter-spacing: .1rem;
@@ -137,7 +137,7 @@ body {
 @media (max-width: 700px) {
 
 	.navbar-link-left {
-		font-size: 14px;
+/*		font-size: 14px; */
 	}
 
 	#menu-contact-us, #menu-about, #menu-sign-in, #menu-sign-out, #navbar-dropdown {
@@ -162,7 +162,7 @@ body {
 @media (min-width: 700px) {
 
 	.navbar-link-left {
-		font-size: 18px;
+/*		font-size: 18px; */
 	}
 
 	#menu-contact-us, #menu-about, #menu-sign-in, #menu-sign-out {
@@ -362,6 +362,7 @@ ul.icons li .icon:before {
 .button.button-special {
 	color: #FFF;
 	background-color: #313335;
+	background-color: #54d2b6;
 	border-color: #33C3F0;
 }
 
